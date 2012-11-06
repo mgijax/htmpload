@@ -46,8 +46,8 @@ WTSI	WTSI		MP:0005478	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anythin
 WTSI	WTSI		MP:0005476	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
 WTSI	WTSI		MP:0008854	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
 WTSI	WTSI		MP:0008855	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
-WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	SexNA
-WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	SexNA
+WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	VerifyAnnotHet
+WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	VerifyAnnotHet
 WTSI	WTSI	EPD0069_4_B07	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
 WTSI	WTSI	EPD0069_4_B08	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
 WTSI	WTSI	EPD0069_4_C08	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype has cell line	VerifyAnnotHet
