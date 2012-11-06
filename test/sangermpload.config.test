@@ -1,0 +1,122 @@
+#format: sh
+###########################################################################
+#
+# Configuration.default
+#
+###########################################################################
+
+###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+###########################################################################
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
+
+###########################################################################
+#
+# Directory paths
+#
+###########################################################################
+
+FILEDIR=${DATALOADSOUTPUT}/mgi/sangermpload.test
+ARCHIVEDIR=${FILEDIR}/archive
+INPUTDIR=${FILEDIR}/input
+OUTPUTDIR=${FILEDIR}/output
+LOGDIR=${FILEDIR}/logs
+RPTDIR=${FILEDIR}/reports
+QCOUTPUTDIR=${RPTDIR}
+
+export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR 
+
+###########################################################################
+#
+# Input/Output files
+#
+###########################################################################
+
+# Sanger input file from the Sanger BioMart
+#
+HTMP_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
+INPUTFILE=${SANGERMPLOAD}/test/mgi_sangermpload_test.txt
+
+# Sanger input file that contains data that was skipped
+#
+HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_skipped.txt
+
+# Sanger input file that contains data that had data errors
+#
+HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_sangerload_error.txt
+
+# Sanger input file that contains data that was merged (duplicates)
+#
+HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
+
+# Sanger input file that contains a unique genotype # (1 thru ...)
+#
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
+
+# Genotype & Annotation input file
+#
+GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
+ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
+OMIM_INPUT_FILE=${INPUTDIR}/mgi_omimload.txt
+
+export HTMP_INPUT_FILE INPUTFILE
+export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE
+export GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE OMIM_INPUT_FILE
+
+# Log files
+#
+LOG_PROC=${LOGDIR}/sangerload.proc.log
+LOG_DIAG=${LOGDIR}/sangerload.diag.log
+LOG_CUR=${LOGDIR}/sangerload.cur.log
+LOG_VAL=${LOGDIR}/sangerload.val.log
+LOG_TEST=${LOGDIR}/sangerload.test.log
+LOG_TEST_SORTED=${LOGDIR}/sangerload.test.sorted.log
+
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST LOG_TEST_SORTED
+
+CREATEDBY=sangermpload
+JNUMBER=J:175295
+export CREATEDBY JNUMBER
+
+# Genotype load
+#
+# is this call a stand-alone or is it being called from another product?
+GENOTYPELOAD_STANDALONE=0
+# run in 'load' mode (default)
+GENOTYPELOAD_MODE=load
+# new genotype file (output from genotypeload)
+GENOTYPELOAD_OUTPUT=${INPUTDIR}/mgi_genotypeload_new.txt
+
+export GENOTYPELOAD_STANDALONE GENOTYPELOAD_CACHE_ADMIN GENOTYPELOAD_MODE GENOTYPELOAD_OUTPUT
+
+###########################################################################
+#
+#  MISCELLANEOUS SETTINGS
+#
+###########################################################################
+
+#  The name of the job stream for the load
+JOBSTREAM=sangermpload
+export JOBSTREAM
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="Sanger-MP Load"
+
+#  Recipient list for mailing the log files (comma-separated)
+#MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
+MAIL_LOG_CUR="lec"
+
+export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
+
+INSTALLDIR=${SANGERMPLOAD}
+export INSTALLDIR
+

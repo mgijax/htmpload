@@ -1,0 +1,10 @@
+1		MGI:4867032	Not Specified	MGI:1915303	MGI:4456838	EPD0009_1_A01	MGI:4456838	EPD0009_1_A01	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Complex: Ubxn2b<tm1a(EUCOMM)Wtsi>, 1 allele, 3 pairs, 2 cell lines
+1		MGI:4867032	Not Specified	MGI:1915303	MGI:4456838	EPD0009_1_B01	MGI:4456838	EPD0009_1_B01	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Complex: Ubxn2b<tm1a(EUCOMM)Wtsi>, 1 allele, 3 pairs, 2 cell lines
+1		MGI:4867032	Not Specified	MGI:1915303	MGI:4456838	EPD0009_1_A01	MGI:4456838	EPD0009_1_B01	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Complex: Ubxn2b<tm1a(EUCOMM)Wtsi>, 1 allele, 3 pairs, 2 cell lines
+2		MGI:4867032	Not Specified	MGI:107809	MGI:4364285	EPD0318_4_C10	MGI:4364285	EPD0318_4_C11	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Aamp<tm1a(KOMP)Wtsi> Hom, diff MCL
+3		MGI:4867032	Not Specified	MGI:107809	MGI:4364285	EPD0318_4_F11	MGI:2434092		no	Mouse Line			Heterozygous	Top	scrum-dog	Compound: Aamp<tm1a(KOMP)Wtsi> over Abcb6<tm1a(KOMP)Wtsi> 
+3		MGI:4867032	Not Specified	MGI:1921354	MGI:4362220	EPD0246_2_B08	MGI:2441161		no	Mouse Line			Heterozygous	Bottom	scrum-dog	Compound: Aamp<tm1a(KOMP)Wtsi> over Abcb6<tm1a(KOMP)Wtsi> 
+4		MGI:4867032	Not Specified	MGI:2148491	MGI:4451483	EPD0246_2_B08	MGI:4451483	EPD0246_2_B08	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Complex: Acaa1a, Adal, Agbl2, 4 alleles, 5 MCIs
+4		MGI:4867032	Not Specified	MGI:1923144	MGI:5302323	EPD0471_1_H10	MGI:5302323	EPD0471_1_H11	no	Mouse Line			Homozygous	Not Applicable	scrum-dog	Complex: Acaa1a, Adal, Agbl2, 4 alleles, 5 MCIs
+4		MGI:4867032	Not Specified	MGI:2443254	MGI:4441857	EPD0525_6_A11	MGI:4442049	EPD0525_6_B11	no	Mouse Line			Heterozygous	Not Applicable	scrum-dog	Complex: Acaa1a, Adal, Agbl2, 4 alleles, 5 MCIs
+5		MGI:4867032	Not Specified	MGI:2442495	MGI:4433360		MGI:4431788		no	Mouse Line			Heterozygous	Not Applicable	scrum-dog	No MCLs: Agmo het

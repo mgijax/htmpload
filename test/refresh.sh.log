@@ -1,0 +1,29 @@
+Fri Oct 26 12:55:51 EDT 2012
+Password: 
+1> 
+2> use mgd_lec1
+1> 
+2> select v._Annot_key
+3> into #todelete1
+4> from VOC_Evidence v
+5> where v._CreatedBy_key = 1526
+(0 rows affected)
+1> 
+2> delete VOC_Annot
+3> from #todelete1 d, VOC_Annot a
+4> where d._Annot_key = a._Annot_key
+(0 rows affected)
+1> 
+2> select _Genotype_key
+3> into #todelete2
+4> from GXD_Genotype
+5> where _CreatedBy_key = 1526
+(0 rows affected)
+1> 
+2> delete GXD_Genotype
+3> from #todelete2 d, GXD_Genotype g
+4> where d._Genotype_key = g._Genotype_key
+(0 rows affected)
+1> 
+2> checkpoint
+Fri Oct 26 12:55:51 EDT 2012

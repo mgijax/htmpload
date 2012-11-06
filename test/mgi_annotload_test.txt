@@ -1,0 +1,10 @@
+MP:0005418	MGI:3688511	J:111	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&M		Slc16a2<tm1.1Sref>	homozygous	Testing Normals WI display
+MP:0005478	MGI:3688511	J:175295	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&F		Slc16a2<tm1.1Sref>	homozygous	Testing Normals WI display
+MP:0005476	MGI:3688511	J:175295	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&M		Slc16a2<tm1.1Sref>	homozygous	Testing Normals WI display
+MP:0005473	MGI:3688510	J:112	EXP		normal	scrum-dog	11/5/2012			MP-Sex-Specificity&=&M		Slc16a2<tm1.1Sref>	hemizygous X-linked	involves: 129/Sv * 129P2/OlaHsd, Testing Normals
+MP:0005476	MGI:3688509	J:114	EXP		normal	scrum-dog	11/5/2012			MP-Sex-Specificity&=&M		Slc16a2<tm1.1Sref>	hemizygous X-linked	involves: 129P2/OlaHsd * C57BL/6J, Testing Normals
+MP:0008854	MGI:5441346	J:148605	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&NA		Aamp<tm1a(KOMP)Wtsi>	het-compound	Scrum-dog mock data genotype(3)
+MP:0008854	MGI:5441345	J:148605	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&NA		Aamp<tm1a(KOMP)Wtsi>	homozyg-diff MCLs	Scrum-dog mock data genotype(2)
+MP:0008854	MGI:5441347	J:148605	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&NA		Acaa1a<tm1a(KOMP)Wtsi>	homozyg-complex	Scrum-dog mock data genotype(4)
+MP:0008854	MGI:5441348	J:148605	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&NA		Agmo<tm1e(EUCOMM)Wtsi>	het no MCLs	Scrum-dog mock data genotype(5)
+MP:0008854	MGI:5441344	J:148605	EXP			scrum-dog	11/5/2012			MP-Sex-Specificity&=&NA		Ubxn2b<tm1a(EUCOMM)Wtsi> 	homozyg-complex	Scrum-dog mock data genotype(1)

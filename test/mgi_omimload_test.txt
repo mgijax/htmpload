@@ -1,0 +1,18 @@
+257350	MGI:5440821	J:155845	TAS			scrum-dog	11/5/2012					Acsl4<tm1a(EUCOMM)Wtsi>	hemizygous X-linked	add to Sanger genotype annots
+112200	MGI:5440821	J:155845	TAS		NOT	scrum-dog	11/5/2012					Acsl4<tm1a(EUCOMM)Wtsi>	hemizygous X-linked	add to Sanger genotype annots
+257350	MGI:5440820	J:155845	TAS			scrum-dog	11/5/2012					Acsl4<tm1a(EUCOMM)Wtsi	indeterminate	add to Sanger genotype annots
+112200	MGI:5440820	J:155845	TAS		NOT	scrum-dog	11/5/2012					Acsl4<tm1a(EUCOMM)Wtsi	indeterminate	add to Sanger genotype annots
+257350	MGI:5440864	J:148605	TAS			scrum-dog	11/5/2012					Baz1b<tm2a(KOMP)Wtsi>	homozygous	add to Sanger genotype annots
+112200	MGI:5440864	J:148605	TAS		NOT	scrum-dog	11/5/2012					Baz1b<tm2a(KOMP)Wtsi>	homozygous	add to Sanger genotype annots
+257350	MGI:5440863	J:148605	TAS			scrum-dog	11/5/2012					Baz1b<tm2a(KOMP)Wtsi>	heterozygous	add to Sanger genotype annots
+112200	MGI:5440863	J:148605	TAS		NOT	scrum-dog	11/5/2012					Baz1b<tm2a(KOMP)Wtsi>	heterozygous	add to Sanger genotype annots
+257350	MGI:5440865	J:155845	TAS			scrum-dog	11/5/2012					Bbx<tm1a(EUCOMM)Wtsi>	indeterminate	add to Sanger genotype annots
+112200	MGI:5440865	J:155845	TAS		NOT	scrum-dog	11/5/2012					Bbx<tm1a(EUCOMM)Wtsi>	indeterminate	add to Sanger genotype annots
+257350	MGI:4356528	J:13426	TAS			scrum-dog	11/5/2012					Mitf<Mi-Or>	homozygous	MGI:4356528 genotype ID
+112200	MGI:4356528	J:13426	TAS		NOT	scrum-dog	11/5/2012					Mitf<Mi-Or>	homozygous	MGI:4356528 genotype ID
+257350	MGI:4356529	J:13426	TAS			scrum-dog	11/5/2012					Mitf<Mi-Or>	heterozygous w.t.	MGI:4356529 genotype ID
+112200	MGI:4356529	J:13426	TAS		NOT	scrum-dog	11/5/2012					Mitf<Mi-Or>	heterozygous w.t.	MGI:4356529 genotype ID
+257350	MGI:5438646	J:5441214	TAS			scrum-dog	11/5/2012					Slc44a5<tm1a(KOMP)Wtsi>	homozygous	add to Sanger genotype annots
+112200	MGI:5438646	J:5441214	TAS		NOT	scrum-dog	11/5/2012					Slc44a5<tm1a(KOMP)Wtsi>	homozygous	add to Sanger genotype annots
+112200	MGI:4410317	J:15061	TAS			scrum-dog	11/5/2012					Mitf<Mi-Or>	het with Mitf<Mi-b>	MGI:4410317 geno ID, conflicting annots
+112200	MGI:4410317	J:37067	TAS		NOT	scrum-dog	11/5/2012					Mitf<Mi-Or>	het with Mitf<Mi-b>	MGI:4410317 geno ID, conflicting annots
