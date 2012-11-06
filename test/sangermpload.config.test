@@ -44,7 +44,7 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 # Sanger input file from the Sanger BioMart
 #
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
-INPUTFILE=${SANGERMPLOAD}/test/mgi_sangermpload_test.txt
+INPUTFILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
 
 # Sanger input file that contains data that was skipped
 #
@@ -117,6 +117,6 @@ MAIL_LOG_CUR="lec"
 
 export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
 
-INSTALLDIR=${SANGERMPLOAD}
+INSTALLDIR=${HTMPLOAD}
 export INSTALLDIR
 

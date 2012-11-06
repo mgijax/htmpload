@@ -9,7 +9,7 @@
 
 cd `dirname $0`
 
-CONFIG=${SANGERMPLOAD}/test/sangermpload.config.test
+CONFIG=${HTMPLOAD}/test/sangermpload.config.test
 
 #
 # Make sure the configuration file exists and source it.
@@ -37,7 +37,7 @@ cd ${OUTPUTDIR}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Call genotypeload.py (makeGenotypeTest.sh)" | tee -a ${LOG}
-cp ${SANGERMPLOAD}/test/mgi_genotypeload_test.txt ${INPUTDIR}/mgi_genotypeload.txt
+cp ${HTMPLOAD}/test/mgi_genotypeload_test.txt ${INPUTDIR}/mgi_genotypeload.txt
 ${GENOTYPELOAD}/bin/genotypeload.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]

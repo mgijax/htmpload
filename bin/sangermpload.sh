@@ -50,8 +50,8 @@ then
     ANNOTCONFIG=$2
     RUNNING="sangerload_test.sh"
 else
-    CONFIG=${SANGERMPLOAD}/sangermpload.config
-    ANNOTCONFIG=${SANGERMPLOAD}/annotload.config
+    CONFIG=${HTMPLOAD}/sangermpload.config
+    ANNOTCONFIG=${HTMPLOAD}/annotload.config
     RUNNING="sangerload.sh"
 fi
 

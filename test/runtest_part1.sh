@@ -15,8 +15,8 @@
 cd `dirname $0`
 
 # config files
-CONFIG=${SANGERMPLOAD}/test/sangermpload.config.test
-ANNOTCONFIG=${SANGERMPLOAD}/test/annotload.new.config.test
+CONFIG=${HTMPLOAD}/test/sangermpload.config.test
+ANNOTCONFIG=${HTMPLOAD}/test/annotload.new.config.test
 
 #
 # Make sure the configuration file exists and source it.
@@ -48,8 +48,8 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Sanger Test...(sangerload_test.sh)" | tee -a ${LOG}
-cp ${SANGERMPLOAD}/test/mgi_sangermpload_test.txt ${INPUTDIR}
-${SANGERMPLOAD}/bin/sangermpload.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
+cp ${HTMPLOAD}/test/mgi_sangermpload_test.txt ${INPUTDIR}
+${HTMPLOAD}/bin/sangermpload.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

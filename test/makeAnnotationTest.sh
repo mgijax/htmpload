@@ -14,8 +14,8 @@
 
 cd `dirname $0`
 
-CONFIG=${SANGERMPLOAD}/test/sangermpload.config.test
-ANNOTCONFIG=${SANGERMPLOAD}/test/annotload.append.config.test
+CONFIG=${HTMPLOAD}/test/sangermpload.config.test
+ANNOTCONFIG=${HTMPLOAD}/test/annotload.append.config.test
 
 #
 # Make sure the configuration file exists and source it.
@@ -48,7 +48,7 @@ cd ${OUTPUTDIR}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Call annotload.py (makeAnnotationTest.sh)" | tee -a ${LOG}
-cp ${SANGERMPLOAD}/test/mgi_annotload_test.txt ${INPUTDIR}/mgi_annotload.txt
+cp ${HTMPLOAD}/test/mgi_annotload_test.txt ${INPUTDIR}/mgi_annotload.txt
 ${ANNOTLOAD}/annotload.csh ${ANNOTCONFIG} mp 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]

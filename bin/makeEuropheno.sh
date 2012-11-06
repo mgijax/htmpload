@@ -47,7 +47,7 @@ if [ $# -ge 1 ]
 then
     CONFIG=$1
 else
-    CONFIG=${SANGERMPLOAD}/europhenompload.config
+    CONFIG=${HTMPLOAD}/europhenompload.config
 fi
 
 #

@@ -50,8 +50,8 @@ then
     ANNOTCONFIG=$2
     RUNNING="europhenompload_test.sh"
 else
-    CONFIG=${SANGERMPLOAD}/europhenompload.config
-    ANNOTCONFIG=${SANGERMPLOAD}/annotload.config
+    CONFIG=${HTMPLOAD}/europhenompload.config
+    ANNOTCONFIG=${HTMPLOAD}/annotload.config
     RUNNING="europhenompload.sh"
 fi
 
