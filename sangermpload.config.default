@@ -25,7 +25,7 @@ fi
 #
 ###########################################################################
 
-FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/sangermpload
+FILEDIR=${DATALOADSOUTPUT}/mgi/sangermpload.lec
 ARCHIVEDIR=${FILEDIR}/archive
 INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output

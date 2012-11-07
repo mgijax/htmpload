@@ -291,22 +291,40 @@ def sangerTest():
 	gender = tokens[11]
 	testName = tokens[13]
 
+	# if no testName is provided,
+	# then use alleleState to determine the correct test to run
 	if len(testName) == 0:
-	    testPassed = 'pass'
-	    testName = 'No Test Performed'
-            fpLogTest.write(testDisplay % \
-		(testPassed, testName, lineNum, \
-                 mpID, alleleSymbol, markerID, alleleID, mutantID, \
-                 alleleState, gender))
-	    continue
+	    testName = 'automatcically determined'
+	    if alleleState == 'Hom':
+	        verifyAnnotHom()
+	    elif alleleState == 'Het':
+	        verifyAnnotHet()
+	    elif alleleState == 'Hemi':
+	        verifyAnnotHemi()
+	    else:
+	        verifyAnnotIndet()
+
+#	    else:
+#		testPassed = 'pass'
+#		testName = 'No Test Performed'
+#		fpLogTest.write(testDisplay % \
+#		    (testPassed, testName, lineNum, \
+#                     mpID, alleleSymbol, markerID, alleleID, mutantID, \
+#                     alleleState, gender))
+#	        continue
+
 	elif testName == 'VerifyAnnotHom':
 	    verifyAnnotHom()
+
 	elif testName == 'VerifyAnnotHet':
 	    verifyAnnotHet()
+
 	elif testName == 'VerifyAnnotHemi':
 	    verifyAnnotHemi()
+
 	elif testName == 'VerifyAnnotIndet':
 	    verifyAnnotIndet()
+
 	elif testName == 'SexNA':
 	    verifySexNA()
 
