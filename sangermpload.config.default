@@ -81,7 +81,7 @@ LOG_TEST=${LOGDIR}/sangerload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
-CREATEDBY=sangermpload
+CREATEDBY=htmpload
 JNUMBER=J:175295
 export CREATEDBY JNUMBER
 
@@ -103,7 +103,7 @@ export GENOTYPELOAD_STANDALONE GENOTYPELOAD_CACHE_ADMIN GENOTYPELOAD_MODE GENOTY
 ###########################################################################
 
 #  The name of the job stream for the load
-JOBSTREAM=sangermpload
+JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification

@@ -36,7 +36,7 @@
 #
 #  Outputs:
 #
-#	High Througput MP file ($HTMP_INPUT_FILE):
+#	High Throughput MP file ($HTMP_INPUT_FILE):
 #
 #       field 1: Phenotyping Center ('Europhenome')
 #       field 2: Annotation Center ('Europhenome')

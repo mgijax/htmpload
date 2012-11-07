@@ -83,7 +83,7 @@ LOG_TEST=${LOGDIR}/europhenoload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
-CREATEDBY=europhenompload
+CREATEDBY=htmpload
 JNUMBER=J:165965
 export CREATEDBY JNUMBER
 
@@ -105,7 +105,7 @@ export GENOTYPELOAD_STANDALONE GENOTYPELOAD_CACHE_ADMIN GENOTYPELOAD_MODE GENOTY
 ###########################################################################
 
 #  The name of the job stream for the load
-JOBSTREAM=europhenompload
+JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
