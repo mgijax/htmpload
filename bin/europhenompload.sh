@@ -89,7 +89,9 @@ fi
 #
 LOG=${LOG_DIAG}
 rm -rf ${LOG}
+rm -rf ${LOG_CUR}
 touch ${LOG}
+touch ${LOG_CUR}
 
 #
 # createArchive
@@ -122,6 +124,24 @@ echo "Call makeEuropheno.sh (${RUNNING})" | tee -a ${LOG}
 ./makeEuropheno.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 checkStatus ${STAT} "makeEuropheno.sh (${RUNNING})"
+
+#
+# Check counts; if Biomart file count = HTMP file count, then OK
+#
+htmpBiomart=`/usr/bin/wc -l < ${BIOMART_COPY_INPUT_FILE}`
+echo '\nBioMart file:' >> ${LOG_CUR}
+echo '   ' ${htmpBiomart} >> ${LOG_CUR}
+htmpMGD=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
+echo '\nHTMP file:' >> ${LOG_CUR}
+echo '   ' ${htmpMGD} >> ${LOG_CUR}
+if [ ${htmpBiomart} -ne ${htmpMGD} ]
+then
+echo 'ERROR:  Biomart does **not** equal HTMP file' >> ${LOG_CUR}
+shutDown
+exit 0
+else
+echo 'SUCCESSFUL:  Biomart equals HTMP file' >> ${LOG_CUR}
+fi
 
 #
 # Create Genotypes

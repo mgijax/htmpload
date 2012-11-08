@@ -60,7 +60,7 @@ fi
 #
 # run DLAInstall for each configuration file
 #
-for c in europhenompload.config sangermpload.config
+for c in test/htmpload.config.test europhenompload.config sangermpload.config
 do
 echo 'running DLAINSTALL'
 . ./${c}

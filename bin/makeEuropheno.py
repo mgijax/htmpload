@@ -206,8 +206,6 @@ def createHTMPfile():
 	    alleleState = 'Hom'
 	elif alleleState == '2':
 	    alleleState = 'Hemi'
-	else:
-	    alleleState = 'Indeterminate'
 
         fpHTMP.write(phenotypingCenter + '\t'  + \
                      annotationCenter + '\t'  + \
