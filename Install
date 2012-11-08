@@ -5,8 +5,10 @@
 #
 # 1) cp sangermpload.config.default sangermpload.config
 # 2) cp sangermpload.config.csh.default sangermpload.config.csh
-# 3) Install 
-# 4) Create empty text files for makeBucketsDiff.py
+# 3) cp europhenompload.config.default europhenompload.config
+# 4) cp europhenompload.config.csh.default europhenompload.config.csh
+# 5) Install 
+# 6) Create empty text files for makeBucketsDiff.py
 #
 
 Usage=Install
@@ -58,9 +60,11 @@ fi
 #
 # run DLAInstall for each configuration file
 #
+for c in europhenompload.config sangermpload.config
+do
 echo 'running DLAINSTALL'
+. ./${c}
 ${DLAINSTALL} ${DEV}
-
 #
 # Create the input directory if it doesn't exist.
 #
@@ -68,4 +72,4 @@ if [ ! -d ${INPUTDIR} ]
 then
     mkdir -p ${INPUTDIR}
 fi
-
+done

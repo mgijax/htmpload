@@ -200,9 +200,6 @@ def createHTMPfile():
 	strainID = ''
         gender = tokens[7]
 
-        if alleleSymbol.find('not yet available') >= 0:
-            continue
-
 	if alleleState == '0':
 	    alleleState = 'Het'
 	elif alleleState == '1':

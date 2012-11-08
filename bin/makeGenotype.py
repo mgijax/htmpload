@@ -476,6 +476,11 @@ def getGenotypes():
         markerID = tokens[7]
         gender = tokens[10]
 
+	# skip
+	if alleleSymbol.find('not yet available') >= 0:
+	    fpHTMPSkip.write(line)
+	    continue
+
 	# skip if no MP annotation ID
 	if mpID == '':
 	    fpHTMPSkip.write(line)
