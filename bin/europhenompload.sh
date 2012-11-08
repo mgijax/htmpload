@@ -98,7 +98,7 @@ touch ${LOG_CUR}
 #
 echo "archiving..." >> ${LOG}
 date >> ${LOG}
-#preload ${OUTPUTDIR}
+preload ${OUTPUTDIR}
 rm -rf ${OUTPUTDIR}/*.diagnostics
 rm -rf ${OUTPUTDIR}/*.error
 echo "archiving complete" >> ${LOG}
@@ -116,7 +116,6 @@ rm -rf ${BIOMART_COPY_INPUT_FILE}
 sort -t"	" -k5,5 -k4,4 -k2,2 ${BIOMART_INPUT_FILE} > ${BIOMART_COPY_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "copying input file completed"
-exit 0
 
 #
 # Create the HTMP input file

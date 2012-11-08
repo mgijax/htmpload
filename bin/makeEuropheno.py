@@ -18,12 +18,12 @@
 #      The following environment variables are set by the configuration
 #      file that is sourced by the wrapper script:
 #
-#	   BIOMART_INPUT_FILE
+#	   BIOMART_COPY_INPUT_FILE
 #    	   HTMP_INPUT_FILE
 #
 #  Inputs:
 #
-#      Europheno file ($BIOMART_INPUT_FILE)
+#      Europheno file ($BIOMART_COPY_INPUT_FILE)
 #
 #       field 1: ES Cell
 #       field 2: MP ID
@@ -76,7 +76,7 @@
 import sys 
 import os
 
-# BIOMART_INPUT_FILE
+# BIOMART_COPY_INPUT_FILE
 biomartFile = None
 
 # HTMP_INPUT_FILE
@@ -97,7 +97,7 @@ def initialize():
     global biomartFile, htmpFile
     global fpBiomart, fpHTMP
 
-    biomartFile = os.getenv('BIOMART_INPUT_FILE')
+    biomartFile = os.getenv('BIOMART_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
 
     rc = 0
@@ -106,7 +106,7 @@ def initialize():
     # Make sure the environment variables are set.
     #
     if not biomartFile:
-        print 'Environment variable not set: BIOMART_INPUT_FILE'
+        print 'Environment variable not set: BIOMART_COPY_INPUT_FILE'
         rc = 1
 
     # Make sure the environment variables are set.

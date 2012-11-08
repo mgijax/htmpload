@@ -105,6 +105,8 @@ date >> ${LOG}
 #
 # copy input file into working directory
 # sort by column 7 (allele name)
+# sort by column 6 (allele state)
+# sort by column 4 (mp id)
 #
 echo "coping input file..." >> ${LOG}
 date >> ${LOG}
