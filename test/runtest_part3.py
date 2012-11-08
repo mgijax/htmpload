@@ -43,7 +43,7 @@
 #
 #  Inputs:
 #
-#      Sanger  file ($HTMPUNIQ_INPUT_FILE)
+#      HTMP file ($HTMPUNIQ_INPUT_FILE)
 #
 #       field 0: Genotype Order
 #       field 1: Phenotyping Center (ex. 'WTSI')
@@ -59,9 +59,6 @@
 #       field 11: Gender ('Female', 'Male', 'Both')
 #       field 12: Human-readable test infomration
 #       field 13: SQL-Test Name
-#
-#      Sanger file ($HTMPDUP_INPUT_FILE)
-#	same as Sanger BioMart file
 #
 #  Outputs:
 #
@@ -98,11 +95,11 @@ import loadlib
 logTestFile = None
 
 # HTMPUNIQ_INPUT_FILE
-sangerFile = None
+htmpFile = None
 
 # file pointers
 fpLogTest = None
-fpSanger = None
+fpHTMP = None
 
 lineNum = 0
 mutantID = ''
@@ -141,6 +138,8 @@ checkAlleleDetailDisplay = '''
 # add check of MP header
 checkMPHeader = ''
 
+createdbySQL = 'and g._CreatedBy_key = 1524 and g._ModifiedBy_key = 1524'
+
 #
 # Purpose: Initialization
 # Returns: 1 if file does not exist or is not readable, else 0
@@ -149,11 +148,11 @@ checkMPHeader = ''
 # Throws: Nothing
 #
 def initialize():
-    global logTestFile, sangerFile
-    global fpLogTest, fpSanger
+    global logTestFile, htmpFile
+    global fpLogTest, fpHTMP
 
     logTestFile = os.getenv('LOG_TEST')
-    sangerFile = os.getenv('HTMPUNIQ_INPUT_FILE')
+    htmpFile = os.getenv('HTMPUNIQ_INPUT_FILE')
 
     rc = 0
 
@@ -167,7 +166,7 @@ def initialize():
     #
     # Make sure the environment variables are set.
     #
-    if not sangerFile:
+    if not htmpFile:
         print 'Environment variable not set: HTMPUNIQ_INPUT_FILE'
         rc = 1
 
@@ -175,7 +174,7 @@ def initialize():
     # Initialize file pointers.
     #
     fpLogTest = None
-    fpSanger = None
+    fpHTMP = None
 
     db.useOneConnection(1)
 
@@ -190,7 +189,7 @@ def initialize():
 # Throws: Nothing
 #
 def openFiles():
-    global fpLogTest, fpSanger
+    global fpLogTest, fpHTMP
 
     #
     # Open the Log Test file.
@@ -202,12 +201,12 @@ def openFiles():
         return 1
 
     #
-    # Open the Sanger/BioMart file
+    # Open the HTMP/BioMart file
     #
     try:
-        fpSanger = open(sangerFile, 'r')
+        fpHTMP = open(htmpFile, 'r')
     except:
-        print 'Cannot open file: ' + sangerFile
+        print 'Cannot open file: ' + htmpFile
         return 1
 
     return 0
@@ -225,8 +224,8 @@ def closeFiles():
     if fpLogTest:
         fpLogTest.close()
 
-    if fpSanger:
-        fpSanger.close()
+    if fpHTMP:
+        fpHTMP.close()
 
     db.useOneConnection(0)
 
@@ -234,13 +233,13 @@ def closeFiles():
 
 
 #
-# Purpose: Process the Sanger Test Input File
+# Purpose: Process the HTMP Test Input File
 # Returns: 1 if file does not exist or is not readable, else 0
 # Assumes: Nothing
 # Effects: Nothing
 # Throws: Nothing
 #
-def sangerTest():
+def htmpTest():
 
     global lineNum
     global mutantID, mpID, alleleID, alleleState, alleleSymbol, markerID, gender
@@ -248,7 +247,7 @@ def sangerTest():
 
     lineNum = 0
 
-    for line in fpSanger.readlines():
+    for line in fpHTMP.readlines():
 
 	lineNum = lineNum + 1
 
@@ -303,6 +302,65 @@ def sangerTest():
 
 	elif testName == 'SexNA':
 	    verifySexNA()
+
+    return 0
+
+#
+# VerifyGenotype
+#	- check if there are duplicate genotypes created by the HTMP load
+#
+def verifyGenotype():
+
+    global testPassed
+
+    query = '''
+        select ap._Marker_key, ap._Allele_key_1, ap._Allele_key_2, 
+	       ap._MutantCellLine_key_1, ap._MutantCellLine_key_2, ap._PairState_key
+	into #allelepair
+        from GXD_Genotype g, GXD_AllelePair ap
+        where g._Genotype_key = ap._Genotype_key
+	%s
+        group by _Marker_key, _Allele_key_1, _Allele_key_2, _MutantCellLine_key_1, _MutantCellLine_key_2, _PairState_key
+        having count(*) > 1
+	''' % (createdbySQL)
+
+    #print query
+    db.sql(query, 'None')
+
+    query2 = '''
+	select a.symbol as alleleSymbol, ma.accID as markerID, aa.accID as alleleID,
+		mcl.accID as mutantID, t.term as alleleState
+	from #allelepair ap, ALL_Allele a, ACC_Accession ma, ACC_Accession aa, ACC_Accession mcl, VOC_Term t
+	where ap._Allele_key_1 = a._Allele_key
+     	and ap._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ap._Allele_key_1 = aa._Object_key
+     	and aa._MGIType_key = 11
+     	and aa._LogicalDB_key = 1
+     	and ap._MutantCellLine_key_1 = mcl._Object_key
+     	and mcl._MGIType_key = 28
+	and ap._PairState_key = t._Term_key
+	'''
+
+    #print query2
+    results = db.sql(query2, 'auto')
+    if len(results) == 0:
+        testPassed = 'pass'
+
+        fpLogTest.write(testDisplay % \
+	    (testPassed, 'duplicate genotypes', 0, 0, 0, 0, 0, 0, 0, 0))
+    else:
+	for r in results:
+	    alleleSymbol = r['alleleSymbol']
+	    markerID = r['markerID']
+	    alleleID = r['alleleID']
+	    mutantID = r['mutantID']
+	    alleleStatus = r['alleleState']
+            fpLogTest.write(testDisplay % \
+	        (testPassed, 'duplicate genotypes', 0, 0, \
+                 alleleSymbol, markerID, alleleID, mutantID, \
+                 alleleState, 0))
 
     return 0
 
@@ -363,7 +421,8 @@ def verifyAnnotHom():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	%s
-	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, mclQuery2)
+	%s
+	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, mclQuery2, createdbySQL)
 
     #print query
     results = db.sql(query, 'auto')
@@ -431,7 +490,8 @@ def verifyAnnotHet():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2)
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
 
     #print query
     results = db.sql(query, 'auto')
@@ -497,7 +557,8 @@ def verifyAnnotHemi():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2)
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
 
     #print query
     results = db.sql(query, 'auto')
@@ -563,7 +624,8 @@ def verifyAnnotIndet():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2)
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
 
     #print query
     results = db.sql(query, 'auto')
@@ -626,7 +688,8 @@ def verifySexNA():
         and p._PropertyTerm_key = 8836535
 	and p.value = 'NA'
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2)
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
 
     #print query
     results = db.sql(query, 'auto')
@@ -650,7 +713,11 @@ if initialize() != 0:
 if openFiles() != 0:
     sys.exit(1)
 
-if sangerTest() != 0:
+if verifyGenotype() != 0:
+    closeFiles()
+    sys.exit(1)
+
+if htmpTest() != 0:
     closeFiles()
     sys.exit(1)
 
