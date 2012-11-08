@@ -72,8 +72,7 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create the Europhenome/HTMP input file (makeEuropheno.sh)" | tee -a ${LOG}
-#./makeEuropheno.py 2>&1 >> ${LOG}
-./makeEuropheno.py
+./makeEuropheno.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
