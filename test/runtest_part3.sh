@@ -30,7 +30,8 @@ LOG=${LOG_TEST}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Run Test...(runtest_part3.sh)\n" | tee -a ${LOG}
-./runtest_part3.py 2>&1 >> ${LOG}
+#./runtest_part3.py 2>&1 >> ${LOG}
+./runtest_part3.py 
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

@@ -16,7 +16,6 @@
 #
 #	LOG_TEST
 #	HTMPUNIQ_INPUT_FILE
-#	HTMPDUP_INPUT_FILE
 #
 # VerifyAnnotHom : Find the genotype (should be homozygous). 
 #	Verify Allele1=Allele2.  
@@ -101,13 +100,9 @@ logTestFile = None
 # HTMPUNIQ_INPUT_FILE
 sangerFile = None
 
-# HTMPDUP_INPUT_FILE
-sangerDupFile = None
-
 # file pointers
 fpLogTest = None
 fpSanger = None
-fpSangerDup = None
 
 lineNum = 0
 mutantID = ''
@@ -154,12 +149,11 @@ checkMPHeader = ''
 # Throws: Nothing
 #
 def initialize():
-    global logTestFile, sangerFile, sangerDupFile
-    global fpLogTest, fpSanger, fpSangerDup
+    global logTestFile, sangerFile
+    global fpLogTest, fpSanger
 
     logTestFile = os.getenv('LOG_TEST')
     sangerFile = os.getenv('HTMPUNIQ_INPUT_FILE')
-    sangerDupFile = os.getenv('HTMPDUP_INPUT_FILE')
 
     rc = 0
 
@@ -178,18 +172,10 @@ def initialize():
         rc = 1
 
     #
-    # Make sure the environment variables are set.
-    #
-    if not sangerDupFile:
-        print 'Environment variable not set: HTMPDUP_INPUT_FILE'
-        rc = 1
-
-    #
     # Initialize file pointers.
     #
     fpLogTest = None
     fpSanger = None
-    fpSangerDup = None
 
     db.useOneConnection(1)
 
@@ -204,7 +190,7 @@ def initialize():
 # Throws: Nothing
 #
 def openFiles():
-    global fpLogTest, fpSanger, fpSangerDup
+    global fpLogTest, fpSanger
 
     #
     # Open the Log Test file.
@@ -224,15 +210,6 @@ def openFiles():
         print 'Cannot open file: ' + sangerFile
         return 1
 
-    #
-    # Open the Sanger/Dup file
-    #
-    try:
-        fpSangerDup = open(sangerDupFile, 'r')
-    except:
-        print 'Cannot open file: ' + sangerDupFile
-        return 1
-
     return 0
 
 
@@ -250,9 +227,6 @@ def closeFiles():
 
     if fpSanger:
         fpSanger.close()
-
-    if fpSangerDup:
-        fpSangerDup.close()
 
     db.useOneConnection(0)
 
@@ -289,12 +263,14 @@ def sangerTest():
         alleleSymbol = tokens[7]
         markerID = tokens[8]
 	gender = tokens[11]
-	testName = tokens[13]
 
-	# if no testName is provided,
-	# then use alleleState to determine the correct test to run
-	if len(testName) == 0:
+	try:
+	    testName = tokens[13]
+        except:
 	    testName = 'automatcically determined'
+
+        if testName == 'automatcically determined':
+
 	    if alleleState == 'Hom':
 	        verifyAnnotHom()
 	    elif alleleState == 'Het':
