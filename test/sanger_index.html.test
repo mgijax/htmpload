@@ -1,29 +1,32 @@
-<TITLE>Sanger/MP Annotation Load</TITLE>
-<H1>Sanger/MP Annotation Load: Inputs, Logs, etc.</H1>
+<TITLE>Sanger/MP Annotation Load TEST</TITLE>
+<H1>Sanger/MP Annotation Load TEST: Inputs, Logs, etc.</H1>
 <UL>
 
 <H3>Inputs/Outputs</H3>
 <UL>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/input/mgi_sanger_mp_test.txt">Sanger BioMart file</A> (contains both MP-annotated & non-MP-annotated rows)</LI>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/input/mgi_sangerload.txt">Sanger BioMart file</A> (contains MP-annotated rows only)</LI>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/input/mgi_genotypeload.txt">MGI-format: Genotype</A> (contains unique genotypes; field 2 contains existing genotype IDs)</LI>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/input/mgi_genotypeload_new.txt">MGI-format: Genotype (new)</A> (contains unique genotypes; field 2 contains both new and existing genotype IDs)
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/input/mgi_annotload.txt">MGI-format: Annotation</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_sangermpload_test.txt">Sanger Test file</A> (contains both MP-annotated & non-MP-annotated rows)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_sangerload.txt">HTMP file</A> (contains MP-annotated rows only)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_sangerload_dup.txt">HTMP duplicate file</A> (male/female duplicates)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_sangerload_skipped.txt">HTMP skipped file</A> (rows where MP id is blank)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_sangerload_error.txt">HTMP error file</A> (errors that can are also reported in curator log)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_genotypeload.txt">MGI-format: Genotype</A> (contains unique genotypes; field 2 contains existing genotype IDs)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_genotypeload_new.txt">MGI-format: Genotype (new)</A> (contains unique genotypes; field 2 contains both new and existing genotype IDs)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/input/mgi_annotload.txt">MGI-format: Annotation</A>
 </UL>
 
 <H3>Diagnostic and Load BCP Files</H3>
 <UL>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/logs/sangerload.diag.log">sangerload.diag.log</A>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/logs/sangerload.cur.log">sangerload.cur.log</A>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/output/">mgi_annotload.txt.*.diagnostics</A> (file name contain date stamp)
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/output/">mgi_annotload.txt.*.error</A> (file name contain date stamp)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/logs/sangerload.diag.log">sangerload.diag.log</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/logs/sangerload.cur.log">sangerload.cur.log</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/">mgi_annotload.txt.*.diagnostics</A> (file name contain date stamp)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/">mgi_annotload.txt.*.error</A> (file name contain date stamp)
 </UL>
 
 <H3>Archives</H3>
 <UL>
-<LI><A HREF="/data/loads/scrum-dog/mgi/sangermpload.test/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads.
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads/scrum-dog.
 </UL>
 
 <H3>Wiki</H3>
