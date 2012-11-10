@@ -547,6 +547,39 @@ def getGenotypes():
             fpLogCur.write(logit)
             error = 1
 	
+	# if allele is 'Het', then marker must have a wild-type allele
+        if alleleState == 'Het':
+
+	    #
+	    # for heterzygous, allele 2 = the wild type allele (marker symbol + '<+>')
+	    # find the wild type allele accession id
+	    #
+
+	    querySQL = '''
+		select awt.accID
+			from ALL_Allele wt, ACC_Accession awt
+			where wt._Marker_key = %s
+			and wt.name = 'wild type'
+			and wt._Allele_key = awt._Object_key
+		        and awt._MGIType_key = 11
+		        and awt._LogicalDB_key = 1
+		        and awt.preferred = 1
+		''' % (markerKey)
+
+	    print querySQL
+	    results = db.sql(querySQL, 'auto')
+	    for r in results:
+		# found the wild type, so set it
+		alleleID2 = r['accID']
+		mutantID2 = ''
+
+	    if alleleID == alleleID2:
+                logit = errorDisplay % (markerID, lineNum, '8', line)
+	        logit = logit + 'no wild type allele exists for this marker'
+                fpLogDiag.write(logit)
+                fpLogCur.write(logit)
+                error = 1
+
         # if error, continue to next line
         if error:
 	    fpHTMPError.write(line)
@@ -620,22 +653,22 @@ def getGenotypes():
 	    # find the wild type allele accession id
 	    #
 
-	    querySQL = '''
-		select awt.accID
-			from ALL_Allele wt, ACC_Accession awt
-			where wt._Marker_key = %s
-			and wt.name = 'wild type'
-			and wt._Allele_key = awt._Object_key
-		        and awt._MGIType_key = 11
-		        and awt._LogicalDB_key = 1
-		        and awt.preferred = 1
-		''' % (markerKey)
+	    #querySQL = '''
+	#	select awt.accID
+	#		from ALL_Allele wt, ACC_Accession awt
+	#		where wt._Marker_key = %s
+	#		and wt.name = 'wild type'
+	#		and wt._Allele_key = awt._Object_key
+	#	        and awt._MGIType_key = 11
+	#	        and awt._LogicalDB_key = 1
+	#	        and awt.preferred = 1
+	#	''' % (markerKey)
 
 	    #print querySQL
-	    results = db.sql(querySQL, 'auto')
-	    for r in results:
-		alleleID2 = r['accID']
-		mutantID2 = ''
+#	    results = db.sql(querySQL, 'auto')
+#	    for r in results:
+#		alleleID2 = r['accID']
+#		mutantID2 = ''
 
 	    querySQL = '''
 		select g.accID

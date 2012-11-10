@@ -137,21 +137,21 @@ fi
 #fi
 
 # don't need to do this..but it's a good idea for later
-echo "" >> ${LOG}
-date >> ${LOG}
-echo "Run QC report (runReports.sh)" | tee -a ${LOG}
-echo $QCOUTPUTDIR
-cd ${QCRPTS}/mgd
-./ALL_MPAnnot.py | tee -a ${LOG}
-STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Error: Run QC report (runReports.sh)" | tee -a ${LOG}
-    exit 1
-fi
-
-rm -rf ${RPTDIR}/ALL_MPAnnot.htmp.rpt
-grep ${JNUMBER} ${RPTDIR}/ALL_MPAnnot.rpt > ${RPTDIR}/ALL_MPAnnot.htmp.rpt
+#echo "" >> ${LOG}
+#date >> ${LOG}
+#echo "Run QC report (runReports.sh)" | tee -a ${LOG}
+#echo $QCOUTPUTDIR
+#cd ${QCRPTS}/mgd
+#./ALL_MPAnnot.py | tee -a ${LOG}
+#STAT=$?
+#if [ ${STAT} -ne 0 ]
+#then
+#    echo "Error: Run QC report (runReports.sh)" | tee -a ${LOG}
+#    exit 1
+#fi
+#
+#rm -rf ${RPTDIR}/ALL_MPAnnot.htmp.rpt
+#grep ${JNUMBER} ${RPTDIR}/ALL_MPAnnot.rpt > ${RPTDIR}/ALL_MPAnnot.htmp.rpt
 
 exit 0
 
