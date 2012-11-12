@@ -60,10 +60,10 @@ fi
 #
 # run DLAInstall for each configuration file
 #
-for c in test/europhenompload.config.test test/sangermpload.config.test europhenompload.config sangermpload.config
+for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/europhenompload.config.test ${HTMPLOAD}/test/sangermpload.config.test
 do
-echo 'running DLAINSTALL'
-. ./${c}
+echo 'running DLAINSTALL:' ${c}
+. ${c}
 ${DLAINSTALL} ${DEV}
 #
 # Create the input directory if it doesn't exist.
