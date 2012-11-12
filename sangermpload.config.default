@@ -43,10 +43,8 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 
 # Europheno input file from the Europheno BioMart
 #
-BIOMART_INPUT_FILE=${DATADOWNLOADS}/www.sanger.ac.uk/htgt/mgi_sanger_mp.tsv
-BIOMART_COPY_INPUT_FILE=${INPUTDIR}/mgi_sangerme_mp.tsv
+INPUTFILE=${DATADOWNLOADS}/www.sanger.ac.uk/htgt/mgi_sanger_mp.tsv
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_sanger.txt
-INPUTFILE=${HTMP_INPUT_FILE}
 
 # Europheno input file that contains data that was skipped
 #
@@ -69,7 +67,7 @@ HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
 ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
 
-export BIOMART_INPUT_FILE BIOMART_COPY_INPUT_FILE HTMP_INPUT_FILE INPUTFILE
+export HTMP_INPUT_FILE INPUTFILE
 export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE
 export GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE
 
