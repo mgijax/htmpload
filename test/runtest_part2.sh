@@ -12,6 +12,8 @@ cd `dirname $0`
 
 # config files
 CONFIG=$1
+ANNOTCONFIG=$2
+OMIMCONFIG=$3
 
 #
 # Make sure the configuration file exists and source it.
@@ -21,6 +23,16 @@ then
     . ${CONFIG}
 else
     echo "Missing configuration file: ${CONFIG}"
+    exit 1
+fi
+if [ ! -f ${ANNOTCONFIG} ]
+then
+    echo "Missing configuration file: ${ANNOTCONFIG}"
+    exit 1
+fi
+if [ ! -f ${OMIMCONFIG} ]
+then
+    echo "Missing configuration file: ${OMIMCONFIG}"
     exit 1
 fi
 
@@ -34,12 +46,12 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeAnnotationTest.sh (sangerload_test.sh)" | tee -a ${LOG}
-./makeAnnotationTest.sh 2>&1 >> ${LOG}
+echo "Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
+./makeAnnotationTest.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call makeAnnotationTest.sh (sangermpload_test)" | tee -a ${LOG}
+    echo "Error: Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
     exit 1
 fi
 
@@ -48,12 +60,12 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeOMIMTest.sh (sangerload_test.sh)" | tee -a ${LOG}
-./makeOMIMTest.sh 2>&1 >> ${LOG}
+echo "Call makeOMIMTest.sh (${CONFIG})" | tee -a ${LOG}
+./makeOMIMTest.sh ${CONFIG} ${ANNOTCONFIG} ${OMIMCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call makeOMIMTest.sh (sangermpload_test)" | tee -a ${LOG}
+    echo "Error: Call makeOMIMTest.sh (${CONFIG})" | tee -a ${LOG}
     exit 1
 fi
 

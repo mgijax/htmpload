@@ -14,8 +14,6 @@
 
 cd `dirname $0`
 
-#CONFIG=${HTMPLOAD}/test/sangermpload.config.test
-#ANNOTCONFIG=${HTMPLOAD}/test/annotload.append.config.test
 CONFIG=$1
 ANNOTCONFIG=$2
 
