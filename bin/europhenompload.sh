@@ -58,6 +58,7 @@ else
     exit 1
 fi
 if [ ! -f ${ANNOTCONFIG} ]
+then
     echo "Missing configuration file: ${ANNOTCONFIG}"
     exit 1
 fi

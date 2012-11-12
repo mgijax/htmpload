@@ -41,24 +41,24 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
-# Europheno input file from the Europheno BioMart
+# input file from the BioMart
 #
 INPUTFILE=${DATADOWNLOADS}/www.sanger.ac.uk/htgt/mgi_sanger_mp.tsv
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_sanger.txt
 
-# Europheno input file that contains data that was skipped
+# input file that contains data that was skipped
 #
 HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_skipped.txt
 
-# Europheno input file that contains data that had data errors
+# input file that contains data that had data errors
 #
 HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_sangerload_error.txt
 
-# Europheno input file that contains data that was merged (duplicates)
+# input file that contains data that was merged (duplicates)
 #
 HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
-# Europheno input file that contains a unique genotype # (1 thru ...)
+# input file that contains a unique genotype # (1 thru ...)
 #
 HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 
@@ -107,7 +107,7 @@ JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
-MAIL_LOADNAME="Europheno-MP Load"
+MAIL_LOADNAME="Sanger-MP Load"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
