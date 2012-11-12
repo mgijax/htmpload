@@ -8,7 +8,7 @@
 
 cd `dirname $0`
 
-CONFIG=${HTMPLOAD}/test/sangermpload.config.test
+CONFIG=$1
 
 #
 # Make sure the configuration file exists and source it.

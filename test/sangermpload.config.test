@@ -25,8 +25,7 @@ fi
 #
 ###########################################################################
 
-#FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/sangermpload.test
-FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/sangermpload.lec
+FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/sangermpload.test
 ARCHIVEDIR=${FILEDIR}/archive
 INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output
@@ -84,7 +83,7 @@ LOG_TEST_SORTED=${LOGDIR}/sangerload.test.sorted.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST LOG_TEST_SORTED
 
-CREATEDBY=sangermpload
+CREATEDBY=scrum-dog
 JNUMBER=J:175295
 export CREATEDBY JNUMBER
 
@@ -106,7 +105,7 @@ export GENOTYPELOAD_STANDALONE GENOTYPELOAD_CACHE_ADMIN GENOTYPELOAD_MODE GENOTY
 ###########################################################################
 
 #  The name of the job stream for the load
-JOBSTREAM=sangermpload
+JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
