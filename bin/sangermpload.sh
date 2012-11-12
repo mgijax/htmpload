@@ -119,7 +119,7 @@ date >> ${LOG}
 echo "Call makeGenotype.sh" | tee -a ${LOG}
 ./makeGenotype.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "makeGenotype.sh (${RUNNING})"
+checkStatus ${STAT} "makeGenotype.sh ${CONFIG}"
 
 #
 # Create the Annotation
@@ -129,7 +129,7 @@ date >> ${LOG}
 echo "Call makeAnnotation.sh" | tee -a ${LOG}
 ./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "makeAnnotation.sh (${RUNNING})"
+checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 
 #
 # Run reports
@@ -139,7 +139,7 @@ date >> ${LOG}
 echo "Run reports runReports.sh" | tee -a ${LOG}
 ./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "runReports.sh (${RUNNING})"
+checkStatus ${STAT} "runReports.sh ${CONFIG}"
 
 #
 # run postload cleanup and email logs

@@ -16,9 +16,9 @@ cd `dirname $0`
 
 # config files
 CONFIG=$1
-ANNOTCONFIG=$2
 # ${HTMPLOAD}/bin/sangermpload.csh, ${HTMPLOAD}/bin/eurompload.sh, etc.
-HTMPLOADSH=$3
+HTMPLOADSH=$2
+ANNOTCONFIG=${HTMPLOAD}/test/annotload.new.config.test
 
 #
 # Make sure the configuration file exists and source it.

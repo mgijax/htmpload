@@ -10,8 +10,8 @@
 cd `dirname $0`
 
 CONFIG=$1
-ANNOTCONFIG=$2
-OMIMCONFIG=$3
+ANNOTCONFIG=${HTMPLOAD}/test/annotload.new.config.test
+OMIMCONFIG=${HTMPLOAD}/test/omimload.config.test
 
 #
 # Make sure the configuration file exists and source it.

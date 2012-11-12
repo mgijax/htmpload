@@ -15,7 +15,7 @@
 cd `dirname $0`
 
 CONFIG=$1
-ANNOTCONFIG=$2
+ANNOTCONFIG=${HTMPLOAD}/test/annotload.append.config.test
 
 #
 # Make sure the configuration file exists and source it.

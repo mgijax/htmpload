@@ -12,8 +12,6 @@ cd `dirname $0`
 
 # config files
 CONFIG=$1
-ANNOTCONFIG=$2
-OMIMCONFIG=$3
 
 #
 # Make sure the configuration file exists and source it.
@@ -23,16 +21,6 @@ then
     . ${CONFIG}
 else
     echo "Missing configuration file: ${CONFIG}"
-    exit 1
-fi
-if [ ! -f ${ANNOTCONFIG} ]
-then
-    echo "Missing configuration file: ${ANNOTCONFIG}"
-    exit 1
-fi
-if [ ! -f ${OMIMCONFIG} ]
-then
-    echo "Missing configuration file: ${OMIMCONFIG}"
     exit 1
 fi
 
@@ -47,7 +35,7 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
-./makeAnnotationTest.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
+./makeAnnotationTest.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
@@ -61,7 +49,7 @@ fi
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Call makeOMIMTest.sh (${CONFIG})" | tee -a ${LOG}
-./makeOMIMTest.sh ${CONFIG} ${ANNOTCONFIG} ${OMIMCONFIG} 2>&1 >> ${LOG}
+./makeOMIMTest.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
