@@ -41,43 +41,45 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
-# Europheno input file from the Europheno BioMart
+# input file from the BioMart
 #
-INPUTFILE=${HTMPLOAD}/test/mgi_eurompload_test.txt
-HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_euro.txt
+BIOMART_INPUT_FILE=${HTMPLOAD}/test/mgi_eurompload_test.txt
+BIOMART_COPY_INPUT_FILE=${INPUTDIR}/mgi_eurompload_test.txt
+HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_europheno.txt
+INPUTFILE=${HTMP_INPUT_FILE}
 
-# Europheno input file that contains data that was skipped
+# input file that contains data that was skipped
 #
-HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_euroload_skipped.txt
+HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_europhenoload_skipped.txt
 
-# Europheno input file that contains data that had data errors
+# input file that contains data that had data errors
 #
-HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_euroload_error.txt
+HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_europhenoload_error.txt
 
-# Europheno input file that contains data that was merged (duplicates)
+# input file that contains data that was merged (duplicates)
 #
-HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_euroload_dup.txt
+HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_europhenoload_dup.txt
 
-# Europheno input file that contains a unique genotype # (1 thru ...)
+# input file that contains a unique genotype # (1 thru ...)
 #
-HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_euroload.txt
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_europhenoload.txt
 
 # Genotype & Annotation input file
 #
 GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
 ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
 
-export HTMP_INPUT_FILE INPUTFILE
+export BIOMART_INPUT_FILE BIOMART_COPY_INPUT_FILE HTMP_INPUT_FILE INPUTFILE
 export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE
 export GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE
 
 # Log files
 #
-LOG_PROC=${LOGDIR}/euroload.proc.log
-LOG_DIAG=${LOGDIR}/euroload.diag.log
-LOG_CUR=${LOGDIR}/euroload.cur.log
-LOG_VAL=${LOGDIR}/euroload.val.log
-LOG_TEST=${LOGDIR}/euroload.test.log
+LOG_PROC=${LOGDIR}/europhenoload.proc.log
+LOG_DIAG=${LOGDIR}/europhenoload.diag.log
+LOG_CUR=${LOGDIR}/europhenoload.cur.log
+LOG_VAL=${LOGDIR}/europhenoload.val.log
+LOG_TEST=${LOGDIR}/europhenoload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
@@ -107,7 +109,7 @@ JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
-MAIL_LOADNAME="Europhenom-MP Load (TEST)"
+MAIL_LOADNAME="Europheno-MP Load"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
