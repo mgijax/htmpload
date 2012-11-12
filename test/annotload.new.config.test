@@ -11,7 +11,7 @@ setenv ANNOTPROPERTY   		86
 setenv ANNOTINPUTFILE		${ANNOT_INPUT_FILE}
 setenv ANNOTLOG			${LOGDIR}/htmp_annot.log
 # delete data by user, not by reference
-setenv DELETEREFERENCE		${JNUMBER}
+setenv DELETEREFERENCE		J:0
 setenv DELETEUSER		${CREATEDBY}
 setenv ANNOTOBSOLETE		0
 
