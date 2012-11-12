@@ -43,12 +43,7 @@
 
 cd `dirname $0`
 
-if [ $# -ge 1 ]
-then
-    CONFIG=$1
-else
-    CONFIG=${HTMPLOAD}/europhenompload.config
-fi
+CONFIG=$1
 
 #
 # Make sure the configuration file exists and source it.

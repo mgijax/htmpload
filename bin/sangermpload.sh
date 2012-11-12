@@ -44,17 +44,8 @@
 
 cd `dirname $0`
 
-if [ $# -ge 2 ]
-then
-    CONFIG=$1
-    ANNOTCONFIG=$2
-    RUNNING="sangerload_test.sh"
-else
-    CONFIG=${HTMPLOAD}/sangermpload.config
-    ANNOTCONFIG=${HTMPLOAD}/annotload.config
-    RUNNING="sangerload.sh"
-fi
-
+CONFIG=$1
+ANNOTCONFIG=$2
 #
 # Make sure the configuration file exists and source it.
 #
@@ -63,6 +54,10 @@ then
     . ${CONFIG}
 else
     echo "Missing configuration file: ${CONFIG}"
+    exit 1
+fi
+if [ ! -f ${ANNOTCONFIG} ]
+    echo "Missing configuration file: ${ANNOTCONFIG}"
     exit 1
 fi
 
