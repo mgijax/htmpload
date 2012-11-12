@@ -17,7 +17,7 @@ cd `dirname $0`
 # config files
 CONFIG=$1
 ANNOTCONFIG=$2
-# ${HTMPLOAD}/bin/sangermpload.csh, bin/eurompload.sh
+# ${HTMPLOAD}/bin/sangermpload.csh, ${HTMPLOAD}/bin/eurompload.sh, etc.
 HTMPLOADSH=$3
 
 #
@@ -33,11 +33,6 @@ fi
 if [ ! -f ${ANNOTCONFIG} ]
 then
     echo "Missing configuration file: ${ANNOTCONFIG}"
-    exit 1
-fi
-if [ ! -f ${HTMPLOADSH} ]
-then
-    echo "Missing configuration file: ${HTMPLOADSH}"
     exit 1
 fi
 
