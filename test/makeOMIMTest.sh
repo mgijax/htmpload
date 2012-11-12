@@ -9,9 +9,6 @@
 
 cd `dirname $0`
 
-#CONFIG=${HTMPLOAD}/test/sangermpload.config.test
-#ANNOTCONFIG=${HTMPLOAD}/test/annotload.new.config.test
-#OMIMCONFIG=${HTMPLOAD}/test/omimload.config.test
 CONFIG=$1
 ANNOTCONFIG=$2
 OMIMCONFIG=$3
