@@ -119,10 +119,10 @@ checkStatus ${STAT} "copying input file completed"
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeEuropheno.sh (${RUNNING})" | tee -a ${LOG}
+echo "Call makeEuropheno.sh" | tee -a ${LOG}
 ./makeEuropheno.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "makeEuropheno.sh (${RUNNING})"
+checkStatus ${STAT} "makeEuropheno.sh"
 
 #
 # Check counts; if Biomart file count = HTMP file count, then OK
@@ -150,30 +150,30 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeGenotype.sh (${RUNNING})" | tee -a ${LOG}
+echo "Call makeGenotype.sh" | tee -a ${LOG}
 ./makeGenotype.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "makeGenotype.sh (${RUNNING})"
+checkStatus ${STAT} "makeGenotype.sh"
 
 #
 # Create the Annotation
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeAnnotation.sh (${RUNNING})" | tee -a ${LOG}
+echo "Call makeAnnotation.sh" | tee -a ${LOG}
 ./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "makeAnnotation.sh (${RUNNING})"
+checkStatus ${STAT} "makeAnnotation.sh"
 
 #
 # Run reports
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Run reports runReports.sh (${RUNNING})" | tee -a ${LOG}
+echo "Run reports runReports.sh" | tee -a ${LOG}
 ./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "runReports.sh (${RUNNING})"
+checkStatus ${STAT} "runReports.sh"
 
 #
 # run postload cleanup and email logs
