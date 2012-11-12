@@ -25,7 +25,7 @@ fi
 #
 ###########################################################################
 
-FILEDIR=${DATALOADSOUTPUT}/mgi/sangermpload.lec
+FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/sangermpload.test
 ARCHIVEDIR=${FILEDIR}/archive
 INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output
@@ -41,24 +41,26 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
-# Sanger input file from the Sanger BioMart
+# Europheno input file from the Europheno BioMart
 #
-HTMP_INPUT_FILE=${INPUTDIR}/mgi_sanger_mp.tsv
-INPUTFILE=${DATADOWNLOADS}/www.sanger.ac.uk/htgt/mgi_sanger_mp.tsv
+BIOMART_INPUT_FILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
+BIOMART_COPY_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
+HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_sanger.txt
+INPUTFILE=${HTMP_INPUT_FILE}
 
-# Sanger input file that contains data that was skipped
+# Europheno input file that contains data that was skipped
 #
 HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_skipped.txt
 
-# Sanger input file that contains data that had data errors
+# Europheno input file that contains data that had data errors
 #
 HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_sangerload_error.txt
 
-# Sanger input file that contains data that was merged (duplicates)
+# Europheno input file that contains data that was merged (duplicates)
 #
 HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
-# Sanger input file that contains a unique genotype # (1 thru ...)
+# Europheno input file that contains a unique genotype # (1 thru ...)
 #
 HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 
@@ -67,7 +69,7 @@ HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
 ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
 
-export HTMP_INPUT_FILE INPUTFILE
+export BIOMART_INPUT_FILE BIOMART_COPY_INPUT_FILE HTMP_INPUT_FILE INPUTFILE
 export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE
 export GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE
 
@@ -81,7 +83,7 @@ LOG_TEST=${LOGDIR}/sangerload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
-CREATEDBY=htmpload
+CREATEDBY=scrum-dog
 JNUMBER=J:175295
 export CREATEDBY JNUMBER
 
@@ -107,7 +109,7 @@ JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
-MAIL_LOADNAME="Sanger-MP Load"
+MAIL_LOADNAME="Europheno-MP Load"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
@@ -115,6 +117,6 @@ MAIL_LOG_CUR="lec"
 
 export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
 
-INSTALLDIR=${HTMPLOAD}
+INSTALLDIR=${HTMPMPLOAD}
 export INSTALLDIR
 

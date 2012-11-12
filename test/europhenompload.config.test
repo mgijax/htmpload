@@ -109,7 +109,7 @@ JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
-MAIL_LOADNAME="Europheno-MP Load (TEST)"
+MAIL_LOADNAME="Europheno-MP Load"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
