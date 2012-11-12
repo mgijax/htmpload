@@ -41,24 +41,24 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
-# Sanger input file from the Sanger BioMart
+# HTMP input file from the HTMP BioMart
 #
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
 INPUTFILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
 
-# Sanger input file that contains data that was skipped
+# HTMP input file that contains data that was skipped
 #
 HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_skipped.txt
 
-# Sanger input file that contains data that had data errors
+# HTMP input file that contains data that had data errors
 #
 HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_sangerload_error.txt
 
-# Sanger input file that contains data that was merged (duplicates)
+# HTMP input file that contains data that was merged (duplicates)
 #
 HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
-# Sanger input file that contains a unique genotype # (1 thru ...)
+# HTMP input file that contains a unique genotype # (1 thru ...)
 #
 HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 
