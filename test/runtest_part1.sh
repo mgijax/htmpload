@@ -51,8 +51,6 @@ echo "" >> ${LOG}
 date >> ${LOG}
 echo "HTMP Test..." | tee -a ${LOG}
 cp ${INPUTFILE} ${INPUTDIR}
-echo ${HTMPLOADSH} ${CONFIG} ${ANNOTCONFIG}
-exit 0
 ${HTMPLOADSH} ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -60,7 +58,6 @@ then
     echo "Error: Call ${HTMPLOADSH}" | tee -a ${LOG}
     exit 1
 fi
-exit 0
 
 #
 # Adding Genotype

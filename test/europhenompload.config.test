@@ -46,7 +46,7 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 BIOMART_INPUT_FILE=${HTMPLOAD}/test/mgi_eurompload_test.txt
 BIOMART_COPY_INPUT_FILE=${INPUTDIR}/mgi_eurompload_test.txt
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_europheno.txt
-INPUTFILE=${HTMP_INPUT_FILE}
+INPUTFILE=${BIOMART_INPUT_FILE}
 
 # input file that contains data that was skipped
 #
