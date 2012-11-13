@@ -41,24 +41,24 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
-# Europheno input file from the Europheno BioMart
+# input file from the BioMart
 #
 INPUTFILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_sanger.txt
 
-# Europheno input file that contains data that was skipped
+# input file that contains data that was skipped
 #
 HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_skipped.txt
 
-# Europheno input file that contains data that had data errors
+# input file that contains data that had data errors
 #
 HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_sangerload_error.txt
 
-# Europheno input file that contains data that was merged (duplicates)
+# input file that contains data that was merged (duplicates)
 #
 HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
-# Europheno input file that contains a unique genotype # (1 thru ...)
+# input file that contains a unique genotype # (1 thru ...)
 #
 HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 

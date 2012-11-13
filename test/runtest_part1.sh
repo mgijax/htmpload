@@ -58,7 +58,6 @@ then
     echo "Error: Call ${HTMPLOADSH}" | tee -a ${LOG}
     exit 1
 fi
-exit 0
 
 #
 # Adding Genotype
