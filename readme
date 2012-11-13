@@ -20,10 +20,7 @@ MP:0005554      MGI:4433718     Het     Prkcz<tm1a(EUCOMM)Wtsi> MGI:97602       
 
 2. Obsolete Term: MP:0000893, Atpif1
 
-3. Unique Genotypes: 490
-   Annotations:  489 (due to obsolete term)
-
-4. Headers (EI)
+3. Headers (EI)
 
 The EI calls stored procedure "VOC_processAnnotHeader".
 Needs to be called per Annotation

@@ -12,6 +12,6 @@ setenv ANNOTINPUTFILE		${OMIM_INPUT_FILE}
 setenv ANNOTLOG			${LOGDIR}/sanger_annot.log
 # delete data by user, not by reference
 setenv DELETEREFERENCE		J:0
-setenv DELETEUSER		scrum-dog
+setenv DELETEUSER		${CREATEDBY}
 setenv ANNOTOBSOLETE		0
 

@@ -10,7 +10,6 @@
 cd `dirname $0`
 
 CONFIG=$1
-ANNOTCONFIG=${HTMPLOAD}/test/annotload.new.config.test
 OMIMCONFIG=${HTMPLOAD}/test/omimload.config.test
 
 #
@@ -23,12 +22,6 @@ else
     echo "Missing configuration file: ${CONFIG}"
     exit 1
 fi
-if [ ! -f ${ANNOTCONFIG} ]
-then
-    echo "Missing configuration file: ${ANNOTCONFIG}"
-    exit 1
-fi
-
 if [ ! -f ${OMIMCONFIG} ]
 then
     echo "Missing configuration file: ${OMIMCONFIG}"
