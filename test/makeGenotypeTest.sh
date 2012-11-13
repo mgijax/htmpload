@@ -4,7 +4,7 @@
 # makeGenotypeTest.sh
 #
 # run additional genotypes
-# input file: mgi_genoload_test.txt
+# input file: mgi_genoload.txt
 #
 
 cd `dirname $0`

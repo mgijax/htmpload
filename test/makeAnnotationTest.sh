@@ -4,7 +4,7 @@
 # makeAnnotationTest.sh
 #
 # run additional MP & OMIM annotations
-# input file:  mgi_annotload_test.txt
+# input file:  mgi_annotload.txt
 #
 # USES ANNOTATION LOADER IN "APPEND" MODE
 # SO IF YOU WANT TO RE-LOAD, SO NEED TO ADD A DELETE SCRIPT

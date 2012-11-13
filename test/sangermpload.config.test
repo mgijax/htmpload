@@ -64,9 +64,9 @@ HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
 
 # Genotype & Annotation input file
 #
-GENOTYPE_INPUT_FILE=${HTMPLOAD}/test/mgi_genotypeload_test.txt
-ANNOT_INPUT_FILE=${HTMPLOAD}/test/mgi_annotload_test.txt
-OMIM_INPUT_FILE=${HTMPLOAD}/test/mgi_omimload_test.txt
+GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
+ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
+OMIM_INPUT_FILE=${INPUTDIR}/mgi_omimload.txt
 
 export HTMP_INPUT_FILE INPUTFILE
 export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE

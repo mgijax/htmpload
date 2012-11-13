@@ -4,7 +4,7 @@
 # makeOMIMTest.sh
 #
 # run OMIM annotations
-# input file: mgi_omimload_test.txt
+# input file: mgi_omimload.txt
 #
 
 cd `dirname $0`

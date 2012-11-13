@@ -4,11 +4,11 @@
 # runtest_part1.csh
 #
 # run the htmpload using a test file as input
-# input file: ??mpload_test.txt
+# input file: ??mpload.txt
 # loads both genotypes and mp annotations
 #
 # run additional genotypes
-# input file: mgi_genoload_test.txt
+# input file: mgi_genoload.txt
 # loads genotypes only
 #
 
@@ -44,7 +44,7 @@ LOG=${LOG_DIAG}
 #
 # HTMP Test
 #
-# input file: mgi_??mpload_test.txt
+# input file: mgi_??mpload.txt
 # contains both genotypes and MP annotations
 #
 echo "" >> ${LOG}
@@ -58,11 +58,12 @@ then
     echo "Error: Call ${HTMPLOADSH}" | tee -a ${LOG}
     exit 1
 fi
+exit 0
 
 #
 # Adding Genotype
 #
-# input file: mgi_genotypeload_test.txt
+# input file: mgi_genotypeload.txt
 #
 echo "" >> ${LOG}
 date >> ${LOG}
