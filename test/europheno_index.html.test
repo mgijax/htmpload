@@ -1,0 +1,38 @@
+<TITLE>Europhenome/MP Annotation Load TEST</TITLE>
+<H1>Europhenome/MP Annotation Load TEST: Inputs, Logs, etc.</H1>
+<UL>
+
+<H3>Inputs/Outputs</H3>
+<UL>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_eurompload_test.txt">Europhenome Test file</A> (contains both MP-annotated & non-MP-annotated rows)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_europhenoload.txt">HTMP file</A> (contains MP-annotated rows only)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_europhenoload_dup.txt">HTMP duplicate file</A> (male/female duplicates)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_europhenoload_skipped.txt">HTMP skipped file</A> (rows where MP id is blank)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_europhenoload_error.txt">HTMP error file</A> (errors that can are also reported in curator log)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_genotypeload.txt">MGI-format: Genotype</A> (contains unique genotypes; field 2 contains existing genotype IDs)</LI>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_genotypeload_new.txt">MGI-format: Genotype (new)</A> (contains unique genotypes; field 2 contains both new and existing genotype IDs)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/input/mgi_annotload.txt">MGI-format: Annotation</A>
+</UL>
+
+<H3>Diagnostic and Load BCP Files</H3>
+<UL>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/logs/europhenoload.diag.log">europhenoload.diag.log</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/logs/europhenoload.cur.log">europhenoload.cur.log</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/output/">mgi_annotload.txt.*.diagnostics</A> (file name contain date stamp)
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/output/">mgi_annotload.txt.*.error</A> (file name contain date stamp)
+</UL>
+
+<H3>Archives</H3>
+<UL>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/europhenompload.test/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads/scrum-dog.
+</UL>
+
+<H3>Wiki</H3>
+<UL>
+<LI><A HREF="http://prodwww.informatics.jax.org/wiki/index.php/sw:Htmpload"><B>Wiki page</B></A>
+</UL>
+
+</UL>
+

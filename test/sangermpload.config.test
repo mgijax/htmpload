@@ -79,8 +79,9 @@ LOG_DIAG=${LOGDIR}/sangerload.diag.log
 LOG_CUR=${LOGDIR}/sangerload.cur.log
 LOG_VAL=${LOGDIR}/sangerload.val.log
 LOG_TEST=${LOGDIR}/sangerload.test.log
+LOG_TEST_SORTED=${LOGDIR}/sangerload.test.sorted.log
 
-export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST LOG_TEST_SORTED
 
 CREATEDBY=scrum-dog
 JNUMBER=J:175295
