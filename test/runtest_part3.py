@@ -138,7 +138,8 @@ checkAlleleDetailDisplay = '''
 # add check of MP header
 checkMPHeader = ''
 
-createdbySQL = 'and g._CreatedBy_key = 1524 and g._ModifiedBy_key = 1524'
+createdbySQL1 = 'and g._CreatedBy_key = 1524 and g._ModifiedBy_key = 1524'
+createdbySQL2 = 'and g._CreatedBy_key = 1526 and g._ModifiedBy_key = 1526'
 
 #
 # Purpose: Initialization
@@ -322,7 +323,7 @@ def verifyGenotype():
 	%s
         group by _Marker_key, _Allele_key_1, _Allele_key_2, _MutantCellLine_key_1, _MutantCellLine_key_2, _PairState_key
         having count(*) > 1
-	''' % (createdbySQL)
+	''' % (createdbySQL1)
 
     #print query
     db.sql(query, 'None')
@@ -422,7 +423,7 @@ def verifyAnnotHom():
         and p._PropertyTerm_key = 8836535
 	%s
 	%s
-	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, mclQuery2, createdbySQL)
+	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, mclQuery2, createdbySQL2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -491,7 +492,7 @@ def verifyAnnotHet():
         and p._PropertyTerm_key = 8836535
 	%s
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -558,7 +559,7 @@ def verifyAnnotHemi():
         and p._PropertyTerm_key = 8836535
 	%s
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -625,7 +626,7 @@ def verifyAnnotIndet():
         and p._PropertyTerm_key = 8836535
 	%s
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -689,7 +690,7 @@ def verifySexNA():
 	and p.value = 'NA'
 	%s
 	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL)
+	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
 
     #print query
     results = db.sql(query, 'auto')
