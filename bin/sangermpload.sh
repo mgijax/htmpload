@@ -137,7 +137,8 @@ checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Run reports runReports.sh" | tee -a ${LOG}
-./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
+#./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
+./runReports.sh ${CONFIG}
 STAT=$?
 checkStatus ${STAT} "runReports.sh ${CONFIG}"
 

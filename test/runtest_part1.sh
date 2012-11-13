@@ -49,30 +49,33 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "HTMP Test..." | tee -a ${LOG}
+echo "HTMP Test (${CONFIG})" | tee -a ${LOG}
 cp ${INPUTFILE} ${INPUTDIR}
 ${HTMPLOADSH} ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call ${HTMPLOADSH}" | tee -a ${LOG}
+    echo "Error: Call ${HTMPLOADSH} for ${CONFIG}" | tee -a ${LOG}
     exit 1
 fi
 
 #
 # Adding Genotype
 #
-# input file: mgi_genotypeload.txt
+# extra input file: mgi_genotypeload.txt
 #
+if [ ${ADDEXTRAGENO} = 1 ]
+then
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeGenotypeTest.sh (${HTMPLOADSH})" | tee -a ${LOG}
+echo "Call makeGenotypeTest.sh (${CONFIG})" | tee -a ${LOG}
 ./makeGenotypeTest.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call makeGenotypeTest.sh (${HTMPLOADSH})" | tee -a ${LOG}
+    echo "Error: Call makeGenotypeTest.sh (${HTMPLOADSH} for ${CONFIG})" | tee -a ${LOG}
     exit 1
+fi
 fi
 
 exit 0
