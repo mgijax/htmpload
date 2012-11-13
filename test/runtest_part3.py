@@ -138,7 +138,9 @@ checkAlleleDetailDisplay = '''
 # add check of MP header
 checkMPHeader = ''
 
+#htmpload
 createdbySQL1 = 'and g._CreatedBy_key = 1524 and g._ModifiedBy_key = 1524'
+#scrum-dog
 createdbySQL2 = 'and g._CreatedBy_key = 1526 and g._ModifiedBy_key = 1526'
 
 #
