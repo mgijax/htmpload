@@ -81,9 +81,8 @@ LOG_CUR=${LOGDIR}/europhenoload.cur.log
 LOG_VAL=${LOGDIR}/europhenoload.val.log
 LOG_TEST=${LOGDIR}/europhenoload.test.log
 LOG_TEST_SORTED=${LOGDIR}/europhenoload.test.sorted.log
-ADDEXTRAGENO=0
 
-export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST LOG_TEST_SORTED ADDEXTRAGENO
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST LOG_TEST_SORTED
 
 CREATEDBY=scrum-dog
 JNUMBER=J:165965

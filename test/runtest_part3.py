@@ -537,7 +537,7 @@ def verifyAnnotHemi():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp, MGI_User
+             ACC_Accession mp, MGI_User u
 	     %s
      	where g._Strain_key = -1
      	and g._Genotype_key = ap._Genotype_key
