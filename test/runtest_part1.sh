@@ -7,10 +7,6 @@
 # input file: ??mpload.txt
 # loads both genotypes and mp annotations
 #
-# run additional genotypes
-# input file: mgi_genoload.txt
-# loads genotypes only
-#
 
 cd `dirname $0`
 
@@ -57,25 +53,6 @@ if [ ${STAT} -ne 0 ]
 then
     echo "Error: Call ${HTMPLOADSH} for ${CONFIG}" | tee -a ${LOG}
     exit 1
-fi
-
-#
-# Adding Genotype
-#
-# extra input file: mgi_genotypeload.txt
-#
-if [ ${ADDEXTRAGENO} = 1 ]
-then
-echo "" >> ${LOG}
-date >> ${LOG}
-echo "Call makeGenotypeTest.sh (${CONFIG})" | tee -a ${LOG}
-./makeGenotypeTest.sh ${CONFIG} 2>&1 >> ${LOG}
-STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Error: Call makeGenotypeTest.sh (${HTMPLOADSH} for ${CONFIG})" | tee -a ${LOG}
-    exit 1
-fi
 fi
 
 exit 0

@@ -467,7 +467,7 @@ def verifyAnnotHet():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp,, MGI_User u,
+             ACC_Accession mp, MGI_User u,
 	     ALL_Allele w
 	     %s
      	where g._Strain_key = -1
