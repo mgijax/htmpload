@@ -138,10 +138,7 @@ checkAlleleDetailDisplay = '''
 # add check of MP header
 checkMPHeader = ''
 
-#htmpload
-createdbySQL1 = 'and g._CreatedBy_key = 1524 and g._ModifiedBy_key = 1524'
-#scrum-dog
-createdbySQL2 = 'and g._CreatedBy_key = 1526 and g._ModifiedBy_key = 1526'
+createdby = os.environ['CREATEDBY']
 
 #
 # Purpose: Initialization
@@ -320,12 +317,13 @@ def verifyGenotype():
         select ap._Marker_key, ap._Allele_key_1, ap._Allele_key_2, 
 	       ap._MutantCellLine_key_1, ap._MutantCellLine_key_2, ap._PairState_key
 	into #allelepair
-        from GXD_Genotype g, GXD_AllelePair ap
+        from GXD_Genotype g, GXD_AllelePair ap, MGI_User u
         where g._Genotype_key = ap._Genotype_key
-	%s
+        and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
         group by _Marker_key, _Allele_key_1, _Allele_key_2, _MutantCellLine_key_1, _MutantCellLine_key_2, _PairState_key
         having count(*) > 1
-	''' % (createdbySQL1)
+	''' % (createdby)
 
     #print query
     db.sql(query, 'None')
@@ -399,7 +397,7 @@ def verifyAnnotHom():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1, ACC_Accession aa2,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp
+             ACC_Accession mp, MGI_User u
 	     %s
      	where g._Strain_key = -1
      	and g._Genotype_key = ap._Genotype_key
@@ -423,9 +421,10 @@ def verifyAnnotHom():
         and a._Annot_key = e._Annot_key
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
 	%s
-	%s
-	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, mclQuery2, createdbySQL2)
+	''' % (mclQuery1, markerID, alleleID, alleleID, mpID, createdby, mclQuery2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -468,7 +467,7 @@ def verifyAnnotHet():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp,
+             ACC_Accession mp,, MGI_User u,
 	     ALL_Allele w
 	     %s
      	where g._Strain_key = -1
@@ -492,9 +491,10 @@ def verifyAnnotHet():
         and a._Annot_key = e._Annot_key
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
 	%s
-	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -537,7 +537,7 @@ def verifyAnnotHemi():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp
+             ACC_Accession mp, MGI_User
 	     %s
      	where g._Strain_key = -1
      	and g._Genotype_key = ap._Genotype_key
@@ -559,9 +559,10 @@ def verifyAnnotHemi():
         and a._Annot_key = e._Annot_key
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
 	%s
-	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -604,7 +605,7 @@ def verifyAnnotIndet():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp
+             ACC_Accession mp, MGI_User u
 	     %s
      	where g._Strain_key = -1
      	and g._Genotype_key = ap._Genotype_key
@@ -626,9 +627,10 @@ def verifyAnnotIndet():
         and a._Annot_key = e._Annot_key
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
 	%s
-	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
     #print query
     results = db.sql(query, 'auto')
@@ -670,7 +672,7 @@ def verifySexNA():
 	from GXD_Genotype g, GXD_AllelePair ap,
      	     ACC_Accession ma, ACC_Accession aa1,
              VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
-             ACC_Accession mp
+             ACC_Accession mp, MGI_User u
 	     %s
      	where g._Strain_key = -1
      	and g._Genotype_key = ap._Genotype_key
@@ -690,9 +692,10 @@ def verifySexNA():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	and p.value = 'NA'
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
 	%s
-	%s
-	''' % (mclQuery1, markerID, alleleID, mpID, mclQuery2, createdbySQL2)
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
     #print query
     results = db.sql(query, 'auto')
