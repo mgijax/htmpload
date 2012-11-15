@@ -3,6 +3,8 @@
 #
 # config variables for Sanger/Annotation load
 #
+# for adding new MP/OMIM annotations to 'scrum-dog'
+#
 
 setenv ANNOTDATADIR		${OUTPUTDIR}
 setenv ANNOTMODE		new

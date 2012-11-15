@@ -3,6 +3,8 @@
 #
 # config variables for Sanger/Annotation load
 #
+# for appending additional MP/OMIM annotations
+#
 
 setenv ANNOTDATADIR		${OUTPUTDIR}
 setenv ANNOTMODE		append
