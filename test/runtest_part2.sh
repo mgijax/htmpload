@@ -4,7 +4,7 @@
 # runtest_part2.csh
 #
 # run additional MP annotations & OMIM annotations
-# these files uses genotype ids created from runtest_part1.csh
+# these files use genotype ids created from runtest_part1.csh
 # so they must be synchronized
 #
 
