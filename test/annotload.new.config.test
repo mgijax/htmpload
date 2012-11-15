@@ -12,6 +12,6 @@ setenv ANNOTINPUTFILE		${ANNOT_INPUT_FILE}
 setenv ANNOTLOG			${LOGDIR}/htmp_annot.log
 # delete data by user, not by reference
 setenv DELETEREFERENCE		J:0
-setenv DELETEUSER		${CREATEDBY}
+setenv DELETEUSER		scrum-dog
 setenv ANNOTOBSOLETE		0
 
