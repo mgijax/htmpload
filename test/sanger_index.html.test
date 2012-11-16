@@ -18,6 +18,7 @@
 <UL>
 <LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/logs/sangerload.diag.log">sangerload.diag.log</A>
 <LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/logs/sangerload.cur.log">sangerload.cur.log</A>
+<LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/logs/sangerload.test.log">sangerload.test.log</A>
 <LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
 <LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
 <LI><A HREF="/data/loads/scrum-dog/mgi/htmpload/sangermpload.test/output/">mgi_annotload.txt.*.diagnostics</A> (file name contain date stamp)
