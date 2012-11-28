@@ -16,4 +16,5 @@ setenv ANNOTLOG			${LOGDIR}/htmp_annot.log
 setenv DELETEREFERENCE		J:0
 setenv DELETEUSER		scrum-dog
 setenv ANNOTOBSOLETE		0
+setenv ANNOTTRANSMISSION        1
 
