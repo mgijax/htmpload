@@ -5,7 +5,6 @@
 #
 # run the htmpload using a test file as input
 # input file: ??mpload.txt
-# loads both genotypes and mp annotations
 #
 
 cd `dirname $0`
