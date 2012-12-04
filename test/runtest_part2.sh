@@ -35,7 +35,7 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
+echo "Call makeAnnotationTest.sh (${CONFIG} ${ANNOTCONFIG})" | tee -a ${LOG}
 ./makeAnnotationTest.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
