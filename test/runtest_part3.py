@@ -37,7 +37,7 @@
 #	Verify MCL1 where it exists. Verify MCL2 = null. 
 #	Verify the MP annotation is associated and has the given Sex value.
 #
-# SexNA : Find the correct genotype, details don.t really matter.
+# SexNA : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
@@ -109,6 +109,7 @@ alleleState = ''
 alleleSymbol = ''
 markerID = ''
 gender = ''
+transmission = 'Germline'
 testName = ''
 testPassed = 'fail'
 query = ''
@@ -124,8 +125,9 @@ query = ''
 # MCL 1
 # Allele State
 # Gender
+# Germline Transmission
 #
-testDisplay = '%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n'
+testDisplay = '%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n'
 
 # add check of Allele Detail Display
 checkAlleleDetailDisplay = '''
@@ -139,6 +141,7 @@ checkAlleleDetailDisplay = '''
 checkMPHeader = ''
 
 createdby = os.environ['CREATEDBY']
+jnum = os.environ['JNUMBER']
 
 #
 # Purpose: Initialization
@@ -266,12 +269,13 @@ def htmpTest():
 	try:
 	    testName = tokens[13]
         except:
-	    testName = 'automatcically determined'
+	    testName = 'automated test'
 
-        if testName == 'automatcically determined':
+        if testName == 'automated test':
 
 	    if alleleState == 'Hom':
 	        verifyAnnotHom()
+		verifyGermlineTransmission()
 	    elif alleleState == 'Het':
 	        verifyAnnotHet()
 	    elif alleleState == 'Hemi':
@@ -279,14 +283,14 @@ def htmpTest():
 	    else:
 	        verifyAnnotIndet()
 
-#	    else:
-#		testPassed = 'pass'
-#		testName = 'No Test Performed'
-#		fpLogTest.write(testDisplay % \
-#		    (testPassed, testName, lineNum, \
-#                     mpID, alleleSymbol, markerID, alleleID, mutantID, \
-#                     alleleState, gender))
-#	        continue
+##	    else:
+##		testPassed = 'pass'
+##		testName = 'No Test Performed'
+##		fpLogTest.write(testDisplay % \
+##		    (testPassed, testName, lineNum, \
+##                     mpID, alleleSymbol, markerID, alleleID, mutantID, \
+##                     alleleState, gender))
+##	        continue
 
 	elif testName == 'VerifyAnnotHom':
 	    verifyAnnotHom()
@@ -350,7 +354,7 @@ def verifyGenotype():
         testPassed = 'pass'
 
         fpLogTest.write(testDisplay % \
-	    (testPassed, 'duplicate genotypes', 0, 0, 0, 0, 0, 0, 0, 0))
+	    (testPassed, 'duplicate genotypes', 0, 0, 0, 0, 0, 0, 0, 0, 0))
     else:
 	for r in results:
 	    alleleSymbol = r['alleleSymbol']
@@ -361,7 +365,7 @@ def verifyGenotype():
             fpLogTest.write(testDisplay % \
 	        (testPassed, 'duplicate genotypes', 0, 0, \
                  alleleSymbol, markerID, alleleID, mutantID, \
-                 alleleState, 0))
+                 alleleState, 0, 0))
 
     return 0
 
@@ -434,7 +438,7 @@ def verifyAnnotHom():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender))
+         alleleState, gender, 0))
 
     return 0
 
@@ -504,7 +508,7 @@ def verifyAnnotHet():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender))
+         alleleState, gender, 0))
 
     return 0
 
@@ -572,7 +576,7 @@ def verifyAnnotHemi():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender))
+         alleleState, gender, 0))
 
     return 0
 
@@ -640,12 +644,12 @@ def verifyAnnotIndet():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender))
+         alleleState, gender, 0))
 
     return 0
 
 #
-# SexNA : Find the correct genotype, details don.t really matter.
+# SexNA : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
@@ -705,7 +709,50 @@ def verifySexNA():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender))
+         alleleState, gender, 0))
+
+    return 0
+
+#
+# Germline Transmission: Find the correct allele/germline transmission value
+#
+def verifyGermlineTransmission():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, VOC_Annot a, VOC_Evidence e,
+	     ALL_Allele aa, BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Genotype_key = a._Object_key
+	and a._AnnotType_key = 1002
+	and g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and aa._Transmission_key in (3982951)
+	and a._Annot_key = e._Annot_key
+	and e._Refs_key = c._Refs_key
+	and c.jnumID in ('%s')
+     	and g._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and g._Allele_key = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+	''' % (jnum, markerID, alleleID)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, transmission))
 
     return 0
 
