@@ -12,6 +12,7 @@ cd `dirname $0`
 
 # config files
 CONFIG=$1
+ANNOTCONFIG=$2
 
 #
 # Make sure the configuration file exists and source it.
@@ -35,11 +36,11 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
-./makeAnnotationTest.sh ${CONFIG} 2>&1 >> ${LOG}
+./makeAnnotationTest.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call makeAnnotationTest.sh (${CONFIG})" | tee -a ${LOG}
+    echo "Error: Call makeAnnotationTest.sh (${CONFIG} ${ANNOTCONFIG})" | tee -a ${LOG}
     exit 1
 fi
 

@@ -10,7 +10,8 @@
 cd `dirname $0`
 
 CONFIG=$1
-ANNOTCONFIG=${HTMPLOAD}/test/annotload.config.test
+ANNOTCONFIG=$2
+#ANNOTCONFIG=${HTMPLOAD}/test/annotload.config.test
 
 #
 # Make sure the configuration file exists and source it.
