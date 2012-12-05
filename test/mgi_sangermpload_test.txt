@@ -69,13 +69,13 @@ WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:4842867	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:99
 WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:9999999	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:98809	EXP	129/SvEv	Male	Nonsense Allele ID	
    	WTSI		MP:0010091	MGI:1857090	Het	Whrn<wi>	MGI:2682003	EXP	STOCK	Male	Spaces pheno ctr	
 WTSI	WTSI	EPD0520_5_C04	MP:999	MGI:4441647	Hom	Notch1<tm1a(EUCOMM)Wtsi>	MGI:97363	EXP	anything	Female	Invalid MP so keep Transm=Cell Line 	CellLine
-WTSI	WTSI			MGI:5292916	Hom	Amh<tm1(KOMP)Vlcg>	MGI:88006	EXP	anything	Female	No MP so keep Transm=Cell Line	CellLine
+WTSI	WTSI			MGI:5292916	Hom	Amh<tm1(KOMP)Vlcg>	MGI:88006	EXP	anything	Female	No MP so KICK-OUT and keep Transm=Cell Line	CellLine
 WTSI	WTSI	EPD0536_2_A11	MP:0008854	MGI:4452757	Hom	Acacb<tm1a(EUCOMM)Wtsi>	MGI:2140940	EXP	anything	Female	Valid MP so change Cell Line to Germline	Germline
-WTSI	WTSI			MGI:4839486	Hom	Med12<tm1.2Hsch>	MGI:1926212	EXP	anything	Female	No MP so keep Transm=Chimeric J:166040	Chimeric
+WTSI	WTSI		MP:999	MGI:4839486	Hom	Med12<tm1.2Hsch>	MGI:1926212	EXP	anything	Female	Invalid MP so keep Transm=Chimeric J:166040	Chimeric
 WTSI	WTSI		MP:0008854	MGI:4837701	Hom	Fadd<tm2Wnt>	MGI:109324	EXP	anything	Female	Valid MP so change Chimeric to Germline	Germline
-WTSI	WTSI			MGI:1888997	Hom	Apaf1<fog>	MGI:1306796	EXP	anything	Female	No MP so keep Transm=Not Applicable	NotApplicable
+WTSI	WTSI		MP:999	MGI:1888997	Hom	Apaf1<fog>	MGI:1306796	EXP	anything	Female	Invalid MP so keep Transm=Not Applicable	NotApplicable
 WTSI	WTSI		MP:0008854	MGI:1856084	Hom	Ap3d1<mh-2J>	MGI:107734	EXP	anything	Female	Valid MP but keep Transm=Not Applicable	NotApplicable
-WTSI	WTSI			MGI:5440060	Hom	Braf<tm2.1Cpri>	MGI:88190	EXP	anything	Female	No MP so keep Transm=Not Specified	NotSpecified
+WTSI	WTSI		MP:999	MGI:5440060	Hom	Braf<tm2.1Cpri>	MGI:88190	EXP	anything	Female	Invalid MP so keep Transm=Not Specified	NotSpecified
 WTSI	WTSI		MP:0008854	MGI:4838301	Hom	Cfp<tm2.2Song>	MGI:97545	EXP	anything	Female	Valid MP but keep Transm=Not Specified	NotSpecified
-WTSI	WTSI			MGI:2181776	Hom	Cbx2<tm1Ykf>	MGI:88289	EXP	anything	Female	No MP, already Germline, keep J:48123	GermlineOld
+WTSI	WTSI		MP:999	MGI:2181776	Hom	Cbx2<tm1Ykf>	MGI:88289	EXP	anything	Female	Invalid MP, already Germline, keep J:48123	GermlineOld
 WTSI	WTSI		MP:0008854	MGI:3831006	Hom	Mro<tm1H>	MGI:2152817	EXP	anything	Female	Valid MP, already Germline, keep J:144349	GermlineOld

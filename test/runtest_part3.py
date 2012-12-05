@@ -41,9 +41,9 @@
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
-# CellLine: transmission = 'Cell Line'
-#
 # Germline: transmission = 'Germline' and Reference in ('J:165965', 'J:175295')
+#
+# CellLine: transmission = 'Cell Line'
 #
 # Chimeric: transmission = 'Chimeric' and Reference not in ('J:165965', 'J:175295')
 #
@@ -320,6 +320,21 @@ def htmpTest():
 	    verifySexNA()
 
 	elif testName == 'Germline':
+	    verifyGermline()
+
+	elif testName == 'CellLine':
+	    verifyCellLine()
+
+	elif testName == 'Chimeric':
+	    verifyChimeric()
+
+	elif testName == 'NotSpecified':
+	    verifyNotSpecified()
+
+	elif testName == 'NotApplicable':
+	    verifyNotApplicable()
+
+	elif testName == 'GermlineOld':
 	    verifyGermline()
 
     return 0
@@ -731,8 +746,7 @@ def verifySexNA():
 #
 # Germline:
 #
-# Allele contains MP annotation to ('J:165965', 'J:175295')
-# Allele contains Germ Line Transmission = Germline
+# Allele contains Germ Line Transmission = Germline (3982951)
 # Allele contains Transmission Reference = see references above
 #
 def verifyGermline():
@@ -743,17 +757,11 @@ def verifyGermline():
 
     query = '''
 	select g._Allele_key
-	from GXD_AlleleGenotype g, VOC_Annot a, VOC_Evidence e,
-	     ALL_Allele aa, BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1,
-	     MGI_Reference_Allele_View v
-	where g._Genotype_key = a._Object_key
-	and a._AnnotType_key = 1002
-	and g._Allele_key = aa._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa, 
+	     BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Allele_key = aa._Allele_key
 	and aa.isWildType = 0
 	and aa._Transmission_key in (3982951)
-	and a._Annot_key = e._Annot_key
-	and e._Refs_key = c._Refs_key
-	and c.jnumID in ('J:165965', 'J:175295')
      	and g._Marker_key = ma._Object_key
      	and ma._MGIType_key = 2
      	and ma._LogicalDB_key = 1
@@ -762,10 +770,174 @@ def verifyGermline():
      	and aa1._MGIType_key = 11
      	and aa1._LogicalDB_key = 1
      	and aa1.accID = '%s'
-	and aa._Allele_key = v._Object_key
-	and v.assocType = 'Transmission'
+	and exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Transmission')
 	''' % (markerID, alleleID)
 
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, transmission))
+
+    return 0
+
+#
+# CellLine:
+#
+# Allele contains Germ Line Transmission = CellLine (3982953)
+# Allele contains Transmission Reference = see references above
+#
+def verifyCellLine():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa, 
+	     BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and aa._Transmission_key in (3982953)
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and g._Allele_key = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+	and not exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Transmission')
+	''' % (markerID, alleleID)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, transmission))
+
+    return 0
+
+#
+# Chimeric:
+#
+# Allele contains Germ Line Transmission = Chimeric (3982952)
+#
+def verifyChimeric():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa, 
+	     BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and aa._Transmission_key in (3982952)
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and g._Allele_key = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+	''' % (markerID, alleleID)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, transmission))
+
+    return 0
+
+#
+# NotSpecified:
+#
+# Allele contains Germ Line Transmission = Not Specified (3982954)
+#
+def verifyNotSpecified():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa, 
+	     BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and aa._Transmission_key in (3982954)
+     	and g._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and g._Allele_key = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+	''' % (markerID, alleleID)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, transmission))
+
+    return 0
+
+#
+# NotApplicable:
+#
+# Allele contains Germ Line Transmission = Not Applicable (3982955)
+#
+def verifyNotApplicable():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa, 
+	     BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and aa._Transmission_key in (3982955)
+     	and g._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and g._Allele_key = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+	''' % (markerID, alleleID)
+
+    #print query
     results = db.sql(query, 'auto')
     if len(results) > 0:
         testPassed = 'pass'
