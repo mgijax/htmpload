@@ -41,6 +41,18 @@
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
+# CellLine: transmission = 'Cell Line'
+#
+# Germline: transmission = 'Germline' and Reference in ('J:165965', 'J:175295')
+#
+# Chimeric: transmission = 'Chimeric' and Reference not in ('J:165965', 'J:175295')
+#
+# NotApplicable: transmission = 'Not Applicable'
+#
+# NotSpecified: transmission = 'Not Specified'
+#
+# GermlineOld: transmission = 'Germline' and Reference not in ('J:165965', 'J:175295')
+#
 #  Inputs:
 #
 #      HTMP file ($HTMPUNIQ_INPUT_FILE)
@@ -271,11 +283,13 @@ def htmpTest():
         except:
 	    testName = 'automated test'
 
+        print testName
+
         if testName == 'automated test':
 
 	    if alleleState == 'Hom':
 	        verifyAnnotHom()
-		verifyGermlineTransmission()
+		verifyGermline()
 	    elif alleleState == 'Het':
 	        verifyAnnotHet()
 	    elif alleleState == 'Hemi':
@@ -306,6 +320,9 @@ def htmpTest():
 
 	elif testName == 'SexNA':
 	    verifySexNA()
+
+	elif testName == 'Germline':
+	    verifyGermline()
 
     return 0
 
@@ -714,9 +731,9 @@ def verifySexNA():
     return 0
 
 #
-# Germline Transmission: Find the correct allele/germline transmission value
+# Germline: transmission = 'Germline' and Reference in ('J:165965', 'J:175295')
 #
-def verifyGermlineTransmission():
+def verifyGermline():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
     global markerID, gender, transmission
@@ -733,7 +750,7 @@ def verifyGermlineTransmission():
 	and aa._Transmission_key in (3982951)
 	and a._Annot_key = e._Annot_key
 	and e._Refs_key = c._Refs_key
-	and c.jnumID in ('%s')
+	and c.jnumID in ('J:165965', 'J:175295')
      	and g._Marker_key = ma._Object_key
      	and ma._MGIType_key = 2
      	and ma._LogicalDB_key = 1
@@ -742,7 +759,7 @@ def verifyGermlineTransmission():
      	and aa1._MGIType_key = 11
      	and aa1._LogicalDB_key = 1
      	and aa1.accID = '%s'
-	''' % (jnum, markerID, alleleID)
+	''' % (markerID, alleleID)
 
     #print query
     results = db.sql(query, 'auto')
