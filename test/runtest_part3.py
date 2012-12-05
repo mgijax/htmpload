@@ -729,7 +729,11 @@ def verifySexNA():
     return 0
 
 #
-# Germline: transmission = 'Germline' and Reference in ('J:165965', 'J:175295')
+# Germline:
+#
+# Allele contains MP annotation to ('J:165965', 'J:175295')
+# Allele contains Germ Line Transmission = Germline
+# Allele contains Transmission Reference = see references above
 #
 def verifyGermline():
 
@@ -740,7 +744,8 @@ def verifyGermline():
     query = '''
 	select g._Allele_key
 	from GXD_AlleleGenotype g, VOC_Annot a, VOC_Evidence e,
-	     ALL_Allele aa, BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1
+	     ALL_Allele aa, BIB_Citation_Cache c, ACC_Accession ma, ACC_Accession aa1,
+	     MGI_Reference_Allele_View v
 	where g._Genotype_key = a._Object_key
 	and a._AnnotType_key = 1002
 	and g._Allele_key = aa._Allele_key
@@ -757,9 +762,10 @@ def verifyGermline():
      	and aa1._MGIType_key = 11
      	and aa1._LogicalDB_key = 1
      	and aa1.accID = '%s'
+	and aa._Allele_key = v._Object_key
+	and v.assocType = 'Transmission'
 	''' % (markerID, alleleID)
 
-    #print query
     results = db.sql(query, 'auto')
     if len(results) > 0:
         testPassed = 'pass'

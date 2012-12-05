@@ -45,7 +45,6 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "HTMP Test (${CONFIG})" | tee -a ${LOG}
-cp ${INPUTFILE} ${INPUTDIR}
 ${HTMPLOADSH} ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]

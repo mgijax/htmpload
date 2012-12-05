@@ -1,21 +1,21 @@
-	HEPD0549_5_C09	MP:0008854	MGI:4434984	-1	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity -1
-	HEPD0549_5_C09	MP:0008854	MGI:4434984	   	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro spaces zygosity
-	HEPD0549_5_C09	MP:0008854	MGI:4434984	4	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity 4
-	HEPD0549_5_C09	MP:0008854	MGI:4434984	X	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity X
-	HEPD0999_9_C09	MP:0008854	MGI:4434984	1	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Female				Euro Invalid cell line
-	HEPD0549_5_C09	MP:0008854	MGI:4434984	2	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Female				Euro Hemi not on X
-		MP:0008854	MGI:3582264	2	Tspy-ps<tm1(Mlc3-Gdf8)Mgs>	MGI:1201688	MGI:4836541	Female				Euro Hemi on Y Female
-		MP:0008855	MGI:3582264	2	Tspy-ps<tm1(Mlc3-Gdf8)Mgs>	MGI:1201688	MGI:4836541	Male				Euro Hemi on Y Male
-	EPD0033_5_D02	MP:0002100	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP, dup MF out of order
-	EPD0033_5_D02	MP:0002968	MGI:4362642	0	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP
-	EPD0033_5_D02	MP:0002968	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP
-	EPD0033_5_D02	MP:0008854	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
-	EPD0033_5_D02	MP:0008854	MGI:4362642	0	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
-	EPD0033_5_D02	MP:0008854	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
-		MP:0008854	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Female				Euro Real MGI geno, mockMP, dup MF out of order
-		MP:0000067	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Female				Euro Real MGI geno, realMP
-	EPD0033_5_D02	MP:0002100	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Male				Euro Dup real Sanger geno+MP, dup MF out of order
-	EPD0874_1_C01	MP:0008854	MGI:5426568	0	1110059M19Rik<tm2e(KOMP)Wtsi>	MGI:1916050		Male				Euro mock geno, only row for het
-	EPD0864_5_C10	MP:0008854	MGI:5296526	2	1700013H16Rik<tm2e(KOMP)Wtsi>	MGI:1922764		Male				Euro mock geno, only row for hemi
-	EPD0659_2_A06	MP:0008854	MGI:4841078	1	Arr3<tm2e(KOMP)Wtsi>	MGI:2159617		Male				Euro mock geno, only row for hom
-		MP:0008854	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Male				Euro Real MGI geno, mockMP, dup MF out of order
+HEPD0549_5_C09	MP:0008854	MGI:4434984	-1	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity -1
+HEPD0549_5_C09	MP:0008854	MGI:4434984	   	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro spaces zygosity
+HEPD0549_5_C09	MP:0008854	MGI:4434984	4	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity 4
+HEPD0549_5_C09	MP:0008854	MGI:4434984	X	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Male				Euro bad zygosity X
+HEPD0999_9_C09	MP:0008854	MGI:4434984	1	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Female				Euro Invalid cell line
+HEPD0549_5_C09	MP:0008854	MGI:4434984	2	Wtap<tm1a(EUCOMM)Hmgu>	MGI:1926395 	none	Female				Euro Hemi not on X
+	MP:0008854	MGI:3582264	2	Tspy-ps<tm1(Mlc3-Gdf8)Mgs>	MGI:1201688	MGI:4836541	Female				Euro Hemi on Y Female
+	MP:0008855	MGI:3582264	2	Tspy-ps<tm1(Mlc3-Gdf8)Mgs>	MGI:1201688	MGI:4836541	Male				Euro Hemi on Y Male
+EPD0033_5_D02	MP:0002100	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP, dup MF out of order
+EPD0033_5_D02	MP:0002968	MGI:4362642	0	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP
+EPD0033_5_D02	MP:0002968	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Dup real Sanger geno+MP
+EPD0033_5_D02	MP:0008854	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
+EPD0033_5_D02	MP:0008854	MGI:4362642	0	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
+EPD0033_5_D02	MP:0008854	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Female				Euro Real Sanger geno, mockMP
+	MP:0008854	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Female				Euro Real MGI geno, mockMP, dup MF out of order
+	MP:0000067	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Female				Euro Real MGI geno, realMP
+EPD0033_5_D02	MP:0002100	MGI:4362642	1	Akap9<tm1a(KOMP)Wtsi>	MGI:2178217	none	Male				Euro Dup real Sanger geno+MP, dup MF out of order
+EPD0874_1_C01	MP:0008854	MGI:5426568	0	1110059M19Rik<tm2e(KOMP)Wtsi>	MGI:1916050		Male				Euro mock geno, only row for het
+EPD0864_5_C10	MP:0008854	MGI:5296526	2	1700013H16Rik<tm2e(KOMP)Wtsi>	MGI:1922764		Male				Euro mock geno, only row for hemi
+EPD0659_2_A06	MP:0008854	MGI:4841078	1	Arr3<tm2e(KOMP)Wtsi>	MGI:2159617		Male				Euro mock geno, only row for hom
+	MP:0008854	MGI:1856087	1	Mitf<Mi-Or>	MGI:104554	none	Male				Euro Real MGI geno, mockMP, dup MF out of order
