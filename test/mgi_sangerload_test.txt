@@ -8,8 +8,8 @@
 	WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>		EXP	129/SvEv	Female	Null Marker ID	
 	WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
 	WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
-	WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
-	WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
+	WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup	SexNA
+	WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup	SexNA
 	WTSI	WTSI	EPD0027_2_B05	MP:00028339	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
 	WTSI	WTSI	EPD0027_2_B05	MP:0000012	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Male	Bad MP ID	
 	WTSI	WTSI	EPD0027_2_B05	MP:000219	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
@@ -46,8 +46,8 @@
 	WTSI	WTSI		MP:0005476	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
 	WTSI	WTSI		MP:0008854	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
 	WTSI	WTSI		MP:0008855	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
-	WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	VerifyAnnotHet
-	WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	VerifyAnnotHet
+	WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	SexNA
+	WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	SexNA
 	WTSI	WTSI	EPD0069_4_B07	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
 	WTSI	WTSI	EPD0069_4_B08	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
 	WTSI	WTSI	EPD0069_4_C08	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype has cell line	VerifyAnnotHet
@@ -68,3 +68,14 @@
 	WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:4842867	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:9999999	EXP	129/SvEv	Female	Nonsense Marker ID	
 	WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:9999999	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:98809	EXP	129/SvEv	Male	Nonsense Allele ID	
 	   	WTSI		MP:0010091	MGI:1857090	Het	Whrn<wi>	MGI:2682003	EXP	STOCK	Male	Spaces pheno ctr	
+	WTSI	WTSI	EPD0520_5_C04	MP:999	MGI:4441647	Hom	Notch1<tm1a(EUCOMM)Wtsi>	MGI:97363	EXP	anything	Female	Invalid MP so keep Transm=Cell Line 	CellLine
+	WTSI	WTSI			MGI:5292916	Hom	Amh<tm1(KOMP)Vlcg>	MGI:88006	EXP	anything	Female	No MP so keep Transm=Cell Line	CellLine
+	WTSI	WTSI	EPD0536_2_A11	MP:0008854	MGI:4452757	Hom	Acacb<tm1a(EUCOMM)Wtsi>	MGI:2140940	EXP	anything	Female	Valid MP so change Cell Line to Germline	Germline
+	WTSI	WTSI			MGI:4839486	Hom	Med12<tm1.2Hsch>	MGI:1926212	EXP	anything	Female	No MP so keep Transm=Chimeric J:166040	Chimeric
+	WTSI	WTSI		MP:0008854	MGI:4837701	Hom	Fadd<tm2Wnt>	MGI:109324	EXP	anything	Female	Valid MP so change Chimeric to Germline	Germline
+	WTSI	WTSI			MGI:1888997	Hom	Apaf1<fog>	MGI:1306796	EXP	anything	Female	No MP so keep Transm=Not Applicable	NotApplicable
+	WTSI	WTSI		MP:0008854	MGI:1856084	Hom	Ap3d1<mh-2J>	MGI:107734	EXP	anything	Female	Valid MP but keep Transm=Not Applicable	NotApplicable
+	WTSI	WTSI			MGI:5440060	Hom	Braf<tm2.1Cpri>	MGI:88190	EXP	anything	Female	No MP so keep Transm=Not Specified	NotSpecified
+	WTSI	WTSI		MP:0008854	MGI:4838301	Hom	Cfp<tm2.2Song>	MGI:97545	EXP	anything	Female	Valid MP but keep Transm=Not Specified	NotSpecified
+	WTSI	WTSI			MGI:2181776	Hom	Cbx2<tm1Ykf>	MGI:88289	EXP	anything	Female	No MP, already Germline, keep J:48123	GermlineOld
+	WTSI	WTSI		MP:0008854	MGI:3831006	Hom	Mro<tm1H>	MGI:2152817	EXP	anything	Female	Valid MP, already Germline, keep J:144349	GermlineOld
