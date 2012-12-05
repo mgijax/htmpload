@@ -60,7 +60,7 @@ HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
 # input file that contains a unique genotype # (1 thru ...)
 #
-HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload.txt
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload_test.txt
 
 # Genotype & Annotation input file
 #

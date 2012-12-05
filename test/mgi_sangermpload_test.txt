@@ -1,70 +1,70 @@
-WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	     	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Spaces Allele State	
-WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	Hemi	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Bad Allele State	
-	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null pheno ctr	
-KLF	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Nonsense pheno ctr	
-WTSI		Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null annot ctr	
-WTSI	WTSI	Not Specified	MP:0002833		Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null Allele ID	
-WTSI	WTSI	Not Specified	MP:0002833	MGI:1	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Bad Allele ID	
-WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>		EXP	129/SvEv	Female	Null Marker ID	
-WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
-WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
-WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
-WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
-WTSI	WTSI	EPD0027_2_B05	MP:00028339	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
-WTSI	WTSI	EPD0027_2_B05	MP:0000012	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Male	Bad MP ID	
-WTSI	WTSI	EPD0027_2_B05	MP:000219	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
-WTSI	WTSI	EPD0027_2_B05	MP:0000063	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	    	Spaces sex	
-WTSI	WTSI	EPD0027_2_B05	KLF	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Both	Nonsense MP ID	
-WTSI	WTSI	EPD0027_2_B05	MP MP:0011167	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Both	Nonsense MP ID	
-WTSI	WTSI	EPD0027_2_B05	MP:0008762	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Klf	Nonsense sex	
-WTSI	WTSI	EPD0027_2_B05	MP:0010770	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	F	Nonsense sex	
-WTSI	WTSI	EPD0027_2_B05	MP:0010770	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Neither	Nonsense sex	
-WTSI	WTSI	EPD0013_1_C02	MP:0008854	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Female	Diseases tests setup, hom has cell line	VerifyAnnotHom
-WTSI	WTSI	EPD0013_1_C02	MP:0008855	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Female	Diseases tests setup, hom has cell line	VerifyAnnotHom
-WTSI	WTSI	EPD0013_1_C02	MP:0008856	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, hom has cell line	VerifyAnnotHom
-WTSI	WTSI	EPD0013_1_C02	MP:0008857	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, hom has cell line	VerifyAnnotHom
-WTSI	WTSI		MP:0008856	MGI:4363543		Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, indet no cell line	VerifyAnnotIndet
-WTSI	WTSI		MP:0008857	MGI:4363543		Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, indet no cell line	VerifyAnnotIndet
-WTSI	    		MP:0008495	MGI:3588650		Chd7<Whi>	MGI:2444748	EXP	C3HeB/FeJ		Spaces annot ctr	
-WTSI	WTSI	EPD0181_1_A05	MP:0000221	MGI:4431679	Hez	Hira<tm1a(EUCOMM)Wtsi>	MGI:99430	EXP	C57BL/6N	Male	Nonsense Allele State	
-WTSI	WTSI	EPD0158_4_G09	MP:0008044	MGI:4431946	Hemi	Ide<tm1a(EUCOMM)Wtsi>	MGI:96412	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad Allele State	
-WTSI	WTSI		      	MGI:4128950		Kctd10<Gt(RRG305)Byg>	MGI:2141207	EXP	CBA/Ca;129P2		Spaces MP ID	
-WTSI	WTSI	EPD0070_2_G04	MP:0010067	MGI:4432392	Het	Ldha<tm1a(EUCOMM)Wtsi>	Klf	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense Marker ID	
-    	WTSI		MP:0008498	MGI:1856555		Myo6<sv>	MGI:104785	EXP	C57BL/6JIco;C57BL/10		Spaces pheno ctr	
-WTSI	WTSI	EPD0033_1_F12	MP:0000220	MGI:4364806	Het	Nf1<tm1a(KOMP)Wtsi>	    	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces Marker ID	
-WTSI	WTSI	EPD0033_4_D01	MP:0004974	    	Het	Nfkb1<tm1a(KOMP)Wtsi>	MGI:97312	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces Allele ID	
-WTSI	WTSI	EPD0079_5_G07		MGI:4362680	Hom	Rapgefl1<tm1a(KOMP)Wtsi>	MGI:3611446	EXP	C57BL/6N	Female	Null MP ID	
-WTSI	WTSI	    	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces cell line	
-WTSI	WTSI	EPD0109_3_E07	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:97490	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad marker for allele	
-WTSI	WTSI	EPD0126_4_F03	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad cell line	
-WTSI	WTSI	klf	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense cell line	
-WTSI	WTSI		MP:0005473	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
-WTSI	WTSI		MP:0005476	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
-WTSI	WTSI		MP:0005319	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Female	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
-WTSI	WTSI		MP:0005418	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
-WTSI	WTSI		MP:0005478	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Female	Diseases tests setup, hom no cell line	VerifyAnnotHom
-WTSI	WTSI		MP:0005476	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
-WTSI	WTSI		MP:0008854	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
-WTSI	WTSI		MP:0008855	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
-WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	VerifyAnnotHet
-WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	VerifyAnnotHet
-WTSI	WTSI	EPD0069_4_B07	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
-WTSI	WTSI	EPD0069_4_B08	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
-WTSI	WTSI	EPD0069_4_C08	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype has cell line	VerifyAnnotHet
-WTSI	WTSI	EPD0069_4_H07	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Dup MF combine them	SexNA
-WTSI	WTSI	EPD0069_4_H07	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Dup MF combine them	SexNA
-WTSI	WTSI		MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype no cell line	VerifyAnnotHet
-WTSI	WTSI	EPD0069_4_C07	MP:0008854	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hom genotype	SexNA
-WTSI	WTSI	EPD0069_4_C07	MP:0008856	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	New annot ok for repeat genotype	SexNA
-WTSI	WTSI		MP:0008855	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hom genotype no cell line	SexNA
-WTSI	WTSI	EPD0069_4_D07	MP:0008854	MGI:4431547		Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	No AllState=Indet genotype, has cell line	VerifyAnnotIndet
-WTSI	WTSI	EPD0069_4_D07	MP:0008855	MGI:4431547		Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	No AllState=Indet genotype, has cell line	VerifyAnnotIndet
-WTSI	WTSI	EPD0060_1_A07	MP:0010124	KLF	Het	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Female	Nonsense Allele ID	
-WTSI	WTSI	EPD0060_1_A07	MP:0010124	MGI:2	Het	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Female	Bad Allele ID	
-WTSI	WTSI	EPD0060_1_A07	MP:0001304	MGI:4432869	Hom	Sparc<tm1a(EUCOMM)Wtsi>	MGI:1	EXP	C57BL/6JTyr;C57BL/6N	Female	Bad Marker ID	
-WTSI	WTSI	EPD0060_1_A07	MP:0002100	MGI:4432869	Klf	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense Allele State	
-WTSI	KLF	EPD0065_1_F10	MP:0005419	MGI:4432393	Het	Spnb2<tm1a(EUCOMM)Wtsi>	MGI:98388	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense annot ctr	
-KLF	WTSI	EPD0183_4_A09	MP:0002412	MGI:4432885	Het	Tpi1<tm1a(EUCOMM)Wtsi>	MGI:98797	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense pheno ctr	
-WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:4842867	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:9999999	EXP	129/SvEv	Female	Nonsense Marker ID	
-WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:9999999	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:98809	EXP	129/SvEv	Male	Nonsense Allele ID	
-   	WTSI		MP:0010091	MGI:1857090	Het	Whrn<wi>	MGI:2682003	EXP	STOCK	Male	Spaces pheno ctr	
+	WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	     	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Spaces Allele State	
+	WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	Hemi	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Bad Allele State	
+		WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null pheno ctr	
+	KLF	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Nonsense pheno ctr	
+	WTSI		Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null annot ctr	
+	WTSI	WTSI	Not Specified	MP:0002833		Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Null Allele ID	
+	WTSI	WTSI	Not Specified	MP:0002833	MGI:1	Het	2700049A03Rik<tm1.1Arte>	MGI:1924217	EXP	129/SvEv	Female	Bad Allele ID	
+	WTSI	WTSI	Not Specified	MP:0002833	MGI:5287574	Het	2700049A03Rik<tm1.1Arte>		EXP	129/SvEv	Female	Null Marker ID	
+	WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
+	WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605	Hemi	Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything	Male	Diseases tests setup, hemi has cell line	VerifyAnnotHemi
+	WTSI	WTSI	EPD0066_2_D10	MP:0008855	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
+	WTSI	WTSI	EPD0066_2_D10	MP:0008856	MGI:4431605		Acsl4<tm1a(EUCOMM)Wtsi>	MGI:1354713	EXP	anything		No sex=NA, Diseases tests setup, ind has c line	SexNA
+	WTSI	WTSI	EPD0027_2_B05	MP:00028339	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
+	WTSI	WTSI	EPD0027_2_B05	MP:0000012	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Male	Bad MP ID	
+	WTSI	WTSI	EPD0027_2_B05	MP:000219	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Female	Nonsense MP ID	
+	WTSI	WTSI	EPD0027_2_B05	MP:0000063	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	    	Spaces sex	
+	WTSI	WTSI	EPD0027_2_B05	KLF	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Both	Nonsense MP ID	
+	WTSI	WTSI	EPD0027_2_B05	MP MP:0011167	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Both	Nonsense MP ID	
+	WTSI	WTSI	EPD0027_2_B05	MP:0008762	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Klf	Nonsense sex	
+	WTSI	WTSI	EPD0027_2_B05	MP:0010770	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	F	Nonsense sex	
+	WTSI	WTSI	EPD0027_2_B05	MP:0010770	MGI:4433303	Hom	Arid2<tm1a(EUCOMM)Wtsi>	MGI:1924294	EXP	anything	Neither	Nonsense sex	
+	WTSI	WTSI	EPD0013_1_C02	MP:0008854	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Female	Diseases tests setup, hom has cell line	VerifyAnnotHom
+	WTSI	WTSI	EPD0013_1_C02	MP:0008855	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Female	Diseases tests setup, hom has cell line	VerifyAnnotHom
+	WTSI	WTSI	EPD0013_1_C02	MP:0008856	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, hom has cell line	VerifyAnnotHom
+	WTSI	WTSI	EPD0013_1_C02	MP:0008857	MGI:4363543	Hom	Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, hom has cell line	VerifyAnnotHom
+	WTSI	WTSI		MP:0008856	MGI:4363543		Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, indet no cell line	VerifyAnnotIndet
+	WTSI	WTSI		MP:0008857	MGI:4363543		Baz1b<tm2a(KOMP)Wtsi>	MGI:1353499	EXP	anything	Male	Diseases tests setup, indet no cell line	VerifyAnnotIndet
+	WTSI	    		MP:0008495	MGI:3588650		Chd7<Whi>	MGI:2444748	EXP	C3HeB/FeJ		Spaces annot ctr	
+	WTSI	WTSI	EPD0181_1_A05	MP:0000221	MGI:4431679	Hez	Hira<tm1a(EUCOMM)Wtsi>	MGI:99430	EXP	C57BL/6N	Male	Nonsense Allele State	
+	WTSI	WTSI	EPD0158_4_G09	MP:0008044	MGI:4431946	Hemi	Ide<tm1a(EUCOMM)Wtsi>	MGI:96412	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad Allele State	
+	WTSI	WTSI		      	MGI:4128950		Kctd10<Gt(RRG305)Byg>	MGI:2141207	EXP	CBA/Ca;129P2		Spaces MP ID	
+	WTSI	WTSI	EPD0070_2_G04	MP:0010067	MGI:4432392	Het	Ldha<tm1a(EUCOMM)Wtsi>	Klf	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense Marker ID	
+	    	WTSI		MP:0008498	MGI:1856555		Myo6<sv>	MGI:104785	EXP	C57BL/6JIco;C57BL/10		Spaces pheno ctr	
+	WTSI	WTSI	EPD0033_1_F12	MP:0000220	MGI:4364806	Het	Nf1<tm1a(KOMP)Wtsi>	    	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces Marker ID	
+	WTSI	WTSI	EPD0033_4_D01	MP:0004974	    	Het	Nfkb1<tm1a(KOMP)Wtsi>	MGI:97312	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces Allele ID	
+	WTSI	WTSI	EPD0079_5_G07		MGI:4362680	Hom	Rapgefl1<tm1a(KOMP)Wtsi>	MGI:3611446	EXP	C57BL/6N	Female	Null MP ID	
+	WTSI	WTSI	    	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Spaces cell line	
+	WTSI	WTSI	EPD0109_3_E07	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:97490	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad marker for allele	
+	WTSI	WTSI	EPD0126_4_F03	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Bad cell line	
+	WTSI	WTSI	klf	MP:0000183	MGI:4364794	Hom	Slc16a2<tm1a(KOMP)Wtsi>	MGI:1203732	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense cell line	
+	WTSI	WTSI		MP:0005473	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
+	WTSI	WTSI		MP:0005476	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
+	WTSI	WTSI		MP:0005319	MGI:3687950	Hemi	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Female	Diseases tests setup, hemi no cell line	VerifyAnnotHemi
+	WTSI	WTSI		MP:0005418	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
+	WTSI	WTSI		MP:0005478	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Female	Diseases tests setup, hom no cell line	VerifyAnnotHom
+	WTSI	WTSI		MP:0005476	MGI:3687950	Hom	Slc16a2<tm1.1Sref>	MGI:1203732	EXP	anything	Male	Diseases tests setup, hom no cell line	VerifyAnnotHom
+	WTSI	WTSI		MP:0008854	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
+	WTSI	WTSI		MP:0008855	MGI:4431547	Hemi	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hemi genotype no cell line	SexNA
+	WTSI	WTSI	EPD0069_4_A07	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Female annot but diff cell lines	VerifyAnnotHet
+	WTSI	WTSI	EPD0069_4_A08	MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Male annot but diff cell lines	VerifyAnnotHet
+	WTSI	WTSI	EPD0069_4_B07	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
+	WTSI	WTSI	EPD0069_4_B08	MP:0008856	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Same annot but diff cell lines	SexNA
+	WTSI	WTSI	EPD0069_4_C08	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype has cell line	VerifyAnnotHet
+	WTSI	WTSI	EPD0069_4_H07	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Female	Dup MF combine them	SexNA
+	WTSI	WTSI	EPD0069_4_H07	MP:0008854	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Male	Dup MF combine them	SexNA
+	WTSI	WTSI		MP:0008855	MGI:4431547	Het	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Het genotype no cell line	VerifyAnnotHet
+	WTSI	WTSI	EPD0069_4_C07	MP:0008854	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hom genotype	SexNA
+	WTSI	WTSI	EPD0069_4_C07	MP:0008856	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	New annot ok for repeat genotype	SexNA
+	WTSI	WTSI		MP:0008855	MGI:4431547	Hom	Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	Hom genotype no cell line	SexNA
+	WTSI	WTSI	EPD0069_4_D07	MP:0008854	MGI:4431547		Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	No AllState=Indet genotype, has cell line	VerifyAnnotIndet
+	WTSI	WTSI	EPD0069_4_D07	MP:0008855	MGI:4431547		Sms<tm1a(EUCOMM)Wtsi>	MGI:109490	EXP	anything	Both	No AllState=Indet genotype, has cell line	VerifyAnnotIndet
+	WTSI	WTSI	EPD0060_1_A07	MP:0010124	KLF	Het	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Female	Nonsense Allele ID	
+	WTSI	WTSI	EPD0060_1_A07	MP:0010124	MGI:2	Het	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Female	Bad Allele ID	
+	WTSI	WTSI	EPD0060_1_A07	MP:0001304	MGI:4432869	Hom	Sparc<tm1a(EUCOMM)Wtsi>	MGI:1	EXP	C57BL/6JTyr;C57BL/6N	Female	Bad Marker ID	
+	WTSI	WTSI	EPD0060_1_A07	MP:0002100	MGI:4432869	Klf	Sparc<tm1a(EUCOMM)Wtsi>	MGI:98373	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense Allele State	
+	WTSI	KLF	EPD0065_1_F10	MP:0005419	MGI:4432393	Het	Spnb2<tm1a(EUCOMM)Wtsi>	MGI:98388	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense annot ctr	
+	KLF	WTSI	EPD0183_4_A09	MP:0002412	MGI:4432885	Het	Tpi1<tm1a(EUCOMM)Wtsi>	MGI:98797	EXP	C57BL/6JTyr;C57BL/6N	Male	Nonsense pheno ctr	
+	WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:4842867	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:9999999	EXP	129/SvEv	Female	Nonsense Marker ID	
+	WTSI	WTSI	EPD0001_3_G07	MP:0002833	MGI:9999999	Het	Tpm1<tm1a(EUCOMM)Wtsi>	MGI:98809	EXP	129/SvEv	Male	Nonsense Allele ID	
+	   	WTSI		MP:0010091	MGI:1857090	Het	Whrn<wi>	MGI:2682003	EXP	STOCK	Male	Spaces pheno ctr	

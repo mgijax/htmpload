@@ -62,7 +62,7 @@ HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_europhenoload_dup.txt
 
 # input file that contains a unique genotype # (1 thru ...)
 #
-HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_europhenoload.txt
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_europhenoload_test.txt
 
 # Genotype & Annotation input file
 #

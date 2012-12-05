@@ -283,8 +283,6 @@ def htmpTest():
         except:
 	    testName = 'automated test'
 
-        print testName
-
         if testName == 'automated test':
 
 	    if alleleState == 'Hom':
