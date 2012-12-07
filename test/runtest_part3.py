@@ -41,6 +41,14 @@
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
+# SexFemale : Find the correct genotype, details don't really matter.
+#	Find the MP annotation. Verify the sex value = Female.  
+#	This covers several cases we need to verify were handled correctly.
+#
+# SexMale : Find the correct genotype, details don't really matter.
+#	Find the MP annotation. Verify the sex value = Male.  
+#	This covers several cases we need to verify were handled correctly.
+#
 # Germline: transmission = 'Germline' and Reference in ('J:165965', 'J:175295')
 #
 # CellLine: transmission = 'Cell Line'
@@ -318,6 +326,12 @@ def htmpTest():
 
 	elif testName == 'SexNA':
 	    verifySexNA()
+
+	elif testName == 'SexFemale':
+	    verifySexFemale()
+
+	elif testName == 'SexMale':
+	    verifySexMale()
 
 	elif testName == 'Germline':
 	    verifyGermline()
@@ -726,6 +740,136 @@ def verifySexNA():
         and e._AnnotEvidence_key = p._AnnotEvidence_key
         and p._PropertyTerm_key = 8836535
 	and p.value = 'NA'
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
+
+    print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, 0))
+
+    return 0
+
+#
+# SexFemale : Find the correct genotype, details don't really matter.
+#	Find the MP annotation. Verify the sex value = Female.  
+#	This covers several cases we need to verify were handled correctly.
+#
+def verifySexFemale():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender 
+    global testName, testPassed, query
+
+    if len(mutantID) > 0:
+        mclQuery1 = ',ACC_Accession mcla1'
+	mclQuery2 = '''
+		and ap._MutantCellLine_key_1 = mcla1._Object_key 
+		and mcla1.accID = '%s'
+		''' % (mutantID)
+    else:
+	mclQuery1 = ''
+	mclQuery2 = '''
+		and ap._MutantCellLine_key_1 = null
+		'''
+
+    query = '''
+	select g._Genotype_key
+	from GXD_Genotype g, GXD_AllelePair ap,
+     	     ACC_Accession ma, ACC_Accession aa1,
+             VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
+             ACC_Accession mp, MGI_User u
+	     %s
+     	where g._Strain_key = -1
+     	and g._Genotype_key = ap._Genotype_key
+     	and ap._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and ap._Allele_key_1 = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+        and g._Genotype_key = a._Object_key
+        and a._AnnotType_key = 1002
+        and a._Term_key = mp._Object_key
+        and mp.accID = '%s'
+        and a._Annot_key = e._Annot_key
+        and e._AnnotEvidence_key = p._AnnotEvidence_key
+        and p._PropertyTerm_key = 8836535
+	and p.value = 'F'
+	and g._CreatedBy_key = u._User_key
+	and u.login = '%s'
+	%s
+	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
+
+    print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	(testPassed, testName, lineNum, \
+         mpID, alleleSymbol, markerID, alleleID, mutantID, \
+         alleleState, gender, 0))
+
+    return 0
+
+#
+# SexMale : Find the correct genotype, details don't really matter.
+#	Find the MP annotation. Verify the sex value = Male.  
+#	This covers several cases we need to verify were handled correctly.
+#
+def verifySexMale():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender 
+    global testName, testPassed, query
+
+    if len(mutantID) > 0:
+        mclQuery1 = ',ACC_Accession mcla1'
+	mclQuery2 = '''
+		and ap._MutantCellLine_key_1 = mcla1._Object_key 
+		and mcla1.accID = '%s'
+		''' % (mutantID)
+    else:
+	mclQuery1 = ''
+	mclQuery2 = '''
+		and ap._MutantCellLine_key_1 = null
+		'''
+
+    query = '''
+	select g._Genotype_key
+	from GXD_Genotype g, GXD_AllelePair ap,
+     	     ACC_Accession ma, ACC_Accession aa1,
+             VOC_Annot a, VOC_Evidence e, VOC_Evidence_Property p, 
+             ACC_Accession mp, MGI_User u
+	     %s
+     	where g._Strain_key = -1
+     	and g._Genotype_key = ap._Genotype_key
+     	and ap._Marker_key = ma._Object_key
+     	and ma._MGIType_key = 2
+     	and ma._LogicalDB_key = 1
+     	and ma.accID = '%s'
+     	and ap._Allele_key_1 = aa1._Object_key
+     	and aa1._MGIType_key = 11
+     	and aa1._LogicalDB_key = 1
+     	and aa1.accID = '%s'
+        and g._Genotype_key = a._Object_key
+        and a._AnnotType_key = 1002
+        and a._Term_key = mp._Object_key
+        and mp.accID = '%s'
+        and a._Annot_key = e._Annot_key
+        and e._AnnotEvidence_key = p._AnnotEvidence_key
+        and p._PropertyTerm_key = 8836535
+	and p.value = 'M'
 	and g._CreatedBy_key = u._User_key
 	and u.login = '%s'
 	%s
