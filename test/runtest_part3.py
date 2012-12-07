@@ -745,7 +745,7 @@ def verifySexNA():
 	%s
 	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
-    print query
+    #print query
     results = db.sql(query, 'auto')
     if len(results) > 0:
         testPassed = 'pass'
@@ -810,7 +810,7 @@ def verifySexFemale():
 	%s
 	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
-    print query
+    #print query
     results = db.sql(query, 'auto')
     if len(results) > 0:
         testPassed = 'pass'
@@ -875,7 +875,7 @@ def verifySexMale():
 	%s
 	''' % (mclQuery1, markerID, alleleID, mpID, createdby, mclQuery2)
 
-    print query
+    #print query
     results = db.sql(query, 'auto')
     if len(results) > 0:
         testPassed = 'pass'
