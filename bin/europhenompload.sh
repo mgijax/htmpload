@@ -95,7 +95,7 @@ touch ${LOG_CUR}
 #
 echo "archiving..." >> ${LOG}
 date >> ${LOG}
-preload ${OUTPUTDIR}
+#preload ${OUTPUTDIR}
 rm -rf ${OUTPUTDIR}/*.diagnostics
 rm -rf ${OUTPUTDIR}/*.error
 echo "archiving complete" >> ${LOG}
