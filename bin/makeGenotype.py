@@ -764,9 +764,9 @@ def getGenotypes():
 	if currentMP == prevMP:
 	    # if current gender != previous gender, then merge as "Both" (NA)
 	    # else leave gender as is
-	    #if gender != prevGender
-	    prevRow = prevRow.replace('\tMale', 'Both')
-	    prevRow = prevRow.replace('\tFemale', 'Both')
+	    if gender != prevGender:
+	        prevRow = prevRow.replace('Male', 'Both')
+	        prevRow = prevRow.replace('Female', 'Both')
 	    fpHTMP.write(prevRow)
 	    prevMP = ''
 	else:
