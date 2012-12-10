@@ -419,6 +419,7 @@ def getGenotypes():
     currentMP = ''
     prevMP = ''
     prevRow = ''
+    prevGender = ''
 
     #
     # all Strains will use 'Not Specified'
@@ -759,7 +760,11 @@ def getGenotypes():
 	#    do not write the current row (the duplicate) by setting prevMP = ''
 	#
 	currentMP = useOrder + mpID
+
 	if currentMP == prevMP:
+	    # if current gender != previous gender, then merge as "Both" (NA)
+	    # else leave gender as is
+	    #if gender != prevGender
 	    prevRow = prevRow.replace('Male', 'Both')
 	    prevRow = prevRow.replace('Female', 'Both')
 	    fpHTMP.write(prevRow)
@@ -771,6 +776,7 @@ def getGenotypes():
 	        fpHTMPDup.write(prevRow)
             prevMP = currentMP
 	    prevRow = useOrder + '\t' + line
+	    prevGender = gender
 
 	if dupGeno:
 	    continue

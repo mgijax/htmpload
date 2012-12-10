@@ -33,6 +33,9 @@
 #       field 6: MGI Marker ID
 #       field 7: Strain ID
 #       field 8: Gender ('Female', 'Male')
+#	(test files)
+#       field 9: Human-readable test infomration
+#       field 10: SQL-Test Name
 #
 #  Outputs:
 #
@@ -49,6 +52,9 @@
 #       field 9: Evidence Code ('EXP')
 #       field 10: Strain Name
 #       field 11: Gender ('Female', 'Male', 'Both')
+#	(test files)
+#       field 12: Human-readable test infomration
+#       field 13: SQL-Test Name
 #
 #  Exit Codes:
 #
@@ -199,6 +205,14 @@ def createHTMPfile():
 	#strainID = tokens[6]
 	strainID = ''
         gender = tokens[7]
+	test1 = ''
+	test2 = ''
+
+	try:
+		test1 = tokens[11]
+		test2 = tokens[12]
+	except:
+		pass
 
 	if alleleState == '0':
 	    alleleState = 'Het'
@@ -207,17 +221,19 @@ def createHTMPfile():
 	elif alleleState == '2':
 	    alleleState = 'Hemi'
 
-        fpHTMP.write(phenotypingCenter + '\t'  + \
-                     annotationCenter + '\t'  + \
-	             mutantID + '\t'  + \
-	             mpID + '\t'  + \
-                     alleleID + '\t'  + \
-                     alleleState + '\t'  + \
-                     alleleSymbol + '\t'  + \
-                     markerID + '\t'  + \
-		     evidenceCode + '\t'  + \
-	             strainID + '\t'  + \
-                     gender + '\n')
+        fpHTMP.write(phenotypingCenter + '\t' + \
+                     annotationCenter + '\t' + \
+	             mutantID + '\t' + \
+	             mpID + '\t' + \
+                     alleleID + '\t' + \
+                     alleleState + '\t' + \
+                     alleleSymbol + '\t' + \
+                     markerID + '\t' + \
+		     evidenceCode + '\t' + \
+	             strainID + '\t' + \
+                     gender + '\t' + \
+		     test1 + '\t' + \
+		     test2 + '\n')
 
     return 0
 
