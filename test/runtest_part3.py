@@ -41,11 +41,11 @@
 #	Find the MP annotation. Verify the sex value = NA.  
 #	This covers several cases we need to verify were handled correctly.
 #
-# SexFemale : Find the correct genotype, details don't really matter.
+# SexF : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = Female.  
 #	This covers several cases we need to verify were handled correctly.
 #
-# SexMale : Find the correct genotype, details don't really matter.
+# SexM : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = Male.  
 #	This covers several cases we need to verify were handled correctly.
 #
@@ -327,11 +327,11 @@ def htmpTest():
 	elif testName == 'SexNA':
 	    verifySexNA()
 
-	elif testName == 'SexFemale':
-	    verifySexFemale()
+	elif testName == 'SexF':
+	    verifySexF()
 
-	elif testName == 'SexMale':
-	    verifySexMale()
+	elif testName == 'SexM':
+	    verifySexM()
 
 	elif testName == 'Germline':
 	    verifyGermline()
@@ -758,11 +758,11 @@ def verifySexNA():
     return 0
 
 #
-# SexFemale : Find the correct genotype, details don't really matter.
+# SexF : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = Female.  
 #	This covers several cases we need to verify were handled correctly.
 #
-def verifySexFemale():
+def verifySexF():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
     global markerID, gender 
@@ -823,11 +823,11 @@ def verifySexFemale():
     return 0
 
 #
-# SexMale : Find the correct genotype, details don't really matter.
+# SexM : Find the correct genotype, details don't really matter.
 #	Find the MP annotation. Verify the sex value = Male.  
 #	This covers several cases we need to verify were handled correctly.
 #
-def verifySexMale():
+def verifySexM():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
     global markerID, gender 
