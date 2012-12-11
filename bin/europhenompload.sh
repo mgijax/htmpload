@@ -102,6 +102,25 @@ echo "archiving complete" >> ${LOG}
 date >> ${LOG}
 
 #
+# There should be a "lastrun" file in the input directory that was created
+# the last time the load was run for this input file. If this file exists
+# and is more recent than the input file, the load does not need to be run.
+#
+LASTRUN_FILE=${INPUTDIR}/lastrun
+
+if [ -f ${LASTRUN_FILE} ]
+then
+    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${INPUTFILE}
+    then
+        echo "Input file has not been updated - skipping load" | tee -a ${LOG_PROC}
+        STAT=0
+        checkStatus ${STAT} 'Checking input file'
+        shutDown
+        exit 0
+    fi
+fi
+
+#
 # copy input file into working directory
 # sort by column 5 (allele name)
 # sort by column 4 (allele state)
@@ -174,6 +193,11 @@ echo "Run reports runReports.sh" | tee -a ${LOG}
 ./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 checkStatus ${STAT} "runReports.sh ${CONFIG}"
+
+#
+# Touch the "lastrun" file to note when the load was run.
+#
+touch ${LASTRUN_FILE}
 
 #
 # run postload cleanup and email logs
