@@ -285,17 +285,15 @@ def htmpTest():
         alleleSymbol = tokens[7]
         markerID = tokens[8]
 	gender = tokens[11]
+	testName = tokens[13]
 
-	try:
-	    testName = tokens[13]
-        except:
+        if len(testName) == 0:
 	    testName = 'automated test'
 
         if testName == 'automated test':
 
 	    if alleleState == 'Hom':
 	        verifyAnnotHom()
-		verifyGermline()
 	    elif alleleState == 'Het':
 	        verifyAnnotHet()
 	    elif alleleState == 'Hemi':
