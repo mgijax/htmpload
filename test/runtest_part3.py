@@ -285,7 +285,11 @@ def htmpTest():
         alleleSymbol = tokens[7]
         markerID = tokens[8]
 	gender = tokens[11]
-	testName = tokens[13]
+
+	try:
+	    testName = tokens[13]
+        except:
+	    testName = ''
 
         if len(testName) == 0:
 	    testName = 'automated test'
