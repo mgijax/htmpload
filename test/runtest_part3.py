@@ -130,6 +130,7 @@ alleleSymbol = ''
 markerID = ''
 gender = ''
 transmission = 'Germline'
+usedfc = ''
 testName = ''
 testPassed = 'fail'
 query = ''
@@ -146,8 +147,9 @@ query = ''
 # Allele State
 # Gender
 # Germline Transmission
+# Used-FC
 #
-testDisplay = '%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n'
+testDisplay = '%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n'
 
 # add check of Allele Detail Display
 checkAlleleDetailDisplay = '''
@@ -400,7 +402,7 @@ def verifyGenotype():
         testPassed = 'pass'
 
         fpLogTest.write(testDisplay % \
-	    (testPassed, 'duplicate genotypes', 0, 0, 0, 0, 0, 0, 0, 0, 0))
+	    (testPassed, 'duplicate genotypes', '', '', '', '', '', '', '', '', '', ''))
     else:
 	for r in results:
 	    alleleSymbol = r['alleleSymbol']
@@ -409,9 +411,9 @@ def verifyGenotype():
 	    mutantID = r['mutantID']
 	    alleleStatus = r['alleleState']
             fpLogTest.write(testDisplay % \
-	        (testPassed, 'duplicate genotypes', 0, 0, \
+	        (testPassed, 'duplicate genotypes', '', '', \
                  alleleSymbol, markerID, alleleID, mutantID, \
-                 alleleState, 0, 0))
+                 alleleState, '', '', '', ''))
 
     return 0
 
@@ -484,7 +486,7 @@ def verifyAnnotHom():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -554,7 +556,7 @@ def verifyAnnotHet():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -622,7 +624,7 @@ def verifyAnnotHemi():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -690,7 +692,7 @@ def verifyAnnotIndet():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -755,7 +757,7 @@ def verifySexNA():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -820,7 +822,7 @@ def verifySexF():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -885,7 +887,7 @@ def verifySexM():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, 0))
+         alleleState, gender, '', ''))
 
     return 0
 
@@ -894,11 +896,12 @@ def verifySexM():
 #
 # Allele contains Germ Line Transmission = Germline (3982951)
 # Allele contains Transmission Reference = see references above
+# Allele contains Used-FC Reference = see references above
 #
 def verifyGermline():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
-    global markerID, gender, transmission
+    global markerID, gender, transmission, usedfc
     global testName, testPassed, query
 
     query = '''
@@ -919,6 +922,9 @@ def verifyGermline():
 	and exists (select 1 from MGI_Reference_Allele_View v
 		where aa._Allele_key = v._Object_key
 		and v.assocType = 'Transmission')
+	and exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Used-FC')
 	''' % (markerID, alleleID)
 
     #print query
@@ -929,7 +935,7 @@ def verifyGermline():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, transmission))
+         alleleState, gender, transmission, usedfc))
 
     return 0
 
@@ -938,11 +944,12 @@ def verifyGermline():
 #
 # Allele contains Germ Line Transmission = CellLine (3982953)
 # Allele contains Transmission Reference = see references above
+# Allele contains Used-FC Reference = see references above
 #
 def verifyCellLine():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
-    global markerID, gender, transmission
+    global markerID, gender, transmission, usedfc
     global testName, testPassed, query
 
     query = '''
@@ -962,6 +969,9 @@ def verifyCellLine():
 	and not exists (select 1 from MGI_Reference_Allele_View v
 		where aa._Allele_key = v._Object_key
 		and v.assocType = 'Transmission')
+	and exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Used-FC')
 	''' % (markerID, alleleID)
 
     #print query
@@ -972,7 +982,7 @@ def verifyCellLine():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, transmission))
+         alleleState, gender, transmission, usedfc))
 
     return 0
 
@@ -984,7 +994,7 @@ def verifyCellLine():
 def verifyChimeric():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
-    global markerID, gender, transmission
+    global markerID, gender, transmission, usedfc
     global testName, testPassed, query
 
     query = '''
@@ -1011,7 +1021,7 @@ def verifyChimeric():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, transmission))
+         alleleState, gender, transmission, usedfc))
 
     return 0
 
@@ -1023,7 +1033,7 @@ def verifyChimeric():
 def verifyNotSpecified():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
-    global markerID, gender, transmission
+    global markerID, gender, transmission, usedfc
     global testName, testPassed, query
 
     query = '''
@@ -1051,7 +1061,7 @@ def verifyNotSpecified():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, transmission))
+         alleleState, gender, transmission, usedfc))
 
     return 0
 
@@ -1063,7 +1073,7 @@ def verifyNotSpecified():
 def verifyNotApplicable():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
-    global markerID, gender, transmission
+    global markerID, gender, transmission, usedfc
     global testName, testPassed, query
 
     query = '''
@@ -1091,7 +1101,7 @@ def verifyNotApplicable():
     fpLogTest.write(testDisplay % \
 	(testPassed, testName, lineNum, \
          mpID, alleleSymbol, markerID, alleleID, mutantID, \
-         alleleState, gender, transmission))
+         alleleState, gender, transmission, usedfc))
 
     return 0
 
