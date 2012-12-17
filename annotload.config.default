@@ -14,5 +14,4 @@ setenv ANNOTLOG			${LOGDIR}/htmp_annot.log
 setenv DELETEREFERENCE		${JNUMBER}
 setenv DELETEUSER		${CREATEDBY}
 setenv ANNOTOBSOLETE		0
-setenv ANNOTTRANSMISSION        1
 
