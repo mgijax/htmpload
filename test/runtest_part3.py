@@ -61,6 +61,8 @@
 #
 # GermlineOld: transmission = 'Germline' and Reference not in ('J:165965', 'J:175295')
 #
+# Used-FC: Allele contains Used-FC Reference
+#
 #  Inputs:
 #
 #      HTMP file ($HTMPUNIQ_INPUT_FILE)
@@ -1106,6 +1108,44 @@ def verifyNotApplicable():
     return 0
 
 #
+# Used-FC:
+#
+# Allele contains Used-FC Reference = see references above
+#
+def verifyUsedFC():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission, usedfc
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa
+	where g._Allele_key = aa._Allele_key
+	and exists (select 1 from VOC_Annot a, VOC_Evidence e, ACC_Accession r
+		where g._Genotype_key = a._Object_key
+		and a._AnnotType_key = 1002
+		and a._Annot_key = e._Annot_key
+		and e._Refs_key = r._Object_key
+		and r._MGIType_key = 1
+		and r.prefixPart = 'J:'
+		and r.accID = '%s')
+	and not exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Used-FC')
+	''' % (jnum)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) == 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	    (testPassed, 'missing Used-FC', '', '', '', '', '', '', '', '', '', ''))
+
+    return 0
+
+#
 #  MAIN
 #
 
@@ -1116,6 +1156,10 @@ if openFiles() != 0:
     sys.exit(1)
 
 if verifyGenotype() != 0:
+    closeFiles()
+    sys.exit(1)
+
+if verifyUsedFC() != 0:
     closeFiles()
     sys.exit(1)
 
