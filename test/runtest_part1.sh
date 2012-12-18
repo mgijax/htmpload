@@ -11,9 +11,7 @@ cd `dirname $0`
 
 # config files
 CONFIG=$1
-# ${HTMPLOAD}/bin/sangermpload.csh, ${HTMPLOAD}/bin/eurompload.sh, etc.
-HTMPLOADSH=$2
-ANNOTCONFIG=$3
+ANNOTCONFIG=$2
 
 #
 # Make sure the configuration file exists and source it.
@@ -45,11 +43,11 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "HTMP Test (${CONFIG})" | tee -a ${LOG}
-${HTMPLOADSH} ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
+${HTMPLOAD}/bin/htmpload.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call ${HTMPLOADSH} for ${CONFIG}" | tee -a ${LOG}
+    echo "Error: Call ${HTMPLOAD}/bin/htmpload.sh for ${CONFIG}" | tee -a ${LOG}
     exit 1
 fi
 
