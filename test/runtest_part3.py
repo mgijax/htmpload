@@ -1108,11 +1108,11 @@ def verifyNotApplicable():
     return 0
 
 #
-# Used-FC:
+# Used-FC1:
 #
-# Allele contains Used-FC Reference = see references above
+# Allele contains Genotype/MP Annotation to J: but Allele does not contain Used-FC reference
 #
-def verifyUsedFC():
+def verifyUsedFC1():
 
     global mutantID, mpID, alleleID, alleleState, alleleSymbol
     global markerID, gender, transmission, usedfc
@@ -1122,6 +1122,7 @@ def verifyUsedFC():
 	select g._Allele_key
 	from GXD_AlleleGenotype g, ALL_Allele aa
 	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
 	and exists (select 1 from VOC_Annot a, VOC_Evidence e, ACC_Accession r
 		where g._Genotype_key = a._Object_key
 		and a._AnnotType_key = 1002
@@ -1132,8 +1133,9 @@ def verifyUsedFC():
 		and r.accID = '%s')
 	and not exists (select 1 from MGI_Reference_Allele_View v
 		where aa._Allele_key = v._Object_key
-		and v.assocType = 'Used-FC')
-	''' % (jnum)
+		and v.assocType = 'Used-FC'
+		and v.jnumID = '%s')
+	''' % (jnum, jnum)
 
     #print query
     results = db.sql(query, 'auto')
@@ -1141,7 +1143,47 @@ def verifyUsedFC():
         testPassed = 'pass'
 
     fpLogTest.write(testDisplay % \
-	    (testPassed, 'missing Used-FC', '', '', '', '', '', '', '', '', '', ''))
+	    (testPassed, 'all MP Annotations contain a Used-FC reference', '', '', '', '', '', '', '', '', '', ''))
+
+    return 0
+
+#
+# Used-FC2:
+#
+# Allele that contains Used-FC reference to J: also contains Genotype/MP Annotation
+#
+def verifyUsedFC2():
+
+    global mutantID, mpID, alleleID, alleleState, alleleSymbol
+    global markerID, gender, transmission, usedfc
+    global testName, testPassed, query
+
+    query = '''
+	select g._Allele_key
+	from GXD_AlleleGenotype g, ALL_Allele aa
+	where g._Allele_key = aa._Allele_key
+	and aa.isWildType = 0
+	and exists (select 1 from VOC_Annot a, VOC_Evidence e, ACC_Accession r
+		where g._Genotype_key = a._Object_key
+		and a._AnnotType_key = 1002
+		and a._Annot_key = e._Annot_key
+		and e._Refs_key = r._Object_key
+		and r._MGIType_key = 1
+		and r.prefixPart = 'J:'
+		and r.accID = '%s')
+	and exists (select 1 from MGI_Reference_Allele_View v
+		where aa._Allele_key = v._Object_key
+		and v.assocType = 'Used-FC'
+		and v.jnumID = '%s')
+	''' % (jnum, jnum)
+
+    #print query
+    results = db.sql(query, 'auto')
+    if len(results) > 0:
+        testPassed = 'pass'
+
+    fpLogTest.write(testDisplay % \
+	    (testPassed, 'all Used-FC contain at least one MP annotation', '', '', '', '', '', '', '', '', '', ''))
 
     return 0
 
@@ -1159,7 +1201,11 @@ if verifyGenotype() != 0:
     closeFiles()
     sys.exit(1)
 
-if verifyUsedFC() != 0:
+if verifyUsedFC1() != 0:
+    closeFiles()
+    sys.exit(1)
+
+if verifyUsedFC2() != 0:
     closeFiles()
     sys.exit(1)
 
