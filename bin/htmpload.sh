@@ -125,10 +125,12 @@ fi
 # If the percentage is < 90%, then abort the load
 # If the percentage is >= 90%, then continue the load
 #
+# for testing:
+#oldcount=4000
+#newcount=2000
+#
 oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
 newcount=`/usr/bin/wc -l < ${INPUTFILE}`
-oldcount=4000
-newcount=2000
 thediff=`expr $newcount / $oldcount \* 100`
 if [ ${thediff} -lt 90 ]
 then
