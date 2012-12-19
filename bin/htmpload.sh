@@ -142,6 +142,10 @@ then
     exit 0
 fi
 
+#
+# input file is *not* in HTMP format and needs additional formatting
+#
+
 if [ ${FILEDIR} = ${DATALOADSOUTPUT}/mgi/htmpload/europhenompload ]
 then
 
@@ -186,7 +190,9 @@ else
 echo 'SUCCESSFUL:  Biomart equals HTMP file' >> ${LOG_CUR}
 fi
 
-# default
+#
+# input file *is* in HTMP format and *does not* require additional formatting
+#
 else
 
 #
