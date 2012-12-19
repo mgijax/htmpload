@@ -20,6 +20,8 @@
 #  Outputs:
 #
 #      - Log file (${LOG_DIAG})
+#      - Log file (${LOG_PROC})
+#      - Log file (${LOG_CUR})
 #
 #  Exit Codes:
 #
@@ -34,7 +36,7 @@
 #
 #      1) Source the configuration file to establish the environment.
 #      2) Establish the log file.
-#      3) Copy the Europhenome input file to the Europhenome/Input directory
+#      3) Copy the HTMP input file to the HTMP/Input directory
 #      4) Call makeGenotype.sh to make a Genotype-input file for the genotypeload & run genotypeload-er
 #      5) Call makeAnnotation.sh to make a Annotation-input file for the annotload & run annotload-er
 #
@@ -143,7 +145,7 @@ then
 fi
 
 #
-# input file is *not* in HTMP format and needs additional formatting
+# euro input file is *not* in HTMP format and needs additional formatting
 #
 
 if [ ${FILEDIR} = ${DATALOADSOUTPUT}/mgi/htmpload/europhenompload ]
