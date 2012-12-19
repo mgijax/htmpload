@@ -120,6 +120,25 @@ then
     fi
 fi
 
+#
+# Verify the percentage between the old input file and the new input file
+# If the percentage is < 90%, then abort the load
+# If the percentage is >= 90%, then continue the load
+#
+oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
+newcount=`/usr/bin/wc -l < ${INPUTFILE}`
+thediff=`expr $newcount / $oldcount \* 100`
+if [ ${thediff} -le 90 ]
+then
+    echo "\n**** WARNING ****" >> ${LOG}
+    echo "${INPUTFILE} is less than 90% of ${HTMP_INPUT_FILE}" >> ${LOG}
+    echo "Sanity error detected in HTMP file" | tee -a ${LOG}
+    STAT=0
+    checkStatus ${STAT} 'Verifying percentage between old & new input files'
+    shutDown
+    exit 0
+fi
+
 if [ ${FILEDIR} = ${DATALOADSOUTPUT}/mgi/htmpload/europhenompload ]
 then
 
