@@ -112,9 +112,9 @@ if [ -f ${LASTRUN_FILE} ]
 then
     if /usr/local/bin/test ${LASTRUN_FILE} -nt ${INPUTFILE}
     then
-        echo "Input file has not been updated - skipping load" | tee -a ${LOG_CUR}
+        echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
         STAT=0
-        checkStatus ${STAT} 'FAIL: Verify date stamp of new input file'
+        checkStatus ${STAT} 'LOAD SKIPPED: Verifying date stamp of new input file'
         shutDown
         exit 0
     fi
@@ -127,14 +127,15 @@ fi
 #
 oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
 newcount=`/usr/bin/wc -l < ${INPUTFILE}`
+oldcount=4000
+newcount=2000
 thediff=`expr $newcount / $oldcount \* 100`
 if [ ${thediff} -lt 90 ]
 then
-    echo "\n**** WARNING ****" >> ${LOG_CUR}
-    echo "${INPUTFILE} is less than 90% of ${HTMP_INPUT_FILE}" >> ${LOG_CUR}
-    echo "Sanity error detected in HTMP file" | tee -a ${LOG_CUR}
+    echo "\nLOAD SKIPPED: Verifying percentage between old & new input files" >> ${LOG_CUR}
+    echo "\n${INPUTFILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n" >> ${LOG_CUR}
     STAT=0
-    checkStatus ${STAT} 'FAIL: Verify percentage between old & new input files'
+    checkStatus ${STAT} 'LOAD SKIPPED: Verifying percentage between old & new input files'
     shutDown
     exit 0
 fi
