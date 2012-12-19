@@ -1,19 +1,19 @@
 #!/bin/sh
 #
-#  europhenompload.sh
+#  htmpload.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the entire Europhenome load process.
+#      This script is a wrapper around the entire HTMP load process.
 #
 #  Usage:
 #
-#      europhenompload.sh
+#      htmpload.sh
 #
 #  Env Vars:
 #
-#      See the configuration file (europhenompload.config)
+#      See the configuration file
 #
 #  Inputs:  None
 #
@@ -120,6 +120,9 @@ then
     fi
 fi
 
+if [ ${FILEDIR} = ${DATALOADSOUTPUT}/mgi/htmpload/europhenompload ]
+then
+
 #
 # copy input file into working directory
 # sort by column 5 (allele name)
@@ -159,6 +162,24 @@ shutDown
 exit 0
 else
 echo 'SUCCESSFUL:  Biomart equals HTMP file' >> ${LOG_CUR}
+fi
+
+# default
+else
+
+#
+# copy input file into working directory
+# sort by column 7 (allele name)
+# sort by column 6 (allele state)
+# sort by column 4 (mp id)
+#
+echo "coping input file..." >> ${LOG}
+date >> ${LOG}
+rm -rf ${HTMP_INPUT_FILE}
+sort -t"        " -k7,7 -k6,6 -k4,4 ${INPUTFILE} > ${HTMP_INPUT_FILE}
+STAT=$?
+checkStatus ${STAT} "copying input file completed"
+
 fi
 
 #
