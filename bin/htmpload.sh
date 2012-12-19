@@ -128,7 +128,7 @@ fi
 oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
 newcount=`/usr/bin/wc -l < ${INPUTFILE}`
 thediff=`expr $newcount / $oldcount \* 100`
-if [ ${thediff} -le 90 ]
+if [ ${thediff} -lt 90 ]
 then
     echo "\n**** WARNING ****" >> ${LOG}
     echo "${INPUTFILE} is less than 90% of ${HTMP_INPUT_FILE}" >> ${LOG}
