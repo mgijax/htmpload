@@ -384,8 +384,8 @@ def verifyGenotype():
 
     query2 = '''
 	select a.symbol as alleleSymbol, ma.accID as markerID, aa.accID as alleleID,
-		mcl.accID as mutantID, t.term as alleleState
-	from #allelepair ap, ALL_Allele a, ACC_Accession ma, ACC_Accession aa, ACC_Accession mcl, VOC_Term t
+		mcl.cellLine as mutantID, t.term as alleleState
+	from #allelepair ap, ALL_Allele a, ACC_Accession ma, ACC_Accession aa, ALL_CellLine mcl, VOC_Term t
 	where ap._Allele_key_1 = a._Allele_key
      	and ap._Marker_key = ma._Object_key
      	and ma._MGIType_key = 2
@@ -393,8 +393,7 @@ def verifyGenotype():
      	and ap._Allele_key_1 = aa._Object_key
      	and aa._MGIType_key = 11
      	and aa._LogicalDB_key = 1
-     	and ap._MutantCellLine_key_1 = mcl._Object_key
-     	and mcl._MGIType_key = 28
+     	and ap._MutantCellLine_key_1 = mcl._CellLine_key
 	and ap._PairState_key = t._Term_key
 	'''
 
@@ -432,12 +431,12 @@ def verifyAnnotHom():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1, ACC_Accession mcla2'
+        mclQuery1 = ',ALL_CellLine mcla1, ALL_CellLine mcla2'
 	mclQuery2 = '''
-	    and ap._MutantCellLine_key_1 = mcla1._Object_key 
-	    and mcla1.accID = '%s'
-	    and ap._MutantCellLine_key_2 = mcla2._Object_key 
-	    and mcla2.accID = '%s'
+	    and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+	    and mcla1.cellLine = '%s'
+	    and ap._MutantCellLine_key_2 = mcla2._CellLine_key 
+	    and mcla2.cellLine = '%s'
 	    ''' % (mutantID, mutantID)
     else:
 	mclQuery1 = ''
@@ -505,10 +504,10 @@ def verifyAnnotHet():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-	mclQuery1 = ',ACC_Accession mcla1'
+	mclQuery1 = ',ALL_CellLine mcla1'
 	mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
 	mclQuery1 = ''
@@ -575,10 +574,10 @@ def verifyAnnotHemi():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1'
+        mclQuery1 = ',ALL_CellLine mcla1'
         mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
         mclQuery1 = ''
@@ -643,10 +642,10 @@ def verifyAnnotIndet():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1'
+        mclQuery1 = ',ALL_CellLine mcla1'
 	mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
 	mclQuery1 = ''
@@ -710,10 +709,10 @@ def verifySexNA():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1'
+        mclQuery1 = ',ALL_CellLine mcla1'
 	mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
 	mclQuery1 = ''
@@ -775,10 +774,10 @@ def verifySexF():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1'
+        mclQuery1 = ',ALL_CellLine mcla1'
 	mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
 	mclQuery1 = ''
@@ -840,10 +839,10 @@ def verifySexM():
     global testName, testPassed, query
 
     if len(mutantID) > 0:
-        mclQuery1 = ',ACC_Accession mcla1'
+        mclQuery1 = ',ALL_CellLine mcla1'
 	mclQuery2 = '''
-		and ap._MutantCellLine_key_1 = mcla1._Object_key 
-		and mcla1.accID = '%s'
+		and ap._MutantCellLine_key_1 = mcla1._CellLine_key 
+		and mcla1.cellLine = '%s'
 		''' % (mutantID)
     else:
 	mclQuery1 = ''
