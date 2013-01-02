@@ -131,6 +131,8 @@ fi
 #oldcount=4000
 #newcount=2000
 #
+if [ -f ${HTMP_INPUT_FILE} ]
+then
 oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
 newcount=`/usr/bin/wc -l < ${INPUTFILE}`
 thediff=`expr $newcount / $oldcount \* 100`
@@ -142,6 +144,7 @@ then
     checkStatus ${STAT} 'LOAD SKIPPED: Verifying percentage between old & new input files'
     shutDown
     exit 0
+fi
 fi
 
 #
