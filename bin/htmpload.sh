@@ -108,17 +108,20 @@ date >> ${LOG}
 # the last time the load was run for this input file. If this file exists
 # and is more recent than the input file, the load does not need to be run.
 #
-LASTRUN_FILE=${INPUTDIR}/lastrun
 
 if [ -f ${LASTRUN_FILE} ]
 then
-    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${INPUTFILE}
-    then
-        echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
-        STAT=0
-        checkStatus ${STAT} 'LOAD SKIPPED: Verifying date stamp of new input file'
-        shutDown
-        exit 0
+    if [ -z "${BIOMART_INPUT_FILE}" ]; then
+       CHECKFILE=${INPUTFILE}
+    else
+       CHECKFILE=${BIOMART_INPUT_FILE}
+    fi
+    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${CHECKFILE}; then
+       echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
+       STAT=0
+       checkStatus ${STAT} 'LOAD SKIPPED: Verifying date stamp of new input file'
+       shutDown
+       exit 0
     fi
 fi
 
