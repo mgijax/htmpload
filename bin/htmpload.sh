@@ -109,21 +109,21 @@ date >> ${LOG}
 # and is more recent than the input file, the load does not need to be run.
 #
 
-if [ -f ${LASTRUN_FILE} ]
-then
-    if [ -z "${BIOMART_INPUT_FILE}" ]; then
-       CHECKFILE=${INPUTFILE}
-    else
-       CHECKFILE=${BIOMART_INPUT_FILE}
-    fi
-    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${CHECKFILE}; then
-       echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
-       STAT=0
-       checkStatus ${STAT} 'LOAD SKIPPED: Verifying date stamp of new input file'
-       shutDown
-       exit 0
-    fi
-fi
+#if [ -f ${LASTRUN_FILE} ]
+#then
+#    if [ -z "${BIOMART_INPUT_FILE}" ]; then
+#       CHECKFILE=${INPUTFILE}
+#    else
+#       CHECKFILE=${BIOMART_INPUT_FILE}
+#    fi
+#    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${CHECKFILE}; then
+#       echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
+#       STAT=0
+#       checkStatus ${STAT} 'LOAD SKIPPED: Verifying date stamp of new input file'
+#       shutDown
+#       exit 0
+#    fi
+#fi
 
 #
 # Verify the percentage between the old input file and the new input file
