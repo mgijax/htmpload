@@ -112,10 +112,10 @@ LASTRUN_FILE=${INPUTDIR}/lastrun
 
 if [ -f ${LASTRUN_FILE} ]
 then
-    if [ "${BIOMART_INPUT_FILE}" = "" ]; then
+    if [ "${SOURCE_INPUT_FILE}" = "" ]; then
        CHECKFILE=${INPUTFILE}
     else
-       CHECKFILE=${BIOMART_INPUT_FILE}
+       CHECKFILE=${SOURCE_INPUT_FILE}
     fi
     if /usr/local/bin/test ${LASTRUN_FILE} -nt ${CHECKFILE}; then
        echo "\nLOAD SKIPPED: Verifying date stamp of new input file" | tee a ${LOG_CUR}
@@ -166,8 +166,8 @@ then
 #
 echo "coping input file..." >> ${LOG}
 date >> ${LOG}
-rm -rf ${BIOMART_COPY_INPUT_FILE}
-sort -t"	" -k5,5 -k4,4 -k2,2 ${BIOMART_INPUT_FILE} > ${BIOMART_COPY_INPUT_FILE}
+rm -rf ${SOURCE_COPY_INPUT_FILE}
+sort -t"	" -k5,5 -k4,4 -k2,2 ${SOURCE_INPUT_FILE} > ${SOURCE_COPY_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "copying input file completed"
 
@@ -184,7 +184,7 @@ checkStatus ${STAT} "makeEuropheno.sh ${CONFIG}"
 #
 # Check counts; if Biomart file count = HTMP file count, then OK
 #
-htmpBiomart=`/usr/bin/wc -l < ${BIOMART_COPY_INPUT_FILE}`
+htmpBiomart=`/usr/bin/wc -l < ${SOURCE_COPY_INPUT_FILE}`
 echo '\nBioMart file:' >> ${LOG_CUR}
 echo '   ' ${htmpBiomart} >> ${LOG_CUR}
 htmpMGD=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`

@@ -1,3 +1,13 @@
+TAG: htmpload-tr11674-1
+DATE: 08/05/2014
+STAFF: sc
+CHANGES: 
+1) updated configuration variable string 'BIOMART_*' to 'SOURCE_*' to be more
+    generic
+a) europhenompload.config.default
+b) makeEuropheno.py
+c) htmpload.py
+
 TAG: htmpload-tr11674-BP
 DATE: 08/05/2014
 STAFF: sc
