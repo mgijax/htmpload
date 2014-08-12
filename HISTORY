@@ -1,3 +1,10 @@
+TAG: htmpload-tr11674-2
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US4
+1) Added makeIMPC.sh, makeIMPC.py
+2) added impcmpload.config.default
+
 TAG: htmpload-tr11674-1
 DATE: 08/05/2014
 STAFF: sc
