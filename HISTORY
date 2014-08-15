@@ -1,3 +1,14 @@
+TAG: htmpload-tr11674-4
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+1) removed europhenome config and index file
+2) makeSanger.py - tweaked, added some logs and moved gender checking from makeGenotype.py
+3) makeGenotype.py - factored out Sanger stuff, set up to use intermediate file
+   created by preprocessor
+4) runReports.sh - updated config settings used and references to 'Biomart'
+Note: have not yet updated anything in the test directory
+
 TAG: htmpload-tr11674-3
 DATE: 08/12/2014
 STAFF: sc

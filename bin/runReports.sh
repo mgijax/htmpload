@@ -62,9 +62,9 @@ fi
 #
 LOG=${LOG_DIAG}
 
-htmpBiomart=`/usr/bin/wc -l < ${INPUTFILE}`
+htmpSource=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
 echo '\nBioMart file (contains all rows):' >> ${LOG_CUR}
-echo '   ' ${htmpBiomart} >> ${LOG_CUR}
+echo '   ' ${htmpSource} >> ${LOG_CUR}
 
 htmpSkip=`/usr/bin/wc -l < ${HTMPSKIP_INPUT_FILE}`
 echo 'BioMart file (skipped):' >> ${LOG_CUR}
@@ -83,14 +83,14 @@ echo 'BioMart file (contains MP-annotated rows only):' >> ${LOG_CUR}
 echo '== ' ${htmpMGD} >> ${LOG_CUR}
 
 #
-# $htmpSkip + $htmpDup + $htmpError + $htmpMGD ==> htmpBiomart
+# $htmpSkip + $htmpDup + $htmpError + $htmpMGD ==> htmpSource
 #
 totalHTMP=`expr $htmpSkip + $htmpDup + $htmpError + $htmpMGD`
-if [ $totalHTMP -ne $htmpBiomart ]
+if [ $totalHTMP -ne $htmpSource ]
 then
-echo 'ERROR:  Biomart does **not** equal skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
+echo 'ERROR:  Source does **not** equal skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
 else
-echo 'SUCCESSFUL:  Biomart equals skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
+echo 'SUCCESSFUL:  Source equals skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
 fi
 
 #

@@ -69,6 +69,7 @@ sangerFile = None
 htmpFile = None
 logDiagFile = None
 logCurFile = None
+htmpErrorFile = None
 
 # file pointers
 # Inputs
@@ -77,6 +78,7 @@ fpSanger = None
 fpHTMP = None
 fpLogDiag = None
 fpLogCur = None
+fpHTMPError = None
 
 errorDisplay = '''
 
@@ -96,15 +98,16 @@ field: %s
 #
 def initialize():
     global sangerFile, htmpFile
-    global logDiagFile, logCurFile
+    global logDiagFile, logCurFile, htmpErrorFile
 
     sangerFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
-
+    htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     print 'sangerFile: %s' % sangerFile
     print 'htmpFile: %s' % htmpFile
+    print 'htmpErrorFile: %s' % htmpErrorFile
     rc = 0
 
     #
@@ -131,7 +134,7 @@ def initialize():
 
 def openFiles():
     global fpSanger, fpHTMP
-    global fpLogDiag, fpLogCur
+    global fpLogDiag, fpLogCur, fpHTMPError
 
     #
     # Open the Sanger file
@@ -169,6 +172,15 @@ def openFiles():
         print 'Cannot open file: ' + logCurFile
         return 1
 
+    #
+    # Open the Error file
+    #
+    try:
+        fpHTMPError = open(htmpErrorFile, 'a+')
+    except:
+        print 'Cannot open file: ' + htmpErrorFile
+        return 1
+
     return 0
 
 
@@ -192,6 +204,9 @@ def closeFiles():
     if fpLogCur:
         fpLogCur.close()
 
+    if fpHTMPError:
+        fpHTMPError.close()
+
     return 0
 
 
@@ -210,14 +225,20 @@ def createHTMPfile():
     lineNum = 0
     for line in fpSanger.readlines():
 	lineNum += 1
- 
-	tokens = line[:-1].split('\t')
+ 	error = 0
 
+	tokens = line[:-1].split('\t')
+	print line
 	phenotypingCenter = tokens[0]
+	print phenotypingCenter
         annotationCenter = tokens[1]
-        mutantID = mutantID2 = tokens[2]
+	print annotationCenter
+        mutantID = tokens[2]
+	print mutantID
+	mutantID2 =  mutantID
         mpID = tokens[3]
-        alleleID = alleleID2 = tokens[4]
+        alleleID = tokens[4]
+	alleleID2 = alleleID
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
@@ -235,6 +256,18 @@ def createHTMPfile():
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
+
+        if gender not in ('Male', 'Female', 'Both', ''):
+            logit = errorDisplay % (gender, lineNum, '11', line)
+            fpLogDiag.write(logit)
+            fpLogCur.write(logit)
+            error = 1
+
+	
+        # if error, continue to next line
+        if error:
+            fpHTMPError.write(line)
+            continue
 
         #
 	# format allele state
@@ -259,6 +292,7 @@ def createHTMPfile():
                      evidenceCode + '\t' + \
                      strainName + '\t' + \
                      gender + '\n'
+	print line
 
 	fpHTMP.write(line)
     return 0

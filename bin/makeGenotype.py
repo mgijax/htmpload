@@ -148,7 +148,6 @@ fpGenotype = None
 genotypeLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
 
 # defaults
-alleleStateDefault = 'Indeterminate'
 conditional = 'no'
 existsAs = 'Mouse Line'
 compound = 'Not Applicable'
@@ -418,7 +417,6 @@ def getGenotypes():
         and a._MGIType_key = 12
         and a._LogicalDB_key = 1
         and a.preferred = 1
-        and g._Strain_key = %s
 	and g.isConditional = 0
         and g._Genotype_key = ap._Genotype_key
         and g._Genotype_key = app._Genotype_key
@@ -428,7 +426,9 @@ def getGenotypes():
 	and u1.login = '%s'
         and g._ModifiedBy_key = u2._User_key
 	and u2.login = '%s'
-	''' % (strainKey, createdBy, createdBy), None)
+	''' % (createdBy, createdBy), None)
+        #/*and g._Strain_key = %s */
+	#''' % (strainKey, createdBy, createdBy), None)
 
     db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
 
@@ -446,14 +446,16 @@ def getGenotypes():
 	phenotypingCenter = tokens[0]
 	annotationCenter = tokens[1]
 
-	mutantID = mutantID2 = tokens[2]
+	mutantID = tokens[2]
+	mutantID2 = mutantID
 	mpID = tokens[3]
-        alleleID = alleleID2 = tokens[4]
+        alleleID = tokens[4]
+	alleleID2 = alleleID
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
+	strainName= tokens[9]
         gender = tokens[10]
-	strainName= tokens[11]
 
 	# skip
 	if alleleSymbol.find('not yet available') >= 0:
@@ -464,20 +466,6 @@ def getGenotypes():
 	if mpID == '':
 	    fpHTMPSkip.write(line)
 	    continue
-
-	# centers
-
-        if phenotypingCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-
-        if annotationCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (annotationCenter, lineNum, '2', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
 
 	# marker
 
@@ -518,14 +506,6 @@ def getGenotypes():
             fpLogCur.write(logit)
             error = 1
 
-	# gender
-
-        if gender not in ('Male', 'Female', 'Both', ''):
-            logit = errorDisplay % (gender, lineNum, '11', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-	
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
 
@@ -599,9 +579,6 @@ def getGenotypes():
 	# Hom => Homozygous
 	# Het => Heterozygous
 	#
-
-	if alleleState == '':
-	    alleleState = alleleStateDefault
 
 	alleleState = alleleState.replace('Hom', 'Homozygous')
 	alleleState = alleleState.replace('Het', 'Heterozygous')
@@ -773,17 +750,20 @@ def getGenotypes():
 #
 #  MAIN
 #
-
+print 'initialize'
 if initialize() != 0:
     sys.exit(1)
 
+print 'open files'
 if openFiles() != 0:
     sys.exit(1)
 
+print 'get genotypes'
 if getGenotypes() != 0:
     closeFiles()
     sys.exit(1)
 
+print 'close files'
 closeFiles()
 sys.exit(0)
 
