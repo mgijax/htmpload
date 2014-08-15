@@ -1,0 +1,283 @@
+#!/usr/local/bin/python
+#
+#  makeSanger.py
+###########################################################################
+#
+#  Purpose:
+#
+#      This script will parse Sanger input file to
+#      create a High-Throughput MP input file
+#
+#  Usage:
+#
+#      makeSanger.py
+#
+#  Env Vars:
+#
+#	See the configuration file (sangermpload.config)
+
+#  Inputs:
+#
+#      Sanger input file (${SOURCE_COPY_INPUT_FILE})
+#
+#  Outputs:
+#
+#	High Throughput MP file ($HTMP_INPUT_FILE):
+#
+#       field 1: Phenotyping Center 
+#       field 2: Interpretation (Annotation) Center 
+#       field 3: ES Cell
+#       field 4: MP ID
+#       field 5: MGI Allele ID
+#       field 6: Allele State 
+#       field 7: Allele Symbol
+#       field 8: MGI Marker ID
+#       field 9: Evidence Code 
+#       field 10: Strain Name
+#       field 11: Gender 
+#
+#  Exit Codes:
+#
+#      0:  Successful completion
+#      1:  An exception occurred
+#
+#  Assumes:  Nothing
+#
+#  Implementation:
+#
+#      This script will perform following steps:
+#
+#      1) 
+#      2) 
+#      3) 
+#      4) 
+#
+#  Notes: 
+#
+#  08/15/2014	sc
+#	- TR11674
+#
+###########################################################################
+
+import sys 
+import os
+
+# Input 
+sangerFile = None
+
+# Outputs 
+htmpFile = None
+logDiagFile = None
+logCurFile = None
+
+# file pointers
+# Inputs
+fpSanger = None
+# Outputs
+fpHTMP = None
+fpLogDiag = None
+fpLogCur = None
+
+errorDisplay = '''
+
+***********
+error:%s
+line: %s
+field: %s
+%s
+'''
+
+#
+# Purpose: Initialization
+# Returns: 1 if file does not exist or is not readable, else 0
+# Assumes: Nothing
+# Effects: Nothing
+# Throws: Nothing
+#
+def initialize():
+    global sangerFile, htmpFile
+    global logDiagFile, logCurFile
+
+    sangerFile = os.getenv('SOURCE_COPY_INPUT_FILE')
+    htmpFile = os.getenv('HTMP_INPUT_FILE')
+    logDiagFile = os.getenv('LOG_DIAG')
+    logCurFile = os.getenv('LOG_CUR')
+
+    print 'sangerFile: %s' % sangerFile
+    print 'htmpFile: %s' % htmpFile
+    rc = 0
+
+    #
+    # Make sure the environment variables are set.
+    #
+    if not sangerFile:
+        print 'Environment variable not set: SOURCE_COPY_INPUT_FILE'
+        rc = 1
+
+    if not htmpFile:
+        print 'Environment variable not set: HTMP_INPUT_FILE'
+        rc = 1
+
+    return rc
+
+
+#
+# Purpose: Open files.
+# Returns: 1 if file does not exist or is not readable, else 0
+# Assumes: Nothing
+# Effects: Nothing
+# Throws: Nothing
+#
+
+def openFiles():
+    global fpSanger, fpHTMP
+    global fpLogDiag, fpLogCur
+
+    #
+    # Open the Sanger file
+    #
+    try:
+        fpSanger = open(sangerFile, 'r')
+    except:
+        print 'Cannot open file: ' + sangerFile
+        return 1
+
+    #
+    # Open the output file
+    #
+    try:
+	print 'htmpfile: %s' % htmpFile
+        fpHTMP = open(htmpFile, 'w')
+    except:
+        print 'Cannot open file: ' + htmpFile
+        return 1
+    #
+    # Open the Log Diag file.
+    #
+    try:
+        fpLogDiag = open(logDiagFile, 'a+')
+    except:
+        print 'Cannot open file: ' + logDiagFile
+        return 1
+
+    #
+    # Open the Log Cur file.
+    #
+    try:
+        fpLogCur = open(logCurFile, 'a+')
+    except:
+        print 'Cannot open file: ' + logCurFile
+        return 1
+
+    return 0
+
+
+#
+# Purpose: Close files.
+# Returns: 1 if file does not exist or is not readable, else 0
+# Assumes: Nothing
+# Effects: Nothing
+# Throws: Nothing
+#
+def closeFiles():
+    if fpSanger:
+        fpSanger.close()
+
+    if fpHTMP:
+        fpHTMP.close()
+
+    if fpLogDiag:
+        fpLogDiag.close()
+
+    if fpLogCur:
+        fpLogCur.close()
+
+    return 0
+
+
+#
+# Purpose: Read Sanger input file and re-format it to create a 
+#    High-Throughpug MP input file
+# Returns: 0
+# Assumes: input/output files exist and have been opened
+# Effects: writes to the file system
+# Throws: Nothing
+#
+def createHTMPfile():
+
+    # all Strains will use 'Not Specified'
+    strainName = 'Not Specified'
+    lineNum = 0
+    for line in fpSanger.readlines():
+	lineNum += 1
+ 
+	tokens = line[:-1].split('\t')
+
+	phenotypingCenter = tokens[0]
+        annotationCenter = tokens[1]
+        mutantID = mutantID2 = tokens[2]
+        mpID = tokens[3]
+        alleleID = alleleID2 = tokens[4]
+        alleleState = tokens[5]
+        alleleSymbol = tokens[6]
+        markerID = tokens[7]
+	evidenceCode = tokens[9]
+        gender = tokens[10]
+
+        if phenotypingCenter not in ['WTSI', 'Europhenome']:
+            logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
+            fpLogDiag.write(logit)
+            fpLogCur.write(logit)
+            error = 1
+
+        if annotationCenter not in ['WTSI', 'Europhenome']:
+            logit = errorDisplay % (annotationCenter, lineNum, '2', line)
+            fpLogDiag.write(logit)
+            fpLogCur.write(logit)
+            error = 1
+
+        #
+	# format allele state
+        # blank = Indeterminate
+        # Hom => Homozygous
+        # Het => Heterozygous
+        #
+
+        if alleleState == '':
+            alleleState = 'Indeterminate'
+	alleleState = alleleState.replace('Hom', 'Homozygous')
+        alleleState = alleleState.replace('Het', 'Heterozygous')
+
+        line = phenotypingCenter + '\t' + \
+                     annotationCenter + '\t' + \
+                     mutantID + '\t' + \
+                     mpID + '\t' + \
+                     alleleID + '\t' + \
+                     alleleState + '\t' + \
+                     alleleSymbol + '\t' + \
+                     markerID + '\t' + \
+                     evidenceCode + '\t' + \
+                     strainName + '\t' + \
+                     gender + '\n'
+
+	fpHTMP.write(line)
+    return 0
+
+#
+#  MAIN
+#
+
+print 'initialize'
+if initialize() != 0:
+    sys.exit(1)
+print 'openFiles'
+if openFiles() != 0:
+    sys.exit(1)
+print 'createHTMPfile'
+if createHTMPfile() != 0:
+    closeFiles()
+    sys.exit(1)
+
+closeFiles()
+sys.exit(0)
+
