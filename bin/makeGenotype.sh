@@ -9,7 +9,7 @@
 #
 #  Usage:
 #
-#      makeGenotype.sh
+#      makeGenotype.sh config_file
 #
 #  Env Vars:
 #
