@@ -14,20 +14,15 @@
 #
 #  Env Vars:
 #
-#      The following environment variables are set by the configuration
-#      file that is sourced by the wrapper script:
-#
-#	   IMPC_COPY_INPUT_FILE
-#	   IMITS2_COPY_INPUT_FILE
-#    	   HTMP_INPUT_FILE
-#
+#	See the configuration file (impcmpload.config)
+
 #  Inputs:
 #
-#      IMPC input file ($IMPC_COPY_INPUT_FILE)
+#      IMPC input file (${SOURCE_COPY_INPUT_FILE})
 #
 #	This is a json format file
 #
-#      IMITS2 input file ($IMITS2_COPY_INPUT_FILE)
+#      IMITS2 input file (${IMITS2_COPY_INPUT_FILE})
 #
 #	This file is fetched from the iMits2 biomart
 #
@@ -58,15 +53,15 @@
 #
 #      This script will perform following steps:
 #
-#      1) Initialize variables.
-#      2) Open files.
-#      3) Morph the Europhenome input file into a Hight-Throughput MP input file
-#      4) Close files.
+#      1) 
+#      2) 
+#      3) 
+#      4) 
 #
-#  Notes:  None
+#  Notes: 
 #
-#  10/29/2012	lec
-#	- TR10273
+#  08/12/2014	sc
+#	- TR11674
 #
 ###########################################################################
 
@@ -99,7 +94,7 @@ colonyToMCLDict = {}
 def initialize():
     global impcFile, imits2File, htmpFile
 
-    impcFile = os.getenv('IMPC_COPY_INPUT_FILE')
+    impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     imits2File = os.getenv('IMITS2_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     print 'impcFile: %s' % impcFile
@@ -111,7 +106,7 @@ def initialize():
     # Make sure the environment variables are set.
     #
     if not impcFile:
-        print 'Environment variable not set: IMPC_COPY_INPUT_FILE'
+        print 'Environment variable not set: SOURCE_COPY_INPUT_FILE'
         rc = 1
 
     if not imits2File:
@@ -155,7 +150,7 @@ def openFiles():
         return 1
 
     #
-    # Open the output file with genotype sequence #
+    # Open the output file 
     #
     try:
 	print 'htmpfile: %s' % htmpFile
@@ -215,9 +210,11 @@ def createHTMPfile():
     print 'creating json object'
     jFile = json.load(fpIMPC)
     print 'done creating json object'
+    epCt = 0
     for f in jFile['response']['docs']:
 	# exclude europhenome for now
 	if f['resource_name'] == 'EuroPhenome':
+	    epCt += 1
 	    continue
 	phenotypingCenter = f['phenotyping_center']
 	colonyID = f['colony_id']
@@ -257,6 +254,7 @@ def createHTMPfile():
                      gender + '\n'
 
 	fpHTMP.write(line)
+    print 'Europhenome count: %s' % epCt
     return 0
 
 #

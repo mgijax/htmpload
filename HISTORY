@@ -1,3 +1,21 @@
+TAG: htmpload-tr11674-3
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+1) makeEuropheno.sh/py - removed
+2) makeSanger.sh/py - added
+3) makeIMPC.sh - factor copy of main IMPC file out to htmpload.sh
+4) makeIMPC.py - comments and change IMPC_COPY_* to SOURCE_COPY_*
+    added epCt for skipping EuroPhenome Debug 
+5) makeGenotype.sh - added proper usage statement
+6) makeGenotype.py - updated commenting, removed commented out code
+    renamed biomartFile to htmpInputFile (file descriptor too) 
+    strainName from input file, 
+    Note: this is still throwing some errors and needs work, but wanted to 
+      get everything into CVS
+7) sangermpload.config.default, impcmpload.config.default - added PREPROCESSOR
+    renamed INPUTFILE 
+
 TAG: htmpload-tr11674-2
 DATE: 08/12/2014
 STAFF: sc

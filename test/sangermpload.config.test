@@ -113,7 +113,7 @@ MAIL_LOADNAME="Sanger-MP Load (TEST)"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
-MAIL_LOG_CUR="lec"
+MAIL_LOG_CUR="sc"
 
 export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
 

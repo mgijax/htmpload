@@ -38,13 +38,15 @@
 #      3) Establish the log file.
 #      4) Call makeHTMP.py to create the htmp load file.
 #
-#  Notes:  None
+#  Notes:  
+#  08/12/2014   sc
+#       - TR11674
 #
 ###########################################################################
 
 cd `dirname $0`
 
-CONFIG=$1
+CONFIG=${HTMPLOAD}/impcmpload.config
 
 #
 # Make sure the configuration file exists and source it.
@@ -84,18 +86,11 @@ LOG=${LOG}
 
 
 #
-# copy input files into working directory
+# copy imits2 input file into working directory
 #
-echo "copying IMPC input file..." >> ${LOG}
-date >> ${LOG}
-rm -rf ${SOURCE_COPY_INPUT_FILE}
-cp ${IMPC_INPUT_FILE} ${IMPC_COPY_INPUT_FILE}
-STAT=$?
-checkStatus ${STAT} "copying IMPC input file completed"
-
 echo "copying iMits2 input file..." >> ${LOG}
 date >> ${LOG}
-rm -rf ${SOURCE_COPY_INPUT_FILE}
+rm -rf ${IMITS2_COPY_INPUT_FILE}
 cp ${IMITS2_INPUT_FILE} ${IMITS2_COPY_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "copying iMits2 input file completed"
