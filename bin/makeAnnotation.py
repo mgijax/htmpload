@@ -34,17 +34,17 @@
 #      High Throughput MP file ($HTMPUNIQ_INPUT_FILE))
 #
 #       field 0: Unique Genotype Sequence Number
-#       field 1: Phenotyping Center (ex. 'WTSI')
-#       field 2: Annotation Center (ex. 'WTSI')
+#       field 1: Phenotyping Center 
+#       field 2: Annotation Center 
 #       field 3: ES Cell
 #       field 4: MP ID
 #       field 5: MGI Allele ID
-#       field 6: Allele State (ex. 'Hom', 'Het', 'Hemi', '')
+#       field 6: Allele State 
 #       field 7: Allele Symbol
 #       field 8: MGI Marker ID
-#       field 9: Evidence Code (ex. 'EXP')
+#       field 9: Evidence Code 
 #       field 10: Strain Name
-#       field 11: Gender ('Female', 'Male', 'Both')
+#       field 11: Gender 
 #
 #      Genotype file ($GENOTYPELOAD_OUTPUT)
 #
@@ -325,19 +325,6 @@ def getAnnotations():
 
     for line in fpHTMP.readlines():
 
-#       field 0: Unique Genotype Sequence Number
-#       field 1: Phenotyping Center (ex. 'WTSI')
-#       field 2: Annotation Center (ex. 'WTSI')
-#       field 3: ES Cell
-#       field 4: MP ID
-#       field 5: MGI Allele ID
-#       field 6: Allele State (ex. 'Hom', 'Het', 'Hemi')
-#       field 7: Allele Symbol
-#       field 8: MGI Marker ID
-#       field 9: Evidence Code (ex. 'EXP')
-#       field 10: Strain Name
-#       field 11: Gender ('Female', 'Male', 'Both')
-
 	error = 0
 	lineNum = lineNum + 1
 
@@ -351,20 +338,10 @@ def getAnnotations():
 	gender = tokens[11]
 
 	# skip any row that does not contain an MP annotation
+	# sc - can't happen for Sanger, but could happen for impc
+	# makeIMPC needs to check for blank attributes
 	if mpID == '':
 	    continue
-
-        if phenotypingCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-
-        if annotationCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (annotationCenter, lineNum, '2', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
 
 	# if genotype file does not exist
 	if not genotypeOrderDict.has_key(genotypeOrder):

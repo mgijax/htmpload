@@ -61,6 +61,7 @@
 
 import sys 
 import os
+import string
 
 # Input 
 sangerFile = None
@@ -70,6 +71,7 @@ htmpFile = None
 logDiagFile = None
 logCurFile = None
 htmpErrorFile = None
+htmpSkipFile = None
 
 # file pointers
 # Inputs
@@ -79,6 +81,7 @@ fpHTMP = None
 fpLogDiag = None
 fpLogCur = None
 fpHTMPError = None
+fpHTMPSkip = None
 
 errorDisplay = '''
 
@@ -98,13 +101,14 @@ field: %s
 #
 def initialize():
     global sangerFile, htmpFile
-    global logDiagFile, logCurFile, htmpErrorFile
+    global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
 
     sangerFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
+    htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
     print 'sangerFile: %s' % sangerFile
     print 'htmpFile: %s' % htmpFile
     print 'htmpErrorFile: %s' % htmpErrorFile
@@ -121,6 +125,14 @@ def initialize():
         print 'Environment variable not set: HTMP_INPUT_FILE'
         rc = 1
 
+    if not htmpErrorFile:
+        print 'Environment variable not set: HTMPERROR_INPUT_FILE'
+        rc = 1
+
+    if not htmpSkipFile:
+        print 'Environment variable not set: HTMPSKIP_INPUT_FILE'
+        rc = 1
+
     return rc
 
 
@@ -134,7 +146,7 @@ def initialize():
 
 def openFiles():
     global fpSanger, fpHTMP
-    global fpLogDiag, fpLogCur, fpHTMPError
+    global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
 
     #
     # Open the Sanger file
@@ -181,6 +193,15 @@ def openFiles():
         print 'Cannot open file: ' + htmpErrorFile
         return 1
 
+    #
+    # Open the Skip file
+    #
+    try:
+        fpHTMPSkip = open(htmpSkipFile, 'w')
+    except:
+        print 'Cannot open file: ' + htmpSkipFile
+        return 1
+
     return 0
 
 
@@ -207,6 +228,9 @@ def closeFiles():
     if fpHTMPError:
         fpHTMPError.close()
 
+    if fpHTMPSkip:
+        fpHTMPSkip.close()
+
     return 0
 
 
@@ -219,7 +243,6 @@ def closeFiles():
 # Throws: Nothing
 #
 def createHTMPfile():
-
     # all Strains will use 'Not Specified'
     strainName = 'Not Specified'
     lineNum = 0
@@ -228,13 +251,13 @@ def createHTMPfile():
  	error = 0
 
 	tokens = line[:-1].split('\t')
-	print line
+	print 'line %s: %s ' % (lineNum, line)
 	phenotypingCenter = tokens[0]
-	print phenotypingCenter
+	print 'phenotypingCenter ' + phenotypingCenter
         annotationCenter = tokens[1]
-	print annotationCenter
+	print 'annotationCenter ' + annotationCenter
         mutantID = tokens[2]
-	print mutantID
+	print 'mutantID: %s' % mutantID
 	mutantID2 =  mutantID
         mpID = tokens[3]
         alleleID = tokens[4]
@@ -242,8 +265,23 @@ def createHTMPfile():
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
-	evidenceCode = tokens[9]
+	evidenceCode = tokens[8]
         gender = tokens[10]
+	remaining = ''
+	if len(tokens) > 10:
+	    remaining = tokens[11:]
+	remaining = string.join(remaining, '\t')
+
+        # skip - checking allele symbol and mpID before checking the pheno
+	# and annot centers is required, so factored them out of makeGenotype
+        if alleleSymbol.find('not yet available') >= 0:
+            fpHTMPSkip.write(line)
+            continue
+
+        # skip if no MP annotation ID
+        if mpID == '':
+            fpHTMPSkip.write(line)
+            continue
 
         if phenotypingCenter not in ['WTSI', 'Europhenome']:
             logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
@@ -280,7 +318,7 @@ def createHTMPfile():
             alleleState = 'Indeterminate'
 	alleleState = alleleState.replace('Hom', 'Homozygous')
         alleleState = alleleState.replace('Het', 'Heterozygous')
-
+	alleleState = alleleState.replace('Hemi', 'Hemizygous')
         line = phenotypingCenter + '\t' + \
                      annotationCenter + '\t' + \
                      mutantID + '\t' + \
@@ -291,9 +329,11 @@ def createHTMPfile():
                      markerID + '\t' + \
                      evidenceCode + '\t' + \
                      strainName + '\t' + \
-                     gender + '\n'
-	print line
-
+                     gender 
+	if remaining != '':
+	    line = line + '\t' + remaining + '\n'
+	else:
+	    line = line + '\n'
 	fpHTMP.write(line)
     return 0
 

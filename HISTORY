@@ -1,3 +1,20 @@
+TAG: htmpload-tr11674-5
+DATE: 08/21/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+Test directory changes:
+1) removed all europhenome files
+2) removed several ./test files (see readme)
+3) updated remaining ./test files (see readme)
+4) htmpload.sh - fixed checking of file size
+5) bin/makeAnnotation.py - removed checking for  ['WTSI', 'Europhenome']
+   as this was factored out into the sanger preprocessor
+6) bin/makeIMPC.py - added logging to skip, error, cur, diag
+7) fixed Usage
+8) bin/makeSanger.py - added 'remaining' to report full input line, not just 
+   columns we are interested in. added logging to skip, error, cur, diag
+9) bin/makeSanger.sh - fixed usage
+ 
 TAG: htmpload-tr11674-4
 DATE: 08/12/2014
 STAFF: sc

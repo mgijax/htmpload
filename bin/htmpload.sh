@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 #
 #  htmpload.sh
 ###########################################################################
@@ -7,9 +7,7 @@
 #
 #      This script is a wrapper around the entire HTMP load process.
 #
-#  Usage:
-#
-#      htmpload.sh *load.config annotload.config
+Usage="Usage: htmpload.sh *load.config annotload.config"
 #
 #  Env Vars:
 #
@@ -47,6 +45,12 @@
 ###########################################################################
 
 cd `dirname $0`
+
+if [ $# -lt 2 ]
+then
+    echo ${Usage}
+    exit 1
+fi
 
 CONFIG=$1
 ANNOTCONFIG=$2
@@ -134,22 +138,23 @@ fi
 #oldcount=4000
 #newcount=2000
 #
-#echo "SOURCE_INPUT_FILE: ${SOURCE_INPUT_FILE}"
-#if [ -f ${HTMP_INPUT_FILE} ]
-#then
-#oldcount=`/usr/bin/wc -l < ${HTMP_INPUT_FILE}`
-#newcount=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
-#thediff=`expr $newcount / $oldcount \* 100`
-#if [ ${thediff} -lt 90 ]
-    #then
-    #    echo "\nLOAD SKIPPED: " >> ${LOG_CUR}
-    #    echo "${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n" >> ${LOG_CUR}
-    #    STAT=0
-    #    checkStatus ${STAT} "LOAD SKIPPED: ${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n"
-    #    shutDown
-    #    exit 0
-    #fi
-#fi
+echo "Checking old vs new filesize: old: ${SOURCE_COPY_INPUT_FILE} new: ${SOURCE_INPUT_FILE}"
+if [ -f ${SOURCE_COPY_INPUT_FILE} ]
+then
+    oldcount=`/usr/bin/wc -l < ${SOURCE_COPY_INPUT_FILE}`
+    newcount=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
+    thediff=`expr $newcount / $oldcount \* 100`
+    echo "oldcount: ${oldcount} newcount: ${newcount} thediff: ${thediff}"
+    if [ ${thediff} -lt 90 ]
+	then
+	    echo "\nLOAD SKIPPED: " >> ${LOG_CUR}
+	    echo "${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n" >> ${LOG_CUR}
+	    STAT=0
+	    checkStatus ${STAT} "LOAD SKIPPED: ${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n"
+	    shutDown
+	    exit 0
+    fi
+fi
 
 echo "copying source input file..." >> ${LOG}
 date >> ${LOG}
@@ -160,7 +165,8 @@ checkStatus ${STAT} "copying IMPC input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-${PREPROCESSOR}
+echo "PREPROCESSOR: ${PREPROCESSOR}" | tee -a  ${LOG}
+${PREPROCESSOR} ${CONFIG} 
 STAT=$?
 checkStatus ${STAT} "Running ${PREPROCESSOR}"
 
@@ -170,7 +176,7 @@ checkStatus ${STAT} "Running ${PREPROCESSOR}"
 # sort by column 6 (allele state)
 # sort by column 4 (mp id)
 #
-echo "sorting pre-processed file..." >> ${LOG}
+echo "sorting pre-processed file ${HTMP_INPUT_FILE} ..." >> ${LOG}
 date >> ${LOG}
 sort -o ${HTMP_INPUT_FILE} -t"        " -k7,7 -k6,6 -k4,4 ${HTMP_INPUT_FILE}
 STAT=$?

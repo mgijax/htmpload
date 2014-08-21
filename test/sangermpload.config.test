@@ -43,8 +43,17 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 
 # input file from the BioMart
 #
-INPUTFILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
+SOURCE_INPUT_FILE=${HTMPLOAD}/test/mgi_sangermpload_test.txt
+SOURCE_COPY_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
 HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_sanger.txt
+
+export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE HTMP_INPUT_FILE
+
+#
+# Sanger pre-processor script
+PREPROCESSOR=${HTMPLOAD}/bin/makeSanger.sh
+
+export PREPROCESSOR
 
 # input file that contains data that was skipped
 #
@@ -60,17 +69,15 @@ HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_sangerload_dup.txt
 
 # input file that contains a unique genotype # (1 thru ...)
 #
-HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangermpload_test.txt
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_sangerload_test.txt
 
 # Genotype & Annotation input file
 #
 GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
 ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
-OMIM_INPUT_FILE=${INPUTDIR}/mgi_omimload.txt
 
-export HTMP_INPUT_FILE INPUTFILE
-export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPUNIQ_INPUT_FILE
-export GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE OMIM_INPUT_FILE
+export HTMPSKIP_INPUT_FILE HTMPERROR_INPUT_FILE HTMPDUP_INPUT_FILE 
+export HTMPUNIQ_INPUT_FILE GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE
 
 # Log files
 #
@@ -96,7 +103,7 @@ GENOTYPELOAD_MODE=load
 # new genotype file (output from genotypeload)
 GENOTYPELOAD_OUTPUT=${INPUTDIR}/mgi_genotypeload_new.txt
 
-export GENOTYPELOAD_STANDALONE GENOTYPELOAD_CACHE_ADMIN GENOTYPELOAD_MODE GENOTYPELOAD_OUTPUT
+export GENOTYPELOAD_STANDALONE GENOTYPELOAD_MODE GENOTYPELOAD_OUTPUT
 
 ###########################################################################
 #
@@ -113,8 +120,7 @@ MAIL_LOADNAME="Sanger-MP Load (TEST)"
 
 #  Recipient list for mailing the log files (comma-separated)
 #MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
-MAIL_LOG_CUR="sc"
-
+MAIL_LOG_CUR=sc
 export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
 
 INSTALLDIR=${HTMPLOAD}

@@ -8,13 +8,11 @@
 #      This script is a wrapper around the process that creates the 
 #	IMPC HTMP file
 #
-#  Usage:
-#
-#      makeIMPC.sh
+Usage="Usage: makeIMPC.sh config"
 #
 #  Env Vars:
 #
-#      See the configuration file (impcload.config)
+#      See the configuration file 
 #
 #  Inputs:  None
 #
@@ -46,7 +44,13 @@
 
 cd `dirname $0`
 
-CONFIG=${HTMPLOAD}/impcmpload.config
+if [ $# -lt 1 ]
+then
+    echo ${Usage}
+    exit 1
+fi
+
+CONFIG=$1
 
 #
 # Make sure the configuration file exists and source it.

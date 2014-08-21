@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 #
 #  makeSanger.sh
 ###########################################################################
@@ -8,13 +8,11 @@
 #      This script is a wrapper around the process that creates the 
 #	Sanger HTMP file
 #
-#  Usage:
-#
-#      makeSanger.sh
+Usage="Usage: makeSanger.sh config"
 #
 #  Env Vars:
 #
-#      See the configuration file (sangermpload.config)
+#      See the configuration file 
 #
 #  Inputs: None
 #
@@ -47,7 +45,13 @@
 
 cd `dirname $0`
 
-CONFIG=${HTMPLOAD}/sangermpload.config
+if [ $# -lt 1 ]
+then
+    echo ${Usage}
+    exit 1
+fi
+
+CONFIG=$1
 
 #
 # Make sure the configuration file exists and source it.
@@ -92,7 +96,7 @@ echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create the Sanger HTMP input file (makeSanger.py)" | tee -a ${LOG}
 
-./makeSanger.py #2>&1 >> ${LOG}
+${HTMPLOAD}/bin/makeSanger.py #2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

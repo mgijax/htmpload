@@ -28,7 +28,6 @@
 #    	   LOG_DIAG
 #    	   LOG_CUR
 #    	   HTMP_INPUT_FILE
-#    	   HTMPSKIP_INPUT_FILE
 #    	   HTMPDUP_INPUT_FILE
 #    	   HTMPERROR_INPUT_FILE
 #    	   HTMPUNIQ_INPUT_FILE
@@ -54,9 +53,6 @@
 #
 #  Outputs:
 #
-#      input data that was skipped	
-#      HTMPSKIP_INPUT_FILE
-#	  field 1-11
 #
 #      input data that was merged (duplicates)
 #      HTMPDUP_INPUT_FILE
@@ -119,9 +115,6 @@ logCurFile = None
 # HTMP_INPUT_FILE
 htmpInputFile = None
 
-# HTMPSKIP_INPUT_FILE
-htmpSkipFile = None
-
 # HTMPDUP_INPUT_FILE
 htmpDupFile = None
 
@@ -138,7 +131,6 @@ genotypeFile = None
 fpLogDiag = None
 fpLogCur = None
 fpHTMPInput = None
-fpHTMPSkip = None
 fpHTMPDup = None
 fpHTMPError = None
 fpHTMP = None
@@ -182,13 +174,12 @@ genotypeOrderDict = {}
 #
 def initialize():
     global logDiagFile, logCurFile
-    global htmpInputFile, htmpSkipFile, htmpDupFile, htmpErrorFile, HTMPFile
+    global htmpInputFile, htmpDupFile, htmpErrorFile, HTMPFile
     global genotypeFile, createdBy, jnumber
 
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
     htmpInputFile = os.getenv('HTMP_INPUT_FILE')
-    htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
     htmpDupFile = os.getenv('HTMPDUP_INPUT_FILE')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     HTMPFile = os.getenv('HTMPUNIQ_INPUT_FILE')
@@ -217,13 +208,6 @@ def initialize():
     #
     if not htmpInputFile:
         print 'Environment variable not set: INPUTDIR/HTMP_INPUT_FILE'
-        rc = 1
-
-    #
-    # Make sure the environment variables are set.
-    #
-    if not htmpSkipFile:
-        print 'Environment variable not set: HTMPSKIP_INPUT_FILE'
         rc = 1
 
     #
@@ -268,7 +252,7 @@ def initialize():
 #
 def openFiles():
     global fpLogDiag, fpLogCur
-    global fpHTMPInput, fpHTMPSkip, fpHTMPDup, fpHTMPError, fpHTMP
+    global fpHTMPInput, fpHTMPDup, fpHTMPError, fpHTMP
     global fpGenotype
 
     #
@@ -299,15 +283,6 @@ def openFiles():
         return 1
 
     #
-    # Open the Skip file
-    #
-    try:
-        fpHTMPSkip = open(htmpSkipFile, 'w')
-    except:
-        print 'Cannot open file: ' + htmpSkipFile
-        return 1
-
-    #
     # Open the Dup file
     #
     try:
@@ -320,7 +295,7 @@ def openFiles():
     # Open the Error file
     #
     try:
-        fpHTMPError = open(htmpErrorFile, 'w')
+        fpHTMPError = open(htmpErrorFile, 'a+')
     except:
         print 'Cannot open file: ' + htmpErrorFile
         return 1
@@ -363,9 +338,6 @@ def closeFiles():
 
     if fpHTMPInput:
         fpHTMPInput.close()
-
-    if fpHTMPSkip:
-        fpHTMPSkip.close()
 
     if fpHTMPDup:
         fpHTMPDup.close()
@@ -457,16 +429,6 @@ def getGenotypes():
 	strainName= tokens[9]
         gender = tokens[10]
 
-	# skip
-	if alleleSymbol.find('not yet available') >= 0:
-	    fpHTMPSkip.write(line)
-	    continue
-
-	# skip if no MP annotation ID
-	if mpID == '':
-	    fpHTMPSkip.write(line)
-	    continue
-
 	# marker
 
 	if len(markerID) > 0:
@@ -509,8 +471,8 @@ def getGenotypes():
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
 
-	# if allele is 'Het', then marker must have a wild-type allele
-        if alleleState == 'Het':
+	# if allele is 'Heterzygous', then marker must have a wild-type allele
+        if alleleState == 'Heterozygous':
 
 	    #
 	    # for heterzygous, allele 2 = the wild type allele 
@@ -575,17 +537,7 @@ def getGenotypes():
 		        print alleleID, alleleSymbol, r['symbol']
 
 	#
-	# blank = Indeterminate
-	# Hom => Homozygous
-	# Het => Heterozygous
-	#
-
-	alleleState = alleleState.replace('Hom', 'Homozygous')
-	alleleState = alleleState.replace('Het', 'Heterozygous')
-
-	#
 	# check alleleState
-	# Allele State ('Hom', 'Het', 'Hemi')
 	#
 
         if alleleState == 'Homozygous':
@@ -630,12 +582,12 @@ def getGenotypes():
 	    for r in results:
 		genotypeID = r['accID']
 
-	elif alleleState in ('Hemi', 'Indeterminate'):
+	elif alleleState in ('Hemizygous', 'Indeterminate'):
 
 	    alleleID2 = ''
 	    mutantID2 = ''
 
-	    if alleleState == 'Hemi':
+	    if alleleState == 'Hemizygous':
 	        querySQL = '''select chromosome 
 			from MRK_Marker 
 			where _Marker_key = %s''' % markerKey

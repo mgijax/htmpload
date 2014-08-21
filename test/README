@@ -1,0 +1,25 @@
+for HDP-2 the following were removed from this product because,
+according to Kim and Lori were used only to develop the scripts that remain
+runtest_part1A.sh
+runtest_part2.sh
+makeOMIMTest.sh
+makeGenotypeTest.sh
+makeAnnotationTest.sh
+mgi_omimload_test.txt
+mgi_genotypeload_test.txt
+mgi_annotload_test.txt
+omimload.config.test
+refresh.sh
+
+The following scripts/files have been updated to use any new config (rename)
+
+makeAnnotationTest.sh
+runtest_part3.sh
+runtest_part3.py
+mgi_sangermpload_test.txt
+sangermpload.config.test
+sanger.annotload.config.test
+
+~
+
+
