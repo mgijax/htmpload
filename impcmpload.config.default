@@ -41,6 +41,11 @@ export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR
 #
 ###########################################################################
 
+# Expected strain prefix/MGI ID|strain root/strain template
+STRAIN_PREFIX="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s, C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s, C57BL/6NCrl|MGI:2683688|C57BL/6N|%s-%s/%s, C57BL/6NJ|MGI:3056279|C57BL/6N|%s-%s/%s, C57BL/6NTac|MGI:2164831|C57BL/6N|%s-%s/%s"
+
+export STRAIN_PREFIX
+
 # input file from IMPC
 #
 SOURCE_INPUT_FILE=${DATADOWNLOADS}/www.ebi.ac.uk/impc.json

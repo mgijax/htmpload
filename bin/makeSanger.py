@@ -180,6 +180,7 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
+	fpLogCur.write('\n\nmakeSanger Log\n\n')
     except:
         print 'Cannot open file: ' + logCurFile
         return 1

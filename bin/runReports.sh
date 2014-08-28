@@ -63,23 +63,23 @@ fi
 LOG=${LOG_DIAG}
 
 htmpSource=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
-echo '\nBioMart file (contains all rows):' >> ${LOG_CUR}
+echo '\nSource file (contains all rows):' >> ${LOG_CUR}
 echo '   ' ${htmpSource} >> ${LOG_CUR}
 
 htmpSkip=`/usr/bin/wc -l < ${HTMPSKIP_INPUT_FILE}`
-echo 'BioMart file (skipped):' >> ${LOG_CUR}
+echo 'Source file (skipped):' >> ${LOG_CUR}
 echo '-- ' ${htmpSkip} >> ${LOG_CUR}
 
 htmpDup=`/usr/bin/wc -l < ${HTMPDUP_INPUT_FILE}`
-echo 'BioMart file (duplicates):' >> ${LOG_CUR}
+echo 'Source file (duplicates):' >> ${LOG_CUR}
 echo '-- ' ${htmpDup} >> ${LOG_CUR}
 
 htmpError=`/usr/bin/wc -l < ${HTMPERROR_INPUT_FILE}`
-echo 'BioMart file (errors):' >> ${LOG_CUR}
+echo 'Source file (errors):' >> ${LOG_CUR}
 echo '-- ' ${htmpError} >> ${LOG_CUR}
 
 htmpMGD=`/usr/bin/wc -l < ${HTMPUNIQ_INPUT_FILE}`
-echo 'BioMart file (contains MP-annotated rows only):' >> ${LOG_CUR}
+echo 'Source file (contains MP-annotated rows only):' >> ${LOG_CUR}
 echo '== ' ${htmpMGD} >> ${LOG_CUR}
 
 #

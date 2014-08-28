@@ -1,3 +1,17 @@
+TAG: htmpload-tr11674-6
+DATE: 08/28/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) runReports.sh - update to comments/echo only
+2) makeGenotype.py - log to curation log 'makeGenotype Log'
+        to differentiate from makeIMPC.py and makeSanger.py
+3) makeSanger.py - log to curation log 'makeSanger Log'
+4) makeIMPC.sh - comments only
+5) makeIMPC.py - changes for US5, plus refactoring into functions and 
+	catching up on comments and consistency
+6) impcmpload.config.default - added STRAIN_PREFIX with'|' delimited  values 
+    for Expected strain prefix|MGI ID|strain root/strain template
+
 TAG: htmpload-tr11674-5
 DATE: 08/21/2014
 STAFF: sc
