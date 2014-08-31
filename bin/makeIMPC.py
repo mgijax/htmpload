@@ -525,7 +525,7 @@ def parseJsonFile():
         time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpIMPC)
     #print 'done creating json object: %s' % \
-        time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+        #time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
     lineSet = set([])
     for f in jFile['response']['docs']:
