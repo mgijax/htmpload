@@ -28,20 +28,32 @@
 #
 #  Outputs:
 #
-#	High Throughput MP file ($HTMP_INPUT_FILE):
+#   htmpload format ($HTMP_INPUT_FILE):
 #
-#       field 1: Phenotyping Center 
-#       field 2: Interpretation (Annotation) Center 
-#       field 3: ES Cell
-#       field 4: MP ID
-#       field 5: MGI Allele ID
-#       field 6: Allele State 
-#       field 7: Allele Symbol
-#       field 8: MGI Marker ID
-#       field 9: Evidence Code 
-#       field 10: Strain Name
-#       field 11: Gender 
+#   1.  Phenotyping Center 
+#   2.  Interpretation (Annotation) Center 
+#   3.  ES Cell
+#   4.  MP ID
+#   5.  MGI Allele ID
+#   6.  Allele State 
+#   7.  Allele Symbol
+#   8.  MGI Marker ID
+#   9.  Evidence Code 
+#   10. Strain Name
+#   11. Gender 
 #
+#    IMPC strainload format file (${STRAIN_INPUT_FILE}
+#
+#    1. Strain Name
+#    2. MGI Allele ID 
+#    3. Strain Type
+#    4. Strain Species
+#    5. Standard 
+#    6. Created By
+#    7. Mutant ES Cell line of Origin note
+#    8. Colony ID Note
+#    9. Strain Attributes
+#    
 #  Exit Codes:
 #
 #      0:  Successful completion
@@ -76,6 +88,11 @@ import Set
 import db
 import time
 
+# strain constants
+species = 'laboratory mouse'
+standard = '1'
+createdBy = 'htmpload'
+
 # Input 
 impcFile = None
 impcFileInt = None
@@ -85,6 +102,7 @@ imits2File = None
 # Outputs 
 
 htmpFile = None
+strainFile = None
 logDiagFile = None
 logCurFile = None
 htmpErrorFile = None
@@ -97,6 +115,7 @@ fpIMPCintRead = None
 fpIMPCdup = None
 fpImits2 = None
 fpHTMP = None
+fpStrain = None
 fpLogDiag = None
 fpLogCur = None
 fpHTMPError = None
@@ -115,8 +134,11 @@ error:%s
 # {colonyId:'productionCtr|mutantID|markerID', ...}
 colonyToMCLDict = {}
 
-# colony ID to strain ID from the database
+# colony ID to strain Name from the database
 colonyToStrainNameDict = {}
+
+# strain name mapped to colony id; colony id can be empty
+strainNameToColonyIdDict = {}
 
 # allele MGI ID from the database mapped to attributes
 # {mgiID:Allele object, ...}
@@ -129,7 +151,7 @@ uniqStrainProcessingDict = {}
 procCtrToLabCodeDict = {}
 
 # Expected MGI ID to strain mapping from configuration
-strainPrefixMapping = os.environ['STRAIN_PREFIX']
+strainInfoMapping = os.environ['STRAIN_INFO']
 
 # MGI ID to  strain prefix mapping from configuration
 strainPrefixDict = {}
@@ -139,6 +161,12 @@ strainRootDict = {}
 
 # MGI ID to strain template for creating strain nomen from configuration
 strainTemplateDict = {}
+
+# MGI ID to strain type 
+strainTypeDict = {}
+
+# MGI ID to strain attributes
+strainAttribDict = {}
 
 #
 # convenience object for allele information 
@@ -161,25 +189,27 @@ class Allele:
 # Throws: Nothing
 #
 def initialize():
-    global impcFile, impcFileInt, impcFileDup, imits2File, htmpFile
+    global impcFile, impcFileInt, impcFileDup, imits2File, htmpFile, strainFile
     global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
-    global allelesInDbDict, procCtrToLabCodeDict, strainPrefixDict
-    global strainRootDict, strainTemplateDict, colonyToStrainNameDict
+    global allelesInDbDict, procCtrToLabCodeDict, strainInfoDict
+    global strainRootDict, strainTemplateDict, strainTypeDict
+    global colonyToStrainNameDict, strainNameToColonyIdDict
 
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     impcFileInt = '%s_int' % impcFile
     impcFileDup = '%s_dup' % impcFile
     imits2File = os.getenv('IMITS2_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
+    strainFile = os.getenv('STRAIN_INPUT_FILE')
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
 
-    print 'impcFile: %s' % impcFile
-    print 'impcFileInt: %s' % impcFileInt
-    print 'imits2File: %s' % imits2File
-    print 'htmpFile: %s' % htmpFile
+    #print 'impcFile: %s' % impcFile
+    #print 'impcFileInt: %s' % impcFileInt
+    #print 'imits2File: %s' % imits2File
+    #print 'htmpFile: %s' % htmpFile
     rc = 0
 
     #
@@ -251,24 +281,32 @@ def initialize():
 	procCtrToLabCodeDict[r['term']] = r['abbreviation']
 
     # load strain mappings from config
-    tokens = map(string.strip, string.split(strainPrefixMapping, ','))
+    tokens = map(string.strip, string.split(strainInfoMapping, ','))
     for t in tokens:
-	pStrain, pID, rStrain, rTemplate = string.split(t, '|')
-	print string.split(t, '|')
+	pStrain, pID, rStrain, rTemplate, pType, pAttr = string.split(t, '|')
 	strainPrefixDict[pID] = pStrain
 	strainRootDict[pID] = rStrain
 	strainTemplateDict[pID] = rTemplate
+	strainTypeDict[pID]  = pType
+	strainAttribDict[pID] = pAttr
 
     # load colony code to strain ID mappings
     # colony id note will never be longer than 255 char
+    # strain types 'coisogenic' and 'Not Specified'
     results = db.sql('''select s.strain, nc.note as colonyID
 	from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
-	where n._NoteType_key = 1012
+	where s._StrainType_key in (3410530, 3410535)
+	and s._Strain_key *= n._Object_key
+	and n._NoteType_key = 1012
 	and n._MGIType_key = 10
-	and n._Note_key = nc._Note_key
-	and n._Object_key = s._Strain_key ''', 'auto')
+	and n._Note_key *= nc._Note_key ''', 'auto')
     for r in results:
-	colonyToStrainNameDict[r['colonyID']] = r['strain']
+	cID =  r['colonyID']
+	if cID == None:
+	    cID = ''
+	if cID != '':
+	    colonyToStrainNameDict[cID] = r['strain']
+	strainNameToColonyIdDict[r['strain']] = cID
     db.useOneConnection(0)
     return rc
 
@@ -282,7 +320,7 @@ def initialize():
 #
 
 def openFiles():
-    global fpIMPC, fpImits2, fpHTMP
+    global fpIMPC, fpImits2, fpHTMP, fpStrain
     global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
     #
     # Open the IMPC file
@@ -303,13 +341,24 @@ def openFiles():
         return 1
 
     #
-    # Open the output file 
+    # Open the htmp output file 
     #
     try:
-	print 'htmpfile: %s' % htmpFile
+	#print 'htmpfile: %s' % htmpFile
         fpHTMP = open(htmpFile, 'w')
     except:
         print 'Cannot open file: ' + htmpFile
+        return 1
+
+
+    #
+    # Open the strain output file
+    #
+    try:
+        #print 'strainfile: %s' % strainFile
+        fpStrain = open(strainFile, 'w')
+    except:
+        print 'Cannot open file: ' + strainFile
         return 1
 
     #
@@ -354,12 +403,11 @@ def openFiles():
 #
 # Purpose: Close files.
 # Returns: 0
-# Assumes: file descriptors exist
+# Assumes: Nothing
 # Effects: Nothing
 # Throws: Nothing
 #
 def closeFiles():
-    global fpIMPC, fpImits2, fpHTMP
     if fpIMPC:
         fpIMPC.close()
 
@@ -368,6 +416,9 @@ def closeFiles():
 
     if fpHTMP:
         fpHTMP.close()
+
+    if fpStrain:
+        fpStrain.close()
 
     if fpLogDiag:
         fpLogDiag.close()
@@ -435,7 +486,7 @@ def parseImits2File():
         # if we find a dup, just print for now to see what we get
         if colonyToMCLDict.has_key(colonyID) and \
                 colonyToMCLDict[colonyID] == value:
-            print 'Dup colony ID record: %s|%s' (colonyID, value)
+            #print 'Dup colony ID record: %s|%s' (colonyID, value)
             continue
         colonyToMCLDict[colonyID] = value
     return 0
@@ -470,10 +521,10 @@ def parseJsonFile():
         print 'Cannot open file: ' + impcFileDup
         return 1
 
-    print 'creating json object: %s' % \
+    #print 'creating json object: %s' % \
         time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpIMPC)
-    print 'done creating json object: %s' % \
+    #print 'done creating json object: %s' % \
         time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
     lineSet = set([])
@@ -531,7 +582,7 @@ def parseJsonFile():
 #
 # Purpose: do strain checks on a set of attributes representing a unique
 #	strain in the input
-# Returns: 0
+# Returns: 1 if error, else 0
 # Assumes: file descriptors exist
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -571,14 +622,14 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     if error == 1:
 	logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
-	return
+	return 1
 
     # Production Center Lab Code Check US5 doc 4c2
     if not procCtrToLabCodeDict.has_key(imits2ProdCtr):
 	msg = 'Production Center not in database: %s' % imits2ProdCtr
 	logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
-	return
+	return 1
 
     # Prefix Strain check #1/#2 US5 doc 4c3
     if not (strainPrefixDict.has_key(strainID) and \
@@ -589,12 +640,55 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % \
 	    (strainID, strainName)
 	logIt(msg, line, 0)
-	return
-    return 0
+	return 1
+    ######################################################
+    
+    # strain name construction US5 doc 4c4
+    # if we find a strain root use the template to create strain name
+    if strainRootDict.has_key(strainID):
+	strainRoot = strainRootDict[strainID]
+	labCode = procCtrToLabCodeDict[imits2ProdCtr]
+	# if strainRootDict has key strainID so does strainTemplateDict
+	strainTemplate = strainTemplateDict[strainID]
+	strainName = strainTemplate % \
+	    (strainRoot, alleleSymbol, labCode)
+    else:  # otherwise use 'Not Specified'
+	strainName = 'Not Specified'
+
+    # Constructed strain name match to strain in db US5 4c5
+    # Not Specified strain will not have colonyID in db
+    # if there is a colony ID at this point we know it doesn't match
+    # because we didn't find it in check US5 4c1
+    # NEED TO TEST THIS CHECK, no colony ids in db now
+    if strainName != 'Not Specified' and \
+	    strainNameToColonyIdDict.has_key(strainName) and \
+	    strainNameToColonyIdDict[strainName] != '':
+
+	dbColonyID =  strainNameToColonyIdDict[strainName]
+	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % (dbColonyID, strainName, colonyID)
+	logit(msg, line, 1)
+	return 1
+    strainType = strainTypeDict[strainID]
+    attributes = strainAttribDict[strainID]
+    attributes = attributes.replace(':', '|')
+    strainLine = strainName + '\t' + \
+	alleleID + '\t' + \
+	strainType + '\t' + \
+	species + '\t' + \
+	standard + '\t' + \
+	createdBy + '\t' + \
+	mutantID + '\t' + \
+	colonyID + '\t' + \
+	attributes + '\n'
+    fpStrain.write(strainLine)
+    uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName
+    return
+##############################################
 
 #
 # Purpose: resolves the IMPC alleleState term to MGI alleleState term
-# Returns: 1 if IMPC alleleState not recognized
+# Returns: string 'error' if IMPC alleleState not recognized, else resolved
+#	    alleleState
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs 
 # Throws: Nothing
@@ -611,12 +705,12 @@ def checkAlleleState(alleleState, line):
 	# 8/22 all match
 	msg = 'Unrecognized allele state %s' % alleleState
 	logIt(msg, line, 1)
-	return 1
-    return 0
+	return  'error'
+    return alleleState
 
 #
 # Purpose: resolves the IMPC gender term to MGI gender term
-# Returns: 1 if IMPC gender not recognized
+# Returns: string 'error' IMPC gender not recognized, else resolved gender
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -631,8 +725,8 @@ def checkGender(gender, line):
 	# 8/22 all match
 	msg = 'Unrecognized gender %s' % gender
 	logIt(msg, line, 1)
-	return 1
-    return 0
+	return 'error'
+    return gender 
 
 #
 # Purpose: checks if IMPC colony ID maps to iMits2 colony ID
@@ -705,8 +799,15 @@ def createHTMPfile():
 	# We know this attributes are not blank - see parseJson
 	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
 
-	error = checkAlleleState(alleleState, line)
-	error = checkGender(gender, line)
+	returnVal = checkAlleleState(alleleState, line)
+	if returnVal == 'error':
+	    error = 1
+	else: alleleState = returnVal
+
+	returnVal= checkGender(gender, line)
+	if returnVal == 'error':
+            error = 1
+	else: gender = returnVal
 
         # if alleleState or gender error, continue to next line
         if error:
@@ -751,40 +852,28 @@ def createHTMPfile():
 	    # if key in the list, we've already processed this uniq record
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    if uniqStrainProcessingKey not in uniqStrainProcessingDict.keys():
-		doUniqStrainChecks(uniqStrainProcessingKey, line)
-
-	# if all the checks passed, then construct the strain name
-	# and write it out to the HTMP load format file
-	if uniqStrainProcessingDict[uniqStrainProcessingKey] == 0:
-
-	    # strain name construction US5 doc 4c4
-	    # if we find a strain root use the template to create strain name
-	    if strainRootDict.has_key(strainID):
-		strainRoot = strainRootDict[strainID]
-		labCode = procCtrToLabCodeDict[imits2ProdCtr]
-		# if strainRootDict has key strainID so does strainTemplateDict
-		strainTemplate = strainTemplateDict[strainID]
-		strainName = strainTemplate % \
-		    (strainRoot, alleleSymbol, labCode)
-	    else:  # otherwise use 'Not Specified'
-		strainName = 'Not Specified'
-
-	    line = phenotypingCenter + '\t' + \
-			 interpretationCenter + '\t' + \
-			 mutantID + '\t' + \
-			 mpID + '\t' + \
-			 alleleID + '\t' + \
-			 alleleState + '\t' + \
-			 alleleSymbol + '\t' + \
-			 markerID + '\t' + \
-			 evidenceCode + '\t' + \
-			 strainName + '\t' + \
-			 gender + '\t' + \
-			 colonyID + '\n'
-	    fpHTMP.write(line)
-	else:
+		 doUniqStrainChecks(uniqStrainProcessingKey, line)
+	    
+	# if all the checks passed write it out to the HTMP load format file
+	if uniqStrainProcessingDict[uniqStrainProcessingKey] == 1:
 	    # just print out for now for verification
-	    print 'dup error line%s' % line
+            #print 'dup error line%s' % line
+	    continue
+	else:
+	    strainName = uniqStrainProcessingDict[uniqStrainProcessingKey]
+	htmpLine = phenotypingCenter + '\t' + \
+	     interpretationCenter + '\t' + \
+	     mutantID + '\t' + \
+	     mpID + '\t' + \
+	     alleleID + '\t' + \
+	     alleleState + '\t' + \
+	     alleleSymbol + '\t' + \
+	     markerID + '\t' + \
+	     evidenceCode + '\t' + \
+	     strainName + '\t' + \
+	     gender + '\t' + \
+	     colonyID + '\n'
+	fpHTMP.write(htmpLine)
     return 0
 
 #

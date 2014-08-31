@@ -1,3 +1,16 @@
+TAG: htmpload-tr11674-7
+DATE: 08/31/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) added makeIMPCStrains.py/sh
+2) impcmpload.config.default - added STRAINMODE, STRAINLOG, 
+	renamed STRAIN_PREFIX to STRAIN_INFO and added more attributes
+3) makeIMPC.sh - added call to makeIMPCStrains.py
+4) makeIMPC.py - 
+a) rename strainPrefix to strainInfo
+b) added writing to a strain file in impc strain load format
+c) factored out checkGender, checkAlleleState, doUniqStrainChecks
+
 TAG: htmpload-tr11674-6
 DATE: 08/28/2014
 STAFF: sc

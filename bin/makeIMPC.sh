@@ -100,16 +100,30 @@ STAT=$?
 checkStatus ${STAT} "copying iMits2 input file completed"
 
 #
-# Create the IMPC HTMP input file
+# Create the IMPC HTMP input files
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
-./makeIMPC.py #2>&1 >> ${LOG}
+echo "Create the IMPC HTMP input files (makeIMPC.py)" | tee -a ${LOG}
+./makeIMPC.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
     echo "Error: Create the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
+    exit 1
+fi
+
+#
+# Create the IMPC HTMP strains
+#
+echo "" >> ${LOG}
+date >> ${LOG}
+echo "Create the IMPC HTMP strains (makeIMPCStrains.py)" | tee -a ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    echo "Error: Create the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
     exit 1
 fi
 
