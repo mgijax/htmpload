@@ -64,30 +64,9 @@ else
 fi
 
 #
-#  Source the DLA library functions.
-#
-
-if [ "${DLAJOBSTREAMFUNC}" != "" ]
-then
-    if [ -r ${DLAJOBSTREAMFUNC} ]
-    then
-        . ${DLAJOBSTREAMFUNC}
-    else
-        echo "Cannot source DLA functions script: ${DLAJOBSTREAMFUNC}" | tee -a
-${LOG}
-        exit 1
-    fi
-else
-    echo "Environment variable DLAJOBSTREAMFUNC has not been defined." | tee -a
-${LOG}
-    exit 1
-fi
-
-#
 # Establish the log file.
 #
 LOG=${LOG}
-
 
 #
 # copy imits2 input file into working directory

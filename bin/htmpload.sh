@@ -205,12 +205,14 @@ checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 #
 # Run reports
 #
+reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
+
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Run reports runReports.sh" | tee -a ${LOG}
-./runReports.sh ${CONFIG} 2>&1 >> ${LOG}
+echo "Run reports ${reportScript}" | tee -a ${LOG}
+./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "runReports.sh ${CONFIG}"
+checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
 
 #
 # Touch the "lastrun" file to note when the load was run.

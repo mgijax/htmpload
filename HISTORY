@@ -1,3 +1,12 @@
+TAG: htmpload-tr11674-8
+DATE: 09/02/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) renamed runReports.sh - runReports_Sanger.sh
+2) added runReports_IMPC.sh, runReports_IMPC.py
+3) makeIMPC.sh - removed DLA jobstream functions
+4)impcmpload.config.default, sangermpload.config.default - added REPORT_SCRIPT_SUFFIX
+
 TAG: htmpload-tr11674-7
 DATE: 08/31/2014
 STAFF: sc

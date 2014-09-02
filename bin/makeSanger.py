@@ -189,7 +189,7 @@ def openFiles():
     # Open the Error file
     #
     try:
-        fpHTMPError = open(htmpErrorFile, 'a+')
+        fpHTMPError = open(htmpErrorFile, 'w')
     except:
         print 'Cannot open file: ' + htmpErrorFile
         return 1

@@ -53,7 +53,11 @@ export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE HTMP_INPUT_FILE
 # Sanger pre-processor script
 PREPROCESSOR=${HTMPLOAD}/bin/makeSanger.sh
 
-export PREPROCESSOR
+#
+# Sanger report script suffix
+REPORT_SCRIPT_SUFFIX=Sanger.sh
+
+export PREPROCESSOR REPORT_SCRIPT_SUFFIX
 
 # input file that contains data that was skipped
 #

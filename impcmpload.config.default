@@ -71,7 +71,11 @@ export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE
 # IMPC pre-processor script
 PREPROCESSOR=${HTMPLOAD}/bin/makeIMPC.sh
 
-export PREPROCESSOR
+#
+# IMPC report script suffix
+REPORT_SCRIPT_SUFFIX=IMPC.sh
+
+export PREPROCESSOR REPORT_SCRIPT_SUFFIX
 
 # input file from iMits2
 #

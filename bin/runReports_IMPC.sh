@@ -1,24 +1,26 @@
 #!/bin/sh
 #
-#  makeIMPCStrains.sh
+#  runReports_IMPC.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the process that creates the 
-#	IMPC strains
+#      This script is a wrapper around the process that runs reports.
 #
-Usage="Usage: makeIMPCStrains.sh  config"
+#  Usage:
+#
+#      runReports_IMPC.sh
 #
 #  Env Vars:
 #
-#      See the configuration file 
+#      See the configuration file (htmpmpload.config)
 #
 #  Inputs:  None
 #
 #  Outputs:
 #
-#      - Log file (${LOG})
+#      - Log file (${LOG_DIAG})
+#      - Log file (${LOG_CUR})
 #
 #  Exit Codes:
 #
@@ -34,11 +36,9 @@ Usage="Usage: makeIMPCStrains.sh  config"
 #      1) Source the configuration file to establish the environment.
 #      2) Verify that the input file exists.
 #      3) Establish the log file.
-#      4) Call makeHTMPStrain.py to create the htmp load file.
+#      4) Generate some reports.
 #
-#  Notes:  
-#  08/12/2014   sc
-#       - TR11674
+#  Notes:  None
 #
 ###########################################################################
 cd `dirname $0`
@@ -65,28 +65,20 @@ fi
 #
 # Establish the log file.
 #
-LOG=${STRAINLOG}
+LOG=${LOG_DIAG}
 
-if [ -f ${LOG} ]
-then
-    rm -rf ${LOG}
-fi
-touch ${LOG}
-
-#
-# Create the IMPC HTMP input file
-#
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create IMPC strains (makeIMPCStrain.py)" | tee -a ${LOG}
-./makeIMPCStrains.py 2>&1 >> ${LOG}
+echo "Create IKMC/IMPC Colony ID Discrepancy Report (runReports_IMPC.py)" | tee -a ${LOG}
+./runReports_IMPC.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create IMPC HTMP strain (makeIMPCStrain.py)" | tee -a ${LOG}
+    echo "Error: Create IKMC/IMPC Colony ID Discrepancy Report (runReports_IMPC.py))" | tee -a ${LOG}
     exit 1
 fi
 echo "" >> ${LOG}
 date >> ${LOG}
 
 exit 0
+
