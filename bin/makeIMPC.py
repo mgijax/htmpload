@@ -150,22 +150,22 @@ uniqStrainProcessingDict = {}
 # processing center mapped to lab code from database
 procCtrToLabCodeDict = {}
 
-# Expected MGI ID to strain mapping from configuration
+# Expected MGI ID to strain info mapping from configuration
 strainInfoMapping = os.environ['STRAIN_INFO']
 
-# MGI ID to  strain prefix mapping from configuration
+# Strain MGI ID to  strain raw prefix mapping from configuration
+strainRawPrefixDict = {}
+
+# Strain MGI ID to strain prefix mapping from configuration
 strainPrefixDict = {}
 
-# MGI ID to strain root mapping from configuration
-strainRootDict = {}
-
-# MGI ID to strain template for creating strain nomen from configuration
+# Strain MGI ID to strain template for creating strain nomen from configuration
 strainTemplateDict = {}
 
-# MGI ID to strain type 
+# Strain MGI ID to strain type from configuration
 strainTypeDict = {}
 
-# MGI ID to strain attributes
+# Strain MGI ID to strain attributes from configuration
 strainAttribDict = {}
 
 #
@@ -192,7 +192,7 @@ def initialize():
     global impcFile, impcFileInt, impcFileDup, imits2File, htmpFile, strainFile
     global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
     global allelesInDbDict, procCtrToLabCodeDict, strainInfoDict
-    global strainRootDict, strainTemplateDict, strainTypeDict
+    global strainPrefixDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
 
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
@@ -284,8 +284,8 @@ def initialize():
     tokens = map(string.strip, string.split(strainInfoMapping, ','))
     for t in tokens:
 	pStrain, pID, rStrain, rTemplate, pType, pAttr = string.split(t, '|')
-	strainPrefixDict[pID] = pStrain
-	strainRootDict[pID] = rStrain
+	strainRawPrefixDict[pID] = pStrain
+	strainPrefixDict[pID] = rStrain
 	strainTemplateDict[pID] = rTemplate
 	strainTypeDict[pID]  = pType
 	strainAttribDict[pID] = pAttr
@@ -602,6 +602,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	dbAllele = allelesInDbDict[alleleID]
 
 	msg=[]
+	# US5 doc 4b2
 	if alleleSymbol != dbAllele.s:
 	    msg.append('Allele symbol: %s does not match database symbol: %s' \
 		% (alleleSymbol, dbAllele.s))
@@ -615,7 +616,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 		(mutantID, alleleID))
 	    error = 1
 	msg = string.join(msg)
-    else:
+    else: # US5 doc 4b2
 	# 15 cases in impc.json e.g. NULL-114475FCF4
 	msg = 'Allele not in the database: %s' % alleleID
 	error = 1
@@ -632,8 +633,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	return 1
 
     # Prefix Strain check #1/#2 US5 doc 4c3
-    if not (strainPrefixDict.has_key(strainID) and \
-	strainPrefixDict[strainID] == strainName):
+    if not (strainRawPrefixDict.has_key(strainID) and \
+	strainRawPrefixDict[strainID] == strainName):
 
 	# This is just a check - the strain name will be determined
 	# outside this function
@@ -645,10 +646,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
-    if strainRootDict.has_key(strainID):
-	strainRoot = strainRootDict[strainID]
+    if strainPrefixDict.has_key(strainID):
+	strainRoot = strainPrefixDict[strainID]
 	labCode = procCtrToLabCodeDict[imits2ProdCtr]
-	# if strainRootDict has key strainID so does strainTemplateDict
+	# if strainPrefixDict has key strainID so does strainTemplateDict
 	strainTemplate = strainTemplateDict[strainID]
 	strainName = strainTemplate % \
 	    (strainRoot, alleleSymbol, labCode)
@@ -752,9 +753,10 @@ def checkColonyID(colonyID, line):
 #
 def compareMarkers(markerID, imits2MrkID, line):
     if markerID != imits2MrkID:
-       # 8/22 all match
-       # test file:
-       #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
+	# US5 doc 4a2
+        # 8/22 all match
+        # test file:
+        #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
 	msg='No Marker ID match. IMPC: %s iMits2: %s' % \
 	    (markerID, imits2MrkID)
 	logIt(msg, line, 1)
