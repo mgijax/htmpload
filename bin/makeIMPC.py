@@ -304,6 +304,7 @@ def initialize():
 	cID =  r['colonyID']
 	if cID == None:
 	    cID = ''
+	cID = string.strip(cID)
 	if cID != '':
 	    colonyToStrainNameDict[cID] = r['strain']
 	strainNameToColonyIdDict[r['strain']] = cID
@@ -681,6 +682,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	mutantID + '\t' + \
 	colonyID + '\t' + \
 	attributes + '\n'
+    #print 'strainLine: %s' % strainLine
     fpStrain.write(strainLine)
     uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName
     return
@@ -837,20 +839,24 @@ def createHTMPfile():
 	# Now do checks on the uniq strains in the input file
 	#
 
+	# key to determine uniq entries for strain processing
+	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s|%s' % \
+	    (alleleID, alleleSymbol, strainName, strainID, markerID, \
+		colonyID, mutantID, imits2ProdCtr)
+
 	# resolve the colonyID to a strain in the database, if we can
 	# we'll use this strain
 	if colonyToStrainNameDict.has_key(colonyID):
   	    strainName = colonyToStrainNameDict[colonyID]
+	    #print 'found strain in db %s' % strainName
+	    uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
 	else:
+	    #print 'strain not found by colonyID %s' % colonyID
 	    #
 	    # if strain not determined by colony ID first do checks on the 
 	    #	uniq strains in the input file
 	    #
 
-	    # key to determine uniq entries for strain processing
-	    uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s|%s' % \
-		(alleleID, alleleSymbol, strainName, strainID, markerID, \
-		    colonyID, mutantID, imits2ProdCtr)
 	    # if key in the list, we've already processed this uniq record
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    if uniqStrainProcessingKey not in uniqStrainProcessingDict.keys():

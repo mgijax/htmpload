@@ -65,29 +65,9 @@ else
 fi
 
 #
-#  Source the DLA library functions.
-#
-
-if [ "${DLAJOBSTREAMFUNC}" != "" ]
-then
-    if [ -r ${DLAJOBSTREAMFUNC} ]
-    then
-        . ${DLAJOBSTREAMFUNC}
-    else
-        echo "Cannot source DLA functions script: ${DLAJOBSTREAMFUNC}" | tee -a
-${LOG}
-        exit 1
-    fi
-else
-    echo "Environment variable DLAJOBSTREAMFUNC has not been defined." | tee -a
-${LOG}
-    exit 1
-fi
-
-#
 # Establish the log file.
 #
-LOG=${LOG}
+LOG=${LOG_DIAG}
 
 #
 # Create the Sanger HTMP input file
@@ -96,7 +76,7 @@ echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create the Sanger HTMP input file (makeSanger.py)" | tee -a ${LOG}
 
-${HTMPLOAD}/bin/makeSanger.py #2>&1 >> ${LOG}
+${HTMPLOAD}/bin/makeSanger.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

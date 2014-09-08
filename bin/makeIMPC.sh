@@ -66,7 +66,7 @@ fi
 #
 # Establish the log file.
 #
-LOG=${LOG}
+LOG=${LOG_DIAG}
 
 #
 # copy imits2 input file into working directory
@@ -76,7 +76,11 @@ date >> ${LOG}
 rm -rf ${IMITS2_COPY_INPUT_FILE}
 cp ${IMITS2_INPUT_FILE} ${IMITS2_COPY_INPUT_FILE}
 STAT=$?
-checkStatus ${STAT} "copying iMits2 input file completed"
+if [ ${STAT} -ne 0 ]
+then
+    echo "Error: copying ${IMITS2_INPUT_FILE} to ${IMITS2_COPY_INPUT_FILE}" | tee -a ${LOG}
+    exit 1
+fi
 
 #
 # Create the IMPC HTMP input files
@@ -88,7 +92,7 @@ echo "Create the IMPC HTMP input files (makeIMPC.py)" | tee -a ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
+    echo "Error: creating the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
     exit 1
 fi
 
@@ -98,7 +102,7 @@ fi
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create the IMPC HTMP strains (makeIMPCStrains.py)" | tee -a ${LOG}
-./makeIMPCStrains.py 2>&1 >> ${LOG}
+./makeIMPCStrains.py #2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

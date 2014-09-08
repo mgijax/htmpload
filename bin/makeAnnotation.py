@@ -76,6 +76,10 @@
 #
 #  Notes:  None
 #
+#  09/04/2014	sc
+#	- TR11674 HDP-2 project add interpretation and phenotyping
+#	    center properties
+#
 #  09/17/2012	lec
 #	- TR10273/new
 #
