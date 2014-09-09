@@ -1,55 +1,50 @@
-<TITLE>Sanger/MP Annotation Load</TITLE>
-<H1>Sanger/MP Annotation Load</H1>
+<TITLE>IMPC/MP Strain, Genotype, MP Annotation Load</TITLE>
+<H1>IMPC/MP Strain, Genotype, MP Annotation Load</H1>
 <UL>
 
 <H3>Source Input Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/scrum-bob/htmpload/impcmpload/input/impc.json">IMPC JSON format file</A> - The main IMPC input file (2732)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/imits.mp.tsv">IKMC iMits2 BioMart file</A> - Used to get MCL ID; joined to IMPC JSON file using colony ID
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/impc.json">IMPC JSON format file</A> - The main IMPC input file (2732)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/imits.mp.tsv">IKMC iMits2 BioMart file</A> - Used to get MCL ID; joined to IMPC JSON file using colony ID
 </UL>
 
 <H3>Intermediate Input Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json_int">Intermediate file of IMPC JSON file data with versioning duplicates removed</A> - Tab-delimited (2319)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json_dup">The versioning duplicates from IMPC JSON file</A> - Tab-delimited (413)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_impcload_dup.txt">HTMP duplicate file</A> - male/female duplicates (729)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_impcload_skipped.txt">HTMP skipped file</A> - Rows where MP id is blank (0)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_impcload_error.txt">HTMP error file</A> Input lines for errors that are reported in curator log (27)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/impc.json_int">Intermediate file of IMPC JSON file data with versioning duplicates removed</A> - Tab-delimited (2319)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/impc.json_dup">The versioning duplicates from IMPC JSON file</A> - Tab-delimited (413)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_impcload_dup.txt">HTMP duplicate file</A> - male/female duplicates (729)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_impcload_skipped.txt">HTMP skipped file</A> - Rows where MP id is blank (0)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_impcload_error.txt">HTMP error file</A> Input lines for errors that are reported in curator log (27)
 </UL>
 
 <H3>Load Input Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_htmp_impc_strain.txt">MGI Strain load format</A> - contains all strains from HTMP format file(308, 36 already exist)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_impcload.txt">HTMP format file</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_genotypeload.txt">MGI
-Genotype load format</A> - contains unique genotypes; field 2 contains existing
-genotype IDs (335)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_genotypeload_new.txt"
->MGI-format: Genotype (new)</A> - Contains unique genotypes; field 2 contains bo
-th new and existing genotype IDs (335)
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_annotload.txt">MGI An
-notation load format</A> (1422)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_impcload.txt">HTMP load format file</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_htmp_impc_strain.txt">MGI Strain load format file</A> - contains all strains from HTMP format file(308, 36 already exist)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_genotypeload.txt">MGI Genotype load format file</A> - contains unique genotypes; field 2 contains existing genotype IDs (335)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_genotypeload_new.txt">MGI Genotype load format file (new)</A> - Contains unique genotypes; field 2 contains both new and existing genotype IDs (335)
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/input/mgi_annotload.txt">MGI Annotation load format file</A> (1422)
 </UL>
 
 <H3>Log Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs/htmpload.diag.log">sangerload.diag.log</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs/htmpload.cur.log">sangerload.cur.log</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs">strainload logs</A> - mgi_htmp_impc_strain.txt.date.diagnostics; mgi_htmp_impc_strain.txt.date.error
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_annotload.txt.diagnostics">mgi_annotload.txt.diagnostics</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_annotload.txt.error">mgi_annotload.txt.error</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/logs/htmpload.diag.log">sangerload.diag.log</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/logs/htmpload.cur.log">sangerload.cur.log</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/logs">strainload logs</A> - mgi_htmp_impc_strain.txt.date.diagnostics; mgi_htmp_impc_strain.txt.date.error
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.diagnostics">mgi_genotypeload.txt.diagnostics</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.error">mgi_genotypeload.txt.error</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/output/mgi_annotload.txt.diagnostics">mgi_annotload.txt.diagnostics</A>
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/output/mgi_annotload.txt.error">mgi_annotload.txt.error</A>
 </UL>
 
 <H3>BCP Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/"><B>BCP</B></A> - BCP Files for htmpload
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/output/"><B>BCP</B></A> - BCP Files for htmpload
 </UL>
 
 <H3>Archives</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads.
+<LI><A HREF="/data/loads/scrum-bob/mgi/htmpload/impcmpload/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads.
 </UL>
 
 <H3>Wiki</H3>
