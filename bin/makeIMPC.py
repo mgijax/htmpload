@@ -168,6 +168,7 @@ strainTypeDict = {}
 # Strain MGI ID to strain attributes from configuration
 strainAttribDict = {}
 
+#testStrainNameDict = {}
 #
 # convenience object for allele information 
 #
@@ -296,6 +297,7 @@ def initialize():
     results = db.sql('''select s.strain, nc.note as colonyID
 	from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
 	where s._StrainType_key in (3410530, 3410535)
+	and s.private = 0
 	and s._Strain_key *= n._Object_key
 	and n._NoteType_key = 1012
 	and n._MGIType_key = 10
@@ -590,14 +592,15 @@ def parseJsonFile():
 #
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict
+    #global testStrainNameDict
 
     # set defaults
     error = 0
-    uniqStrainProcessingDict[uniqStrainProcessingKey] = 0
+    uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
     
     # unpack the key into attributes
     alleleID, alleleSymbol, strainName, strainID, markerID, colonyID, mutantID, imits2ProdCtr = string.split(uniqStrainProcessingKey, '|') 
-
+    rawStrainName = strainName
     # Allele/MCL Object Identity/Consistency Check US5 doc 4b
     if allelesInDbDict.has_key(alleleID):
 	dbAllele = allelesInDbDict[alleleID]
@@ -648,12 +651,23 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
     if strainPrefixDict.has_key(strainID):
+	
 	strainRoot = strainPrefixDict[strainID]
 	labCode = procCtrToLabCodeDict[imits2ProdCtr]
 	# if strainPrefixDict has key strainID so does strainTemplateDict
 	strainTemplate = strainTemplateDict[strainID]
 	strainName = strainTemplate % \
 	    (strainRoot, alleleSymbol, labCode)
+	#if not testStrainNameDict.has_key(colonyID):
+        #    testStrainNameDict[colonyID] = []
+	#testStrainNameDict[colonyID].append(rawStrainName)
+        #testStrainNameDict[colonyID].append(strainID)
+	#testStrainNameDict[colonyID].append(strainRoot)
+        #testStrainNameDict[colonyID].append(alleleSymbol)
+	#testStrainNameDict[colonyID].append(imits2ProdCtr)
+        #testStrainNameDict[colonyID].append(labCode)
+	#testStrainNameDict[colonyID].append(strainName)
+
     else:  # otherwise use 'Not Specified'
 	strainName = 'Not Specified'
 
@@ -802,7 +816,6 @@ def createHTMPfile():
 	error = 0
 	# We know this attributes are not blank - see parseJson
 	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
-
 	returnVal = checkAlleleState(alleleState, line)
 	if returnVal == 'error':
 	    error = 1
@@ -832,7 +845,6 @@ def createHTMPfile():
 	imits2Data = colonyToMCLDict[colonyID]
 	imits2ProdCtr, mutantID, imits2MrkID = string.split(
 	    colonyToMCLDict[colonyID], '|')
-
         if compareMarkers(markerID, imits2MrkID, line):
 	    continue
 	#
@@ -865,10 +877,11 @@ def createHTMPfile():
 	# if all the checks passed write it out to the HTMP load format file
 	if uniqStrainProcessingDict[uniqStrainProcessingKey] == 1:
 	    # just print out for now for verification
-            #print 'dup error line%s' % line
+            print 'rejected Uniq strain check line%s' % line
 	    continue
 	else:
 	    strainName = uniqStrainProcessingDict[uniqStrainProcessingKey]
+	print 'strainName: %s' % strainName
 	htmpLine = phenotypingCenter + '\t' + \
 	     interpretationCenter + '\t' + \
 	     mutantID + '\t' + \
@@ -913,5 +926,7 @@ if createHTMPfile() != 0:
 closeFiles()
 print 'done: %s' % \
     time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+#for id in testStrainNameDict.keys():
+#    print string.join(testStrainNameDict[id], '\t')
 sys.exit(0)
 
