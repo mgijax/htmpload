@@ -575,6 +575,7 @@ def parseJsonFile():
         # lineSet assures dups are filtered out
 	if line in lineSet:
 	    fpIMPCdup.write(line)
+	    continue
         lineSet.add(line)
 
     for line in lineSet:
@@ -611,8 +612,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	msg=[]
 	# US5 doc 4b2
 	if alleleSymbol != dbAllele.s:
-	    msg.append('For matched Allele accID, Allele symbol: %s ' + \
-		'does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
+	    msg.append('For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
 	    error = 1
 	if markerID != dbAllele.m:
 	    msg.append('Marker ID: %s does not match database marker ID: %s' % \
@@ -685,7 +685,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
 	dbColonyID =  strainNameToColonyIdDict[strainName]
 	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % (dbColonyID, strainName, colonyID)
-	logit(msg, line, 1)
+	logIt(msg, line, 1)
 	return 1
     strainType = strainTypeDict[strainID]
     attributes = strainAttribDict[strainID]
