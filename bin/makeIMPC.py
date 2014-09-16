@@ -472,6 +472,9 @@ def parseImits2File():
     # US5 - skip if any attributes don't exist
     for line in fpImits2.readlines():
         tokens = line[:-1].split('\t')
+	if len(tokens) < 6:
+	    print 'bad line: %s' % line
+	    continue
         productionCtr = tokens[0]
         mutantID = tokens[3]
         markerID = tokens[4]
@@ -608,8 +611,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	msg=[]
 	# US5 doc 4b2
 	if alleleSymbol != dbAllele.s:
-	    msg.append('Allele symbol: %s does not match database symbol: %s' \
-		% (alleleSymbol, dbAllele.s))
+	    msg.append('For matched Allele accID, Allele symbol: %s ' + \
+		'does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
 	    error = 1
 	if markerID != dbAllele.m:
 	    msg.append('Marker ID: %s does not match database marker ID: %s' % \
