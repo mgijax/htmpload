@@ -472,9 +472,9 @@ def parseImits2File():
     # US5 - skip if any attributes don't exist
     for line in fpImits2.readlines():
         tokens = line[:-1].split('\t')
-	if len(tokens) < 6:
-	    print 'bad line: %s' % line
-	    continue
+        if len(tokens) < 6:
+            print 'skipping line with < 5 columns: %s' % line
+            continue
         productionCtr = tokens[0]
         mutantID = tokens[3]
         markerID = tokens[4]
