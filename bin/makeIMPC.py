@@ -296,7 +296,7 @@ def initialize():
     # strain types 'coisogenic' and 'Not Specified'
     results = db.sql('''select s.strain, nc.note as colonyID
 	from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
-	where s._StrainType_key in (3410530, 3410535)
+	where s._StrainType_key in (3410530, 3410535, 6508969)
 	and s.private = 0
 	and s._Strain_key *= n._Object_key
 	and n._NoteType_key = 1012
