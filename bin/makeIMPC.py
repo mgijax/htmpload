@@ -598,57 +598,32 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict
     #global testStrainNameDict
 
-    # set defaults
-    error = 0
-    uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
+    if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
+	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
+	return 'error'
     
     # unpack the key into attributes
     alleleID, alleleSymbol, strainName, strainID, markerID, colonyID, mutantID, imits2ProdCtr = string.split(uniqStrainProcessingKey, '|') 
     rawStrainName = strainName
-    # Allele/MCL Object Identity/Consistency Check US5 doc 4b
-    if allelesInDbDict.has_key(alleleID):
-	dbAllele = allelesInDbDict[alleleID]
-
-	msg=[]
-	# US5 doc 4b2
-	if alleleSymbol != dbAllele.s:
-	    msg.append('For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
-	    error = 1
-	if markerID != dbAllele.m:
-	    msg.append('Marker ID: %s does not match database marker ID: %s' % \
-		(markerID, dbAllele.m))
-	    error = 1
-	if mutantID not in dbAllele.c:
-	    msg.append('Mutant ID: %s not associated with %s in database' % \
-		(mutantID, alleleID))
-	    error = 1
-	msg = string.join(msg)
-    else: # US5 doc 4b2
-	# 15 cases in impc.json e.g. NULL-114475FCF4
-	msg = 'Allele not in the database: %s' % alleleID
-	error = 1
-    if error == 1:
-	logIt(msg, line, 1)
-	uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
-	return 1
 
     # Production Center Lab Code Check US5 doc 4c2
     if not procCtrToLabCodeDict.has_key(imits2ProdCtr):
 	msg = 'Production Center not in database: %s' % imits2ProdCtr
-	logIt(msg, line, 1)
-	uniqStrainProcessingDict[uniqStrainProcessingKey] = 1
-	return 1
+	#logIt(msg, line, 1)
+	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	return 'error'
 
     # Prefix Strain check #1/#2 US5 doc 4c3
     if not (strainRawPrefixDict.has_key(strainID) and \
 	strainRawPrefixDict[strainID] == strainName):
 
 	# This is just a check - the strain name will be determined
-	# outside this function
+	# outside this block
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % \
 	    (strainID, strainName)
-	logIt(msg, line, 0)
-	return 1
+	#logIt(msg, line, 0)
+	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	return 'error'
     ######################################################
     
     # strain name construction US5 doc 4c4
@@ -685,8 +660,9 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
 	dbColonyID =  strainNameToColonyIdDict[strainName]
 	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % (dbColonyID, strainName, colonyID)
-	logIt(msg, line, 1)
-	return 1
+	#logIt(msg, line, 1)
+	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	return 'error'
     strainType = strainTypeDict[strainID]
     attributes = strainAttribDict[strainID]
     attributes = attributes.replace(':', '|')
@@ -701,8 +677,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	attributes + '\n'
     #print 'strainLine: %s' % strainLine
     fpStrain.write(strainLine)
-    uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName
-    return
+    return strainName
+
 ##############################################
 
 #
@@ -845,11 +821,35 @@ def createHTMPfile():
 	if checkColonyID(colonyID, line):
 	    continue
 
-	imits2Data = colonyToMCLDict[colonyID]
 	imits2ProdCtr, mutantID, imits2MrkID = string.split(
 	    colonyToMCLDict[colonyID], '|')
         if compareMarkers(markerID, imits2MrkID, line):
 	    continue
+##################
+	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
+	if allelesInDbDict.has_key(alleleID):
+	    dbAllele = allelesInDbDict[alleleID]
+
+	    msg=[]
+	    # US5 doc 4b2
+	    if alleleSymbol != dbAllele.s:
+		msg.append('For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
+		error = 1
+	    if markerID != dbAllele.m:
+		msg.append('Marker ID: %s does not match database marker ID: %s' % (markerID, dbAllele.m))
+		error = 1
+	    if mutantID not in dbAllele.c:
+		msg.append('Mutant ID: %s not associated with %s in database' % (mutantID, alleleID))
+		error = 1
+	    msg = string.join(msg)
+	else: # US5 doc 4b2
+	    # 15 cases in impc.json e.g. NULL-114475FCF4
+	    msg = 'Allele not in the database: %s' % alleleID
+	    error = 1
+	if error == 1:
+	    logIt(msg, line, 1)
+	    continue
+#################
 	#
 	# Now do checks on the uniq strains in the input file
 	#
@@ -864,7 +864,7 @@ def createHTMPfile():
 	if colonyToStrainNameDict.has_key(colonyID):
   	    strainName = colonyToStrainNameDict[colonyID]
 	    #print 'found strain in db %s' % strainName
-	    uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
+	    #uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
 	else:
 	    #print 'strain not found by colonyID %s' % colonyID
 	    #
@@ -874,16 +874,14 @@ def createHTMPfile():
 
 	    # if key in the list, we've already processed this uniq record
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
-	    if uniqStrainProcessingKey not in uniqStrainProcessingDict.keys():
-		 doUniqStrainChecks(uniqStrainProcessingKey, line)
+	    # Nor does it include gender, multi gender per uniq allele
+	    strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
 	    
 	# if all the checks passed write it out to the HTMP load format file
-	if uniqStrainProcessingDict[uniqStrainProcessingKey] == 1:
+	if strainName == 'error':
 	    # just print out for now for verification
             print 'rejected Uniq strain check line%s' % line
 	    continue
-	else:
-	    strainName = uniqStrainProcessingDict[uniqStrainProcessingKey]
 	print 'strainName: %s' % strainName
 	htmpLine = phenotypingCenter + '\t' + \
 	     interpretationCenter + '\t' + \
@@ -898,6 +896,14 @@ def createHTMPfile():
 	     gender + '\t' + \
 	     colonyID + '\n'
 	fpHTMP.write(htmpLine)
+    for key in uniqStrainProcessingDict.keys():
+	msgList = uniqStrainProcessingDict[key]
+	msg = msgList[0]
+	for line in msgList[1:]:
+	    if 'Strain ID/Name discrepancy' in msg:
+		logIt(msg, line, 0)
+	    else:
+		logIt(msg, line, 1)
     return 0
 
 #
