@@ -522,6 +522,7 @@ def processFile():
 
 	for a in allAlleles:
 		alleleKey = loadlib.verifyObject(a, alleleTypeKey, None, lineNum, errorFile)
+		print 'makeIMPCStrains.py allele: %s marker key: %s' % (a, alleleKey)
 	    	results = db.sql('select _Marker_key from ALL_Allele where _Allele_key = %s' % (alleleKey),  'auto')
 		markerKey = results[0]['_Marker_key']
 

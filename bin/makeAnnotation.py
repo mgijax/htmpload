@@ -122,7 +122,8 @@ annotLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\t%s\n'
 # the properties will be stored in the same evidence record (_annotevidence_key)
 #
 #propertiesLine = 'MP-Sex-Specificity&=&%s&==&MP-HTLink-WTSI&=&http://www.sanger.ac.uk/mouseportal/'
-propertiesLine = 'MP-Sex-Specificity&=&%s'
+#'MP-Sex-Specificity&=&%s'
+propertiesLine = 'MP-Sex-Specificity&=&%s&==&Data Interpretation Center&=&%s&==&Phenotyping Center&=&%s'
 
 # defaults
 inferredFrom = ''
@@ -376,7 +377,7 @@ def getAnnotations():
 	#
 
 	genotypeID = genotypeOrderDict[genotypeOrder][0]
-	properties = propertiesLine % (gender)
+	properties = propertiesLine % (gender, annotationCenter, phenotypingCenter)
 
 	#
 	# add to annotation mgi-format file

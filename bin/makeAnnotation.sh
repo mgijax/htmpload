@@ -9,7 +9,7 @@
 #
 #  Usage:
 #
-#      makeAnnotation.sh
+#      makeAnnotation.sh configFile annotConfigFile
 #
 #  Env Vars:
 #
