@@ -168,6 +168,9 @@ strainTypeDict = {}
 # Strain MGI ID to strain attributes from configuration
 strainAttribDict = {}
 
+# uniq set of strain lines written to strainload input file
+strainLineList = []
+
 #testStrainNameDict = {}
 #
 # convenience object for allele information 
@@ -675,8 +678,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	mutantID + '\t' + \
 	colonyID + '\t' + \
 	attributes + '\n'
-    #print 'strainLine: %s' % strainLine
-    fpStrain.write(strainLine)
+    if strainLine not in strainLineList:
+	strainLineList.append(strainLine)
+	#print 'strainLine: %s' % strainLine
+	fpStrain.write(strainLine)
     return strainName
 
 ##############################################
