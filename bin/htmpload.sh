@@ -118,7 +118,7 @@ LASTRUN_FILE=${INPUTDIR}/lastrun
 if [ -f ${LASTRUN_FILE} ]
 then
     if /usr/local/bin/test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
-       echo "\nLOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" | tee a ${LOG_CUR}
+       echo "\nLOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" | tee -a ${LOG_CUR}
        STAT=0
        checkStatus ${STAT} "LOAD SKIPPED: No new input file ${SOURCE_INPUT_FILE}"
        shutDown
