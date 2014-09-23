@@ -626,7 +626,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	    (strainID, strainName)
 	#logIt(msg, line, 0)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	return 'error'
+	return 'Not Specified'
     ######################################################
     
     # strain name construction US5 doc 4c4
