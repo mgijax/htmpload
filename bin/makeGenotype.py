@@ -381,7 +381,7 @@ def getGenotypes():
     # grab/save existing genotypes
     #
     db.sql('''
-        select a.accID, ap.*, t.term
+        select a.accID, ap.*, t.term, g._Strain_key
 	into #genotypes
         from GXD_Genotype g, GXD_AllelePair ap, 
              ACC_Accession a, GXD_AllelePair app, VOC_Term t, 
@@ -404,9 +404,9 @@ def getGenotypes():
 	#''' % (strainKey, createdBy, createdBy), None)
 
     db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
-
+    print 'makeGenotype.py getGentoypes - reading mgi_htmp_impc.txt'
     for line in fpHTMPInput.readlines():
-
+	print 'input line: %s' % line
 	error = 0
 	lineNum = lineNum + 1
 
@@ -471,7 +471,7 @@ def getGenotypes():
 
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
-
+	print 'strainName: %s strainID: %s strainKey: %s' % (strainName, strainID, strainKey)
 	# if allele is 'Heterzygous', then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
 
@@ -492,7 +492,7 @@ def getGenotypes():
 		        and awt.preferred = 1
 		''' % (markerKey)
 
-	    print querySQL
+	    #print querySQL
 	    results = db.sql(querySQL, 'auto')
 	    for r in results:
 		# found the wild type, so set it
@@ -552,10 +552,15 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = %s
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
+	    print 'Homozygous'
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+		print 'More than one genotype - last one wins'
+	    print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -576,10 +581,15 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = null
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
+	    print 'Heterozygous'
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+                print 'More than one genotype - last one wins'
+            print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -615,10 +625,15 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = null
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
+	    print 'Hemi/Indeterminate'
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+                print 'More than one genotype - last one wins'
+            print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -630,13 +645,14 @@ def getGenotypes():
 
         # if error, continue to next line
         if error:
+	    print 'writing line to error file'
 	    fpHTMPError.write(line)
             continue
 
 	#
 	# check genotype unique-ness
 	#
-
+	print 'checking genotype uniqueness'
 	dupGeno = 0
 	useOrder = str(genotypeOrder)
 
@@ -664,6 +680,7 @@ def getGenotypes():
 	    # if current gender != previous gender, then merge as "Both" (NA)
 	    # else leave gender as is
 	    if gender != prevGender:
+		print 'changing gender to both'
 	        prevRow = prevRow.replace('Male', 'Both')
 	        prevRow = prevRow.replace('Female', 'Both')
 	    fpHTMP.write(prevRow)
