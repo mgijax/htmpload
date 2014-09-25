@@ -600,24 +600,24 @@ def parseJsonFile():
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict
     #global testStrainNameDict
-
+    dupStrainKey = 0
     if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
 	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
-	return 'error'
+	dupStrainKey = 1
     
     # unpack the key into attributes
     alleleID, alleleSymbol, strainName, strainID, markerID, colonyID, mutantID, imits2ProdCtr = string.split(uniqStrainProcessingKey, '|') 
     rawStrainName = strainName
 
     # Production Center Lab Code Check US5 doc 4c2
-    if not procCtrToLabCodeDict.has_key(imits2ProdCtr):
+    if dupStrainKey == 0 and not procCtrToLabCodeDict.has_key(imits2ProdCtr):
 	msg = 'Production Center not in database: %s' % imits2ProdCtr
 	#logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	return 'error'
 
     # Prefix Strain check #1/#2 US5 doc 4c3
-    if not (strainRawPrefixDict.has_key(strainID) and \
+    if dupStrainKey == 0 and not (strainRawPrefixDict.has_key(strainID) and \
 	strainRawPrefixDict[strainID] == strainName):
 
 	# This is just a check - the strain name will be determined
@@ -650,14 +650,15 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	#testStrainNameDict[colonyID].append(strainName)
 
     else:  # otherwise use 'Not Specified'
-	strainName = 'Not Specified'
+	#strainName = 'Not Specified'
+	return 'Not Specified'
 
     # Constructed strain name match to strain in db US5 4c5
     # Not Specified strain will not have colonyID in db
     # if there is a colony ID at this point we know it doesn't match
     # because we didn't find it in check US5 4c1
     # NEED TO TEST THIS CHECK, no colony ids in db now
-    if strainName != 'Not Specified' and \
+    if dupStrainKey == 0 and strainName != 'Not Specified' and \
 	    strainNameToColonyIdDict.has_key(strainName) and \
 	    strainNameToColonyIdDict[strainName] != '':
 
