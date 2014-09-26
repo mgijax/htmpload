@@ -284,13 +284,13 @@ def createHTMPfile():
             fpHTMPSkip.write(line)
             continue
 
-        if phenotypingCenter not in ['WTSI', 'Europhenome']:
+        if phenotypingCenter not in ['WTSI']:
             logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
 
-        if annotationCenter not in ['WTSI', 'Europhenome']:
+        if annotationCenter not in ['WTSI']:
             logit = errorDisplay % (annotationCenter, lineNum, '2', line)
             fpLogDiag.write(logit)
             fpLogCur.write(logit)

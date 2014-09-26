@@ -6,7 +6,7 @@
 #  Purpose:
 #
 #      This script is a wrapper around the process that creates the 
-#	IMPC strains
+#	IMPC strains - Used for development only
 #
 Usage="Usage: makeIMPCStrains.sh  config"
 #

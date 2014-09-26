@@ -1,3 +1,14 @@
+TAG: htmpload-tr11674-10
+DATE: 09/02/2014
+STAFF: sc
+CHANGES: US 6 - add two properties, general load testing round 1
+1) makeAnnotation.py - add two properties
+2) makeIMPC.py - bug fix not writing new genotypes using 'Not Specified'
+	strain to the htmp load file
+3) makeIMPCStrains.sh - made not that this was convenience script used
+    during development
+4) makeSanger.py - removed testing if pheno center was Europhenome; just WTSI
+
 TAG: htmpload-tr11674-9
 TAG: htmpload-tr11674-8
 DATE: 09/02/2014

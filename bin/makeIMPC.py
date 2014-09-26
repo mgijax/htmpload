@@ -476,7 +476,7 @@ def parseImits2File():
     for line in fpImits2.readlines():
         tokens = line[:-1].split('\t')
         if len(tokens) < 6:
-            print 'skipping line with < 5 columns: %s' % line
+            print 'skipping line with < 6 columns: %s' % line
             continue
         productionCtr = tokens[0]
         mutantID = tokens[3]
@@ -944,4 +944,3 @@ print 'done: %s' % \
 #for id in testStrainNameDict.keys():
 #    print string.join(testStrainNameDict[id], '\t')
 sys.exit(0)
-

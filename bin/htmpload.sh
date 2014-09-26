@@ -72,6 +72,15 @@ then
 fi
 
 #
+# Establish the log file.
+#
+LOG=${LOG_DIAG}
+rm -rf ${LOG}
+rm -rf ${LOG_CUR}
+touch ${LOG}
+touch ${LOG_CUR}
+
+#
 #  Source the DLA library functions.
 #
 
@@ -88,15 +97,6 @@ else
     echo "Environment variable DLAJOBSTREAMFUNC has not been defined." | tee -a ${LOG}
     exit 1
 fi
-
-#
-# Establish the log file.
-#
-LOG=${LOG_DIAG}
-rm -rf ${LOG}
-rm -rf ${LOG_CUR}
-touch ${LOG}
-touch ${LOG_CUR}
 
 #
 # createArchive
