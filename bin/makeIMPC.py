@@ -201,7 +201,7 @@ def initialize():
 
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     impcFileInt = '%s_int' % impcFile
-    impcFileDup = '%s_dup' % impcFile
+    impcFileDup = '%s_jsondup' % impcFile
     imits2File = os.getenv('IMITS2_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     strainFile = os.getenv('STRAIN_INPUT_FILE')
