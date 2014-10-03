@@ -252,13 +252,13 @@ def createHTMPfile():
  	error = 0
 
 	tokens = line[:-1].split('\t')
-	print 'line %s: %s ' % (lineNum, line)
+	#print 'line %s: %s ' % (lineNum, line)
 	phenotypingCenter = tokens[0]
-	print 'phenotypingCenter ' + phenotypingCenter
+	#print 'phenotypingCenter ' + phenotypingCenter
         annotationCenter = tokens[1]
-	print 'annotationCenter ' + annotationCenter
+	#print 'annotationCenter ' + annotationCenter
         mutantID = tokens[2]
-	print 'mutantID: %s' % mutantID
+	#print 'mutantID: %s' % mutantID
 	mutantID2 =  mutantID
         mpID = tokens[3]
         alleleID = tokens[4]
