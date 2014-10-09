@@ -1,3 +1,13 @@
+TAG: htmpload-tr11674-11
+DATE: 09/03/2014
+STAFF: sc
+CHANGES: US 6 - strain in db, diff colony id bug fixed
+1) makeIMPC.py  - removed this constraint, no longer applicable:
+    if dupStrainKey == 0 and strainName != 'Not Specified' and \
+2) makeIMPCStrains.py - missing 'continue'
+3) added system_docs directory with visio data flow diagram and jpg version
+    which is uploaded to the htmpload wiki
+
 TAG: htmpload-tr11674-10
 DATE: 09/02/2014
 STAFF: sc

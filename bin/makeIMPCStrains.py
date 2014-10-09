@@ -326,7 +326,9 @@ def verifyStrainType(
 
 def checkColonyNote(strainKey):
     global colonyIdDict
+    #print 'chacking colony note for strain key: %s' % strainKey
     if len(colonyIdDict)== 0:
+	#print 'loading colonyIdDict'
         results = db.sql('''select _Note_key, _Object_key as strainKey
 		from MGI_Note 
 		where _MGIType_key = %s
@@ -335,6 +337,7 @@ def checkColonyNote(strainKey):
         for r in results:
             colonyIdDict[r['strainKey']] = r['_Note_key']
     if colonyIdDict.has_key(strainKey):
+	#print 'strain key %s has colony id: %s' % (strainKey, colonyIdDict[strainKey])
 	return 1
     return 0
 	
@@ -473,7 +476,7 @@ def processFile():
     for line in inputFile.readlines():
 
         lineNum = lineNum + 1
-
+	#print line
         # Split the line into tokens
         tokens = line[:-1].split('\t')
 
@@ -497,18 +500,21 @@ def processFile():
 
 	# if the strain exist, but with no colony id note, create one
 	if strainExistKey > 0:
-	    print 'strain in database : %s' % line
+	    #print 'strain in database : %s' % line
 	    if (not checkColonyNote(strainExistKey) ):
 		print 'colony note not in the database: %s' % colonyNote
 		createColonyNote(strainExistKey, colonyNote, createdByKey)
-		continue
+	    else:
+		print 'colony note in database: %s'  % colonyNote
+	    continue
 	else: 
 	    print 'strain not in database : %s' % line
 
-	# if strain already exists and  verification failed on strain type, 
+	# if strain does not exist and  verification failed on strain type, 
 	# species or createdBy, skip the record
         if strainTypeKey == 0 or speciesKey == 0 \
 		or createdByKey == 0:
+	    #print 'verification failed on strain type, species or createdBy: %s %s %s ' % (strainTypeKey, speciesKey, createdByKey)
             continue
 
         # if no errors, process
@@ -522,7 +528,7 @@ def processFile():
 
 	for a in allAlleles:
 		alleleKey = loadlib.verifyObject(a, alleleTypeKey, None, lineNum, errorFile)
-		print 'makeIMPCStrains.py allele: %s marker key: %s' % (a, alleleKey)
+		#print 'makeIMPCStrains.py allele: %s marker key: %s' % (a, alleleKey)
 	    	results = db.sql('select _Marker_key from ALL_Allele where _Allele_key = %s' % (alleleKey),  'auto')
 		markerKey = results[0]['_Marker_key']
 

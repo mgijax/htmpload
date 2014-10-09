@@ -599,12 +599,16 @@ def parseJsonFile():
 #
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict
+    
+    #print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
+    #print 'doUniqStrainChecks line: %s' % line
+
     #global testStrainNameDict
     dupStrainKey = 0
     if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
 	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
 	dupStrainKey = 1
-    
+    #print 'dupStrainKey: %s' % dupStrainKey
     # unpack the key into attributes
     alleleID, alleleSymbol, strainName, strainID, markerID, colonyID, mutantID, imits2ProdCtr = string.split(uniqStrainProcessingKey, '|') 
     rawStrainName = strainName
@@ -614,6 +618,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	msg = 'Production Center not in database: %s' % imits2ProdCtr
 	#logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	#print '%s returning "error"' % msg
 	return 'error'
 
     # Prefix Strain check #1/#2 US5 doc 4c3
@@ -626,6 +631,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	    (strainID, strainName)
 	#logIt(msg, line, 0)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	#print msg
 	return 'Not Specified'
     ######################################################
     
@@ -648,9 +654,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	#testStrainNameDict[colonyID].append(imits2ProdCtr)
         #testStrainNameDict[colonyID].append(labCode)
 	#testStrainNameDict[colonyID].append(strainName)
-
+        #print 'calculated strain name: %s' % strainName
     else:  # otherwise use 'Not Specified'
 	#strainName = 'Not Specified'
+	#print 'cannot calc strain name returning "Not Specified"'
 	return 'Not Specified'
 
     # Constructed strain name match to strain in db US5 4c5
@@ -658,15 +665,17 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # if there is a colony ID at this point we know it doesn't match
     # because we didn't find it in check US5 4c1
     # NEED TO TEST THIS CHECK, no colony ids in db now
-    if dupStrainKey == 0 and strainName != 'Not Specified' and \
-	    strainNameToColonyIdDict.has_key(strainName) and \
+    #if dupStrainKey == 0 and strainName != 'Not Specified' and \
+    if strainNameToColonyIdDict.has_key(strainName) and \
 	    strainNameToColonyIdDict[strainName] != '':
-
 	dbColonyID =  strainNameToColonyIdDict[strainName]
 	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % (dbColonyID, strainName, colonyID)
+	#print msg
 	#logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	#print '%s returning "error"' % msg
 	return 'error'
+    #print 'writing to strain line'
     strainType = strainTypeDict[strainID]
     attributes = strainAttribDict[strainID]
     attributes = attributes.replace(':', '|')
@@ -882,13 +891,14 @@ def createHTMPfile():
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    # Nor does it include gender, multi gender per uniq allele
 	    strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
+	    #print 'strainName from doUniqStrainChecks:%s' % strainName
 	    
 	# if all the checks passed write it out to the HTMP load format file
 	if strainName == 'error':
 	    # just print out for now for verification
-            print 'rejected Uniq strain check line%s' % line
+            #print 'rejected Uniq strain check line%s' % line
 	    continue
-	print 'strainName: %s' % strainName
+	#print 'writing to htmp file'
 	htmpLine = phenotypingCenter + '\t' + \
 	     interpretationCenter + '\t' + \
 	     mutantID + '\t' + \
