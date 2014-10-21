@@ -106,6 +106,8 @@ import db
 import loadlib
 import sourceloadlib
 import alleleloadlib
+import Set
+import string
 
 # LOG_DIAG
 # LOG_CUR
@@ -368,14 +370,14 @@ def closeFiles():
 def getGenotypes():
 
     global genotypeOrderDict
-
     lineNum = 0
     genotypeOrder = 1
-
-    currentMP = ''
-    prevMP = ''
-    prevRow = ''
-    prevGender = ''
+    
+    # annotations organized by order/mpID
+    # 'order' indicates uniq genotype
+    # key = order + '|' + mpID
+    # value = list of lines
+    annotDict = {}
 
     #
     # grab/save existing genotypes
@@ -406,7 +408,7 @@ def getGenotypes():
     db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
     print 'makeGenotype.py getGentoypes - reading mgi_htmp_impc.txt'
     for line in fpHTMPInput.readlines():
-	print 'input line: %s' % line
+	print 'current line: %s' % line
 	error = 0
 	lineNum = lineNum + 1
 
@@ -429,7 +431,6 @@ def getGenotypes():
         markerID = tokens[7]
 	strainName= tokens[9]
         gender = tokens[10]
-
 	# marker
 
 	if len(markerID) > 0:
@@ -666,33 +667,14 @@ def getGenotypes():
 	    dupGeno = 1
 	    useOrder = str(genotypeOrderDict[key])
 
-	#
-	# check for duplicate gender within the same annotation
-	# assumes that the duplicates are next to each other in the input file
-	# if 2 consecutive rows are the same (based on genotype order & MP)
-	#    then: set the prevRow male/female to 'both'
-	#    write the prevRow
-	#    do not write the current row (the duplicate) by setting prevMP = ''
-	#
-	currentMP = useOrder + mpID
+	# uniq genotype/mpID key
+	currentMP = useOrder + '|' + mpID
 
-	if currentMP == prevMP:
-	    # if current gender != previous gender, then merge as "Both" (NA)
-	    # else leave gender as is
-	    if gender != prevGender:
-		print 'changing gender to both'
-	        prevRow = prevRow.replace('Male', 'Both')
-	        prevRow = prevRow.replace('Female', 'Both')
-	    fpHTMP.write(prevRow)
-	    prevMP = ''
-	else:
-	    if prevMP != '':
-	        fpHTMP.write(prevRow)
-	    elif lineNum > 1:
-	        fpHTMPDup.write(prevRow)
-            prevMP = currentMP
-	    prevRow = useOrder + '\t' + line
-	    prevGender = gender
+	#### new code HDP-2 US161 support TR11792 ####
+	# add line to dictionary by currentMP key for later processing
+	if not annotDict.has_key(currentMP):
+	    annotDict[currentMP] = []
+	annotDict[currentMP].append(line)
 
 	if dupGeno:
 	    continue
@@ -711,8 +693,30 @@ def getGenotypes():
 
 	genotypeOrder = genotypeOrder + 1
 
-    # don't forget the last row
-    fpHTMP.write(prevRow)
+    #### new code HDP-2 US161 support TR11792 ####
+    # iterate through annotDict
+    for key in annotDict.keys():
+	order, mpID = string.split(key, '|')
+	lineList = annotDict[key]
+	genderSet = set([])
+	# get the gender for each line and add to the set
+	for line in lineList:
+	    tokens = line.split('\t')
+	    genderSet.add(tokens[10])
+
+	# if multi lines, the only difference is gender
+	# just get the last (or only) line in the list; prepend the order number
+	line = order + '\t' + line
+
+	# if there are multi gender values in the set, update line to 'Both'
+	if len(genderSet) > 1:
+	    # Don't bother to look at values. If already 'Both', we're golden
+	    # otherwise just update the line to 'Both'
+	    line = line.replace('Male', 'Both')
+	    line = line.replace('Female', 'Both')
+
+	# now write out the line
+	fpHTMP.write(line)
 
     return 0
 

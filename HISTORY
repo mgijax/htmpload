@@ -1,3 +1,13 @@
+TAG: htmpload-tr11674-12
+DATE: 10/21/2014
+STAFF: sc
+CHANGES: US161 - TR11792 - Support
+1) makeGenotype.py - update to handle gender collapsing correctly. 
+    separated out writing of annotations (annotload input file) from writing 
+    of genotypes (genotypeload input file). While creating genotype file, 
+    load a dictionary key=order|mpID value=list of lines; parse the dictionary 
+    after genotype file is created collapsing Male/Female dups to 'Both'. 
+
 TAG: htmpload-tr11674-11
 DATE: 09/03/2014
 STAFF: sc
