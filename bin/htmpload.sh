@@ -217,7 +217,7 @@ checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
 #
 # Touch the "lastrun" file to note when the load was run.
 #
-touch ${LASTRUN_FILE}
+#touch ${LASTRUN_FILE}
 
 #
 # run postload cleanup and email logs

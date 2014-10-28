@@ -1,3 +1,9 @@
+TAG: htmpload-tr11674-13
+DATE: 10/28/2014
+STAFF: sc
+CHANGES: commented out touch of the LASTRUN file. Need to uncomment
+    before production release!!!
+
 TAG: htmpload-tr11674-12
 DATE: 10/21/2014
 STAFF: sc
