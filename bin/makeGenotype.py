@@ -271,7 +271,10 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n\nmakeGenotype Log\n\n')
+	fpLogCur.write('\n\n######################################\n')
+        fpLogCur.write('########## makeGenotype Log ##########\n')
+        fpLogCur.write('######################################\n\n')
+
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
@@ -406,13 +409,9 @@ def getGenotypes():
 	#''' % (strainKey, createdBy, createdBy), None)
 
     db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
-    print 'makeGenotype.py getGentoypes - reading mgi_htmp_impc.txt'
     for line in fpHTMPInput.readlines():
-	print 'current line: %s' % line
 	error = 0
 	lineNum = lineNum + 1
-
-	#print lineNum, line
 
         tokens = line[:-1].split('\t')
 
@@ -472,7 +471,6 @@ def getGenotypes():
 
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
-	print 'strainName: %s strainID: %s strainKey: %s' % (strainName, strainID, strainKey)
 	# if allele is 'Heterzygous', then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
 
@@ -535,8 +533,6 @@ def getGenotypes():
 			and aa.accID = '%s'
 			''' % (alleleID)
 		    results = db.sql(checkAllele, 'auto')
-		    for r in results:
-		        print alleleID, alleleSymbol, r['symbol']
 
 	#
 	# check alleleState
@@ -557,11 +553,9 @@ def getGenotypes():
 		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
-	    print 'Homozygous'
 	    results = db.sql(querySQL, 'auto')
 	    if len(results) > 1:
 		print 'More than one genotype - last one wins'
-	    print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -586,11 +580,9 @@ def getGenotypes():
 		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
-	    print 'Heterozygous'
 	    results = db.sql(querySQL, 'auto')
 	    if len(results) > 1:
                 print 'More than one genotype - last one wins'
-            print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -630,11 +622,9 @@ def getGenotypes():
 		''' % (markerKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
-	    print 'Hemi/Indeterminate'
 	    results = db.sql(querySQL, 'auto')
 	    if len(results) > 1:
                 print 'More than one genotype - last one wins'
-            print 'results from homozygous query: %s' % results
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -646,14 +636,12 @@ def getGenotypes():
 
         # if error, continue to next line
         if error:
-	    print 'writing line to error file'
 	    fpHTMPError.write(line)
             continue
 
 	#
 	# check genotype unique-ness
 	#
-	print 'checking genotype uniqueness'
 	dupGeno = 0
 	useOrder = str(genotypeOrder)
 
@@ -724,20 +712,20 @@ def getGenotypes():
 #
 #  MAIN
 #
-print 'initialize'
+#print 'initialize'
 if initialize() != 0:
     sys.exit(1)
 
-print 'open files'
+#print 'open files'
 if openFiles() != 0:
     sys.exit(1)
 
-print 'get genotypes'
+#print 'get genotypes'
 if getGenotypes() != 0:
     closeFiles()
     sys.exit(1)
 
-print 'close files'
+#print 'close files'
 closeFiles()
 sys.exit(0)
 

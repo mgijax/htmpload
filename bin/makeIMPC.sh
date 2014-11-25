@@ -87,7 +87,6 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the IMPC HTMP input files (makeIMPC.py)" | tee -a ${LOG}
 ./makeIMPC.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -101,8 +100,7 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the IMPC HTMP strains (makeIMPCStrains.py)" | tee -a ${LOG}
-./makeIMPCStrains.py #2>&1 >> ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

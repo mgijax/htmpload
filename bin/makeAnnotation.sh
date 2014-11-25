@@ -72,7 +72,6 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the HTMP/Annotation file (makeAnnotation.sh)" | tee -a ${LOG}
 ./makeAnnotation.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
@@ -90,7 +89,6 @@ fi
 cd ${OUTPUTDIR}
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call annotload.py (makeAnnotation.sh)" | tee -a ${LOG}
 ${ANNOTLOAD}/annotload.csh ${ANNOTCONFIG} mp 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]

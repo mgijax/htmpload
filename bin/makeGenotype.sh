@@ -80,7 +80,6 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Call genotypeload.py (makeGenotype.sh)" | tee -a ${LOG}
 ${GENOTYPELOAD}/bin/genotypeload.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]

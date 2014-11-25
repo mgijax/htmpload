@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 #
 #  makeSanger.sh
 ###########################################################################
@@ -74,7 +74,6 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the Sanger HTMP input file (makeSanger.py)" | tee -a ${LOG}
 
 ${HTMPLOAD}/bin/makeSanger.py 2>&1 >> ${LOG}
 STAT=$?
