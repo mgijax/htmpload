@@ -115,7 +115,7 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('%sIMPC/IKMC Colony ID Discrepancies%s%s' % (CRT, CRT, CRT))
+	fpLogCur.write('%s######################################\n# IMPC/IKMC Colony ID Discrepancies  #\n######################################%s%s' % (CRT, CRT, CRT))
 	fpLogCur.write('Allele%sIMPC%sIKMC%s' % (TAB, TAB, CRT) )
     except:
         print 'Cannot open file: ' + logCurFile
@@ -185,7 +185,6 @@ def createColonyIdReport():
 	accID = r['accID']
 	id = string.strip(r['impcCID'])
 	if ikmcDict.has_key(alleleKey):
-	    print 'IKMC ID: %s IMPC ID: %s' % (ikmcDict[alleleKey], id)
 	    if id not in ikmcDict[alleleKey]:
 		fpLogCur.write('%s%s%s%s%s%s%s' % \
 		    (accID, TAB, id, TAB, TAB, ikmcDict[alleleKey], CRT) )

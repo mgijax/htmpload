@@ -171,8 +171,6 @@ strainAttribDict = {}
 # uniq set of strain lines written to strainload input file
 strainLineList = []
 
-#testStrainNameDict = {}
-#
 # convenience object for allele information 
 #
 class Allele:
@@ -210,10 +208,6 @@ def initialize():
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
 
-    #print 'impcFile: %s' % impcFile
-    #print 'impcFileInt: %s' % impcFileInt
-    #print 'imits2File: %s' % imits2File
-    #print 'htmpFile: %s' % htmpFile
     rc = 0
 
     #
@@ -381,7 +375,10 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n\n makeIMPC Log\n\n')
+	fpLogCur.write('\n\n######################################\n')
+	fpLogCur.write('########## makeIMPC Log ##############\n')
+	fpLogCur.write('######################################\n\n')
+
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
@@ -603,7 +600,6 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     #print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
     #print 'doUniqStrainChecks line: %s' % line
 
-    #global testStrainNameDict
     dupStrainKey = 0
     if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
 	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
@@ -616,7 +612,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # Production Center Lab Code Check US5 doc 4c2
     if dupStrainKey == 0 and not procCtrToLabCodeDict.has_key(imits2ProdCtr):
 	msg = 'Production Center not in database: %s' % imits2ProdCtr
-	#logIt(msg, line, 1)
+	logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print '%s returning "error"' % msg
 	return 'error'
@@ -629,11 +625,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	# outside this block
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % \
 	    (strainID, strainName)
-	#logIt(msg, line, 0)
+	logIt(msg, line, 0)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print msg
 	return 'Not Specified'
-    ######################################################
     
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
@@ -645,15 +640,6 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	strainTemplate = strainTemplateDict[strainID]
 	strainName = strainTemplate % \
 	    (strainRoot, alleleSymbol, labCode)
-	#if not testStrainNameDict.has_key(colonyID):
-        #    testStrainNameDict[colonyID] = []
-	#testStrainNameDict[colonyID].append(rawStrainName)
-        #testStrainNameDict[colonyID].append(strainID)
-	#testStrainNameDict[colonyID].append(strainRoot)
-        #testStrainNameDict[colonyID].append(alleleSymbol)
-	#testStrainNameDict[colonyID].append(imits2ProdCtr)
-        #testStrainNameDict[colonyID].append(labCode)
-	#testStrainNameDict[colonyID].append(strainName)
         #print 'calculated strain name: %s' % strainName
     else:  # otherwise use 'Not Specified'
 	#strainName = 'Not Specified'
@@ -665,7 +651,6 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # if there is a colony ID at this point we know it doesn't match
     # because we didn't find it in check US5 4c1
     # NEED TO TEST THIS CHECK, no colony ids in db now
-    #if dupStrainKey == 0 and strainName != 'Not Specified' and \
     if strainNameToColonyIdDict.has_key(strainName) and \
 	    strainNameToColonyIdDict[strainName] != '':
 	dbColonyID =  strainNameToColonyIdDict[strainName]
@@ -693,8 +678,6 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	#print 'strainLine: %s' % strainLine
 	fpStrain.write(strainLine)
     return strainName
-
-##############################################
 
 #
 # Purpose: resolves the IMPC alleleState term to MGI alleleState term
@@ -840,7 +823,6 @@ def createHTMPfile():
 	    colonyToMCLDict[colonyID], '|')
         if compareMarkers(markerID, imits2MrkID, line):
 	    continue
-##################
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 	if allelesInDbDict.has_key(alleleID):
 	    dbAllele = allelesInDbDict[alleleID]
@@ -864,7 +846,6 @@ def createHTMPfile():
 	if error == 1:
 	    logIt(msg, line, 1)
 	    continue
-#################
 	#
 	# Now do checks on the uniq strains in the input file
 	#
@@ -881,12 +862,10 @@ def createHTMPfile():
 	    #print 'found strain in db %s' % strainName
 	    #uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
 	else:
-	    #print 'strain not found by colonyID %s' % colonyID
 	    #
 	    # if strain not determined by colony ID first do checks on the 
 	    #	uniq strains in the input file
 	    #
-
 	    # if key in the list, we've already processed this uniq record
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    # Nor does it include gender, multi gender per uniq allele
@@ -951,6 +930,4 @@ if createHTMPfile() != 0:
 closeFiles()
 print 'done: %s' % \
     time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-#for id in testStrainNameDict.keys():
-#    print string.join(testStrainNameDict[id], '\t')
 sys.exit(0)

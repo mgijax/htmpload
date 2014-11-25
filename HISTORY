@@ -1,3 +1,22 @@
+TAG: htmpload-tr11674-14
+DATE: 10/28/2014
+STAFF: sc
+General cleanup:
+1) htmpload.sh
+a. uncomment last run file
+b. move removal of genotype/annot loads error and diagnostics files to after 
+   checking lastrun file and sanity check on line number - per Lori, bug in 
+   original code
+c. remove extraneous echos to stdout which end up in cron email
+2) makeAnnotation.sh, makeGenotype.sh, makeSanger.sh
+a. remove extraneous echos to stdout which end up in cron email
+3) makeIMPC.sh
+a. remove extraneous echos; send output of makeIMPCStrains.py to log
+4) makeGenotype.py, makeIMPC.py, makeSanger.py, runReports_IMPC.py
+a. removed extraneous debug; highighted curation log header
+5) impcmpload.config.default, sangermpload.config.default
+a. reinstated proper MAIL_LOG_CUR setting
+
 TAG: htmpload-tr11674-13
 DATE: 10/28/2014
 STAFF: sc
