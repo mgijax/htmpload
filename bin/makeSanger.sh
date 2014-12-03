@@ -1,25 +1,24 @@
 #!/bin/sh
 #
-#  makeEuropheno.sh
+#  makeSanger.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the process that creates the Europhenome HTMP file
+#      This script is a wrapper around the process that creates the 
+#	Sanger HTMP file
 #
-#  Usage:
-#
-#      makeEuropheno.sh
+Usage="Usage: makeSanger.sh config"
 #
 #  Env Vars:
 #
-#      See the configuration file (europhenompload.config)
+#      See the configuration file 
 #
-#  Inputs:  None
+#  Inputs: None
 #
 #  Outputs:
 #
-#      - Log file (${LOG_DIAG})
+#      - Log file (${LOG})
 #
 #  Exit Codes:
 #
@@ -35,13 +34,22 @@
 #      1) Source the configuration file to establish the environment.
 #      2) Verify that the input file exists.
 #      3) Establish the log file.
-#      4) Call makeEuropheno.py to create the association file.
+#      4) Call makeHTMP.py to create the htmp load file.
 #
-#  Notes:  None
+#  Notes: 
+#
+#  08/15/2014   sc
+#       - TR11674
 #
 ###########################################################################
 
 cd `dirname $0`
+
+if [ $# -lt 1 ]
+then
+    echo ${Usage}
+    exit 1
+fi
 
 CONFIG=$1
 
@@ -62,16 +70,16 @@ fi
 LOG=${LOG_DIAG}
 
 #
-# Create the Europhenome/HTMP input file
+# Create the Sanger HTMP input file
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the Europhenome/HTMP input file (makeEuropheno.sh)" | tee -a ${LOG}
-./makeEuropheno.py 2>&1 >> ${LOG}
+
+${HTMPLOAD}/bin/makeSanger.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create the Europhenome/HTMP input file (makeEuropheno.sh)" | tee -a ${LOG}
+    echo "Error: Create the Sanger HTMP input file (makeSanger.py)" | tee -a ${LOG}
     exit 1
 fi
 

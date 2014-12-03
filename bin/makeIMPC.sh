@@ -1,25 +1,24 @@
 #!/bin/sh
 #
-#  makeAnnotation.sh
+#  makeIMPC.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the process that creates the Annotations.
+#      This script is a wrapper around the process that creates the 
+#	IMPC HTMP file
 #
-#  Usage:
-#
-#      makeAnnotation.sh configFile annotConfigFile
+Usage="Usage: makeIMPC.sh config"
 #
 #  Env Vars:
 #
-#      See the configuration file (CONFIG)
+#      See the configuration file 
 #
 #  Inputs:  None
 #
 #  Outputs:
 #
-#      - Log file (${LOG_DIAG})
+#      - Log file (${LOG})
 #
 #  Exit Codes:
 #
@@ -35,16 +34,23 @@
 #      1) Source the configuration file to establish the environment.
 #      2) Verify that the input file exists.
 #      3) Establish the log file.
-#      4) Call makeAnnotation.py to create the annotation file.
+#      4) Call makeHTMP.py to create the htmp load file.
 #
-#  Notes:  None
+#  Notes:  
+#  08/12/2014   sc
+#       - TR11674
 #
 ###########################################################################
 
 cd `dirname $0`
 
+if [ $# -lt 1 ]
+then
+    echo ${Usage}
+    exit 1
+fi
+
 CONFIG=$1
-ANNOTCONFIG=$2
 
 #
 # Make sure the configuration file exists and source it.
@@ -56,11 +62,6 @@ else
     echo "Missing configuration file: ${CONFIG}"
     exit 1
 fi
-if [ ! -f ${ANNOTCONFIG} ]
-then
-    echo "Missing configuration file: ${ANNOTCONFIG}"
-    exit 1
-fi
 
 #
 # Establish the log file.
@@ -68,32 +69,42 @@ fi
 LOG=${LOG_DIAG}
 
 #
-# Create the HTMP/Annotation input file for the annotload
+# copy imits2 input file into working directory
 #
-echo "" >> ${LOG}
+echo "copying iMits2 input file..." >> ${LOG}
 date >> ${LOG}
-./makeAnnotation.py 2>&1 >> ${LOG}
+rm -rf ${IMITS2_COPY_INPUT_FILE}
+cp ${IMITS2_INPUT_FILE} ${IMITS2_COPY_INPUT_FILE}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create the HTMP/Annotation file (makeAnnotation.sh)" | tee -a ${LOG}
+    echo "Error: copying ${IMITS2_INPUT_FILE} to ${IMITS2_COPY_INPUT_FILE}" | tee -a ${LOG}
     exit 1
 fi
 
 #
-# Run the annotload-er
-# Make sure you cd into the output directory
-# since the annotload-er puts its output files into
-# the current-working-directory
+# Create the IMPC HTMP input files
 #
-cd ${OUTPUTDIR}
 echo "" >> ${LOG}
 date >> ${LOG}
-${ANNOTLOAD}/annotload.csh ${ANNOTCONFIG} mp 2>&1 >> ${LOG}
+./makeIMPC.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Call annotload.py (makeAnnotation.sh)" | tee -a ${LOG}
+    echo "Error: creating the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
+    exit 1
+fi
+
+#
+# Create the IMPC HTMP strains
+#
+echo "" >> ${LOG}
+date >> ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    echo "Error: Create the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
     exit 1
 fi
 

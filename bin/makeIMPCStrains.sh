@@ -1,25 +1,24 @@
 #!/bin/sh
 #
-#  makeGenotype.sh
+#  makeIMPCStrains.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the Genotype 
+#      This script is a wrapper around the process that creates the 
+#	IMPC strains - Used for development only
 #
-#  Usage:
-#
-#      makeGenotype.sh config_file
+Usage="Usage: makeIMPCStrains.sh  config"
 #
 #  Env Vars:
 #
-#      See the configuration file (CONFIG)
+#      See the configuration file 
 #
 #  Inputs:  None
 #
 #  Outputs:
 #
-#      - Log file (${LOG_DIAG})
+#      - Log file (${LOG})
 #
 #  Exit Codes:
 #
@@ -35,13 +34,20 @@
 #      1) Source the configuration file to establish the environment.
 #      2) Verify that the input file exists.
 #      3) Establish the log file.
-#      4) Call makeGenotype.py to create the association file.
+#      4) Call makeHTMPStrain.py to create the htmp load file.
 #
-#  Notes:  None
+#  Notes:  
+#  08/12/2014   sc
+#       - TR11674
 #
 ###########################################################################
-
 cd `dirname $0`
+
+if [ $# -lt 1 ]
+then
+    echo ${Usage}
+    exit 1
+fi
 
 CONFIG=$1
 
@@ -59,33 +65,28 @@ fi
 #
 # Establish the log file.
 #
-LOG=${LOG_DIAG}
+LOG=${STRAINLOG}
+
+if [ -f ${LOG} ]
+then
+    rm -rf ${LOG}
+fi
+touch ${LOG}
 
 #
-# Create the Genotype input file for the genotypeload
+# Create the IMPC HTMP input file
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create the Genotype file (makeGenotype.sh)" | tee -a ${LOG}
-./makeGenotype.py 2>&1 >> ${LOG}
+echo "Create IMPC strains (makeIMPCStrain.py)" | tee -a ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create the Genotype file (makeGenotype.sh)" | tee -a ${LOG}
+    echo "Error: Create IMPC HTMP strain (makeIMPCStrain.py)" | tee -a ${LOG}
     exit 1
 fi
-
-#
-# Run the genotypeload-er
-#
 echo "" >> ${LOG}
 date >> ${LOG}
-${GENOTYPELOAD}/bin/genotypeload.sh ${CONFIG} 2>&1 >> ${LOG}
-STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Error: Call genotypeload.py (makeGenotype.sh)" | tee -a ${LOG}
-    exit 1
-fi
 
 exit 0

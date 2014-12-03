@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#  runReports.sh
+#  runReports_Sanger.sh
 ###########################################################################
 #
 #  Purpose:
@@ -9,7 +9,7 @@
 #
 #  Usage:
 #
-#      runReports.sh
+#      runReports_Sanger.sh
 #
 #  Env Vars:
 #
@@ -62,35 +62,35 @@ fi
 #
 LOG=${LOG_DIAG}
 
-htmpBiomart=`/usr/bin/wc -l < ${INPUTFILE}`
-echo '\nBioMart file (contains all rows):' >> ${LOG_CUR}
-echo '   ' ${htmpBiomart} >> ${LOG_CUR}
+htmpSource=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
+echo '\nSource file (contains all rows):' >> ${LOG_CUR}
+echo '   ' ${htmpSource} >> ${LOG_CUR}
 
 htmpSkip=`/usr/bin/wc -l < ${HTMPSKIP_INPUT_FILE}`
-echo 'BioMart file (skipped):' >> ${LOG_CUR}
+echo 'Source file (skipped):' >> ${LOG_CUR}
 echo '-- ' ${htmpSkip} >> ${LOG_CUR}
 
 htmpDup=`/usr/bin/wc -l < ${HTMPDUP_INPUT_FILE}`
-echo 'BioMart file (duplicates):' >> ${LOG_CUR}
+echo 'Source file (duplicates):' >> ${LOG_CUR}
 echo '-- ' ${htmpDup} >> ${LOG_CUR}
 
 htmpError=`/usr/bin/wc -l < ${HTMPERROR_INPUT_FILE}`
-echo 'BioMart file (errors):' >> ${LOG_CUR}
+echo 'Source file (errors):' >> ${LOG_CUR}
 echo '-- ' ${htmpError} >> ${LOG_CUR}
 
 htmpMGD=`/usr/bin/wc -l < ${HTMPUNIQ_INPUT_FILE}`
-echo 'BioMart file (contains MP-annotated rows only):' >> ${LOG_CUR}
+echo 'Source file (contains MP-annotated rows only):' >> ${LOG_CUR}
 echo '== ' ${htmpMGD} >> ${LOG_CUR}
 
 #
-# $htmpSkip + $htmpDup + $htmpError + $htmpMGD ==> htmpBiomart
+# $htmpSkip + $htmpDup + $htmpError + $htmpMGD ==> htmpSource
 #
 totalHTMP=`expr $htmpSkip + $htmpDup + $htmpError + $htmpMGD`
-if [ $totalHTMP -ne $htmpBiomart ]
+if [ $totalHTMP -ne $htmpSource ]
 then
-echo 'ERROR:  Biomart does **not** equal skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
+echo 'ERROR:  Source does **not** equal skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
 else
-echo 'SUCCESSFUL:  Biomart equals skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
+echo 'SUCCESSFUL:  Source equals skip + duplicates + errors + MP-annotations ' >> ${LOG_CUR}
 fi
 
 #
@@ -130,31 +130,6 @@ if [ $genotypeInput1 -ne $genotypeInput2 ]
 then
 echo 'ERROR:  check file: ' ${LOGDIR}/htmp_annot.log >> ${LOG_CUR}
 fi
-
-#if [ $genotypeInput2 -ne $genotypeOutput ]
-#then
-#echo 'ERROR:  check file: ' ${OUTPUTDIR}/mgi_genotypeload.txt.error >> ${LOG_CUR}
-#fi
-
-# don't need to do this..but it's a good idea for later
-#echo "" >> ${LOG}
-#date >> ${LOG}
-#echo "Run QC report (runReports.sh)" | tee -a ${LOG}
-#echo $QCOUTPUTDIR
-#cd ${QCRPTS}/mgd
-#./ALL_MPAnnot.py | tee -a ${LOG}
-#STAT=$?
-#if [ ${STAT} -ne 0 ]
-#then
-#    echo "Error: Run QC report (runReports.sh)" | tee -a ${LOG}
-#    exit 1
-#fi
-
-#rm -rf ${RPTDIR}/ALL_MPAnnot.htmp.rpt
-#grep ${JNUMBER} ${RPTDIR}/ALL_MPAnnot.rpt > ${RPTDIR}/ALL_MPAnnot.htmp.rpt
-
-#rm -rf ${RPTDIR}/${JNUMBER}check
-#grep -l ${JNUMBER} ${QCREPORTDIR}/output/* > ${RPTDIR}/${JNUMBER}check
 
 exit 0
 

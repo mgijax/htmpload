@@ -11,8 +11,9 @@
 #
 #      2) create new Genotype records, if necessary
 #
-#	Genotypes that are created or modified by the HTMP 'createdBy' user can be used
-#	Else a new Genotype will be added.
+#	Only genotypes that are created or modified by the 
+#	    HTMP 'createdBy' user can be used otherwise a new Genotype
+#	    will be added.
 #	Genotypes that are created or modified by a curator *cannot* be used
 #
 #  Usage:
@@ -27,7 +28,6 @@
 #    	   LOG_DIAG
 #    	   LOG_CUR
 #    	   HTMP_INPUT_FILE
-#    	   HTMPSKIP_INPUT_FILE
 #    	   HTMPDUP_INPUT_FILE
 #    	   HTMPERROR_INPUT_FILE
 #    	   HTMPUNIQ_INPUT_FILE
@@ -39,25 +39,22 @@
 #
 #      High Throughput MP file ($HTMP_INPUT_FILE)
 #
-#       field 1: Phenotyping Center ('WTSI', 'Europhenome')
-#       field 2: Annotation Center ('WTSI', 'Europhenome')
+#       field 1: Phenotyping Center 
+#       field 2: Annotation Center
 #       field 3: ES Cell
 #       field 4: MP ID
 #       field 5: MGI Allele ID
-#       field 6: Allele State ('Hom', 'Het', 'Hemi', '')
+#       field 6: Allele State 
 #       field 7: Allele Symbol
 #       field 8: MGI Marker ID
-#       field 9: Evidence Code ('EXP')
+#       field 9: Evidence Code 
 #       field 10: Strain Name
-#       field 11: Gender ('Female', 'Male', 'Both')
+#       field 11: Gender 
 #
 #  Outputs:
 #
-#      input data that was skipped	
-#      HTMPSKIP_INPUT_FILE
-#	  field 1-11
 #
-#      input data that was merged (duplciates)
+#      input data that was merged (duplicates)
 #      HTMPDUP_INPUT_FILE
 #	  field 1-11
 #
@@ -65,8 +62,8 @@
 #      HTMPERROR_INPUT_FILE
 #	  field 1-11
 #
-#      these output files contain the genotype # so that we can
-#      associated the genotype fields (4,5,6,7,10) with the appropriate genotype ID
+#      these output files contain the genotype # so that we can associate
+#      the genotype fields (4,5,6,7,10) with the appropriate genotype ID
 #
 #      HTMPUNIQ_INPUT_FILE
 #         field 0: Unique Genotype Sequence Number 
@@ -94,13 +91,9 @@
 #
 #  Notes:  None
 #
-# read X/Y chromosomes into lookup list
-# select symbol, _Marker_Type_key 
-# from MRK_Marker 
-# where _Organism_key = 1 
-# and chromosome in ('X' , 'Y')
-# and _Marker_Status_key in (1,3) 
-# and _Marker_Type_key = 1
+#  08-15-2014	sc
+#	- TR11674 - HDP-2/IMPC project
+#	- make generic - factor proprietary sanger code out into preprocessor
 #
 #  09/04/2012	lec
 #	- TR10273
@@ -113,6 +106,8 @@ import db
 import loadlib
 import sourceloadlib
 import alleleloadlib
+import Set
+import string
 
 # LOG_DIAG
 # LOG_CUR
@@ -120,10 +115,7 @@ logDiagFile = None
 logCurFile = None
 
 # HTMP_INPUT_FILE
-biomartFile = None
-
-# HTMPSKIP_INPUT_FILE
-htmpSkipFile = None
+htmpInputFile = None
 
 # HTMPDUP_INPUT_FILE
 htmpDupFile = None
@@ -140,8 +132,7 @@ genotypeFile = None
 # file pointers
 fpLogDiag = None
 fpLogCur = None
-fpBiomart = None
-fpHTMPSkip = None
+fpHTMPInput = None
 fpHTMPDup = None
 fpHTMPError = None
 fpHTMP = None
@@ -151,7 +142,6 @@ fpGenotype = None
 genotypeLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n'
 
 # defaults
-alleleStateDefault = 'Indeterminate'
 conditional = 'no'
 existsAs = 'Mouse Line'
 compound = 'Not Applicable'
@@ -186,15 +176,12 @@ genotypeOrderDict = {}
 #
 def initialize():
     global logDiagFile, logCurFile
-    global biomartFile, htmpSkipFile, htmpDupFile, htmpErrorFile, HTMPFile
-    global genotypeFile
-    global fpLogDiag, fpLogCur, fpBiomart, fpHTMPSkip, fpHTMPDup, fpHTMPError, fpHTMP, fpGenotype
-    global createdBy, jnumber
+    global htmpInputFile, htmpDupFile, htmpErrorFile, HTMPFile
+    global genotypeFile, createdBy, jnumber
 
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
-    biomartFile = os.getenv('HTMP_INPUT_FILE')
-    htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
+    htmpInputFile = os.getenv('HTMP_INPUT_FILE')
     htmpDupFile = os.getenv('HTMPDUP_INPUT_FILE')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     HTMPFile = os.getenv('HTMPUNIQ_INPUT_FILE')
@@ -221,15 +208,8 @@ def initialize():
     #
     # Make sure the environment variables are set.
     #
-    if not biomartFile:
+    if not htmpInputFile:
         print 'Environment variable not set: INPUTDIR/HTMP_INPUT_FILE'
-        rc = 1
-
-    #
-    # Make sure the environment variables are set.
-    #
-    if not htmpSkipFile:
-        print 'Environment variable not set: HTMPSKIP_INPUT_FILE'
         rc = 1
 
     #
@@ -260,18 +240,6 @@ def initialize():
         print 'Environment variable not set: GENOTYPE_INPUT_FILE'
         rc = 1
 
-    #
-    # Initialize file pointers.
-    #
-    fpLogDiag = None
-    fpLogCur = None
-    fpBiomart = None
-    fpHTMPSkip = None
-    fpHTMPDup = None
-    fpHTMPError = None
-    fpHTMP = None
-    fpGenotype = None
-
     db.useOneConnection(1)
 
     return rc
@@ -279,14 +247,14 @@ def initialize():
 
 #
 # Purpose: Open files.
-# Returns: 1 if file does not exist or is not readable, else 0
+# Returns: 1 if file cannot be opened, else 0
 # Assumes: Nothing
 # Effects: Nothing
 # Throws: Nothing
 #
 def openFiles():
     global fpLogDiag, fpLogCur
-    global fpBiomart, fpHTMPSkip, fpHTMPDup, fpHTMPError, fpHTMP
+    global fpHTMPInput, fpHTMPDup, fpHTMPError, fpHTMP
     global fpGenotype
 
     #
@@ -303,26 +271,21 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
+	fpLogCur.write('\n\n######################################\n')
+        fpLogCur.write('########## makeGenotype Log ##########\n')
+        fpLogCur.write('######################################\n\n')
+
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
 
     #
-    # Open the Biomart file
+    # Open the HTMP input file
     #
     try:
-        fpBiomart = open(biomartFile, 'r')
+        fpHTMPInput = open(htmpInputFile, 'r')
     except:
-        print 'Cannot open file: ' + biomartFile
-        return 1
-
-    #
-    # Open the Skip file
-    #
-    try:
-        fpHTMPSkip = open(htmpSkipFile, 'w')
-    except:
-        print 'Cannot open file: ' + htmpSkipFile
+        print 'Cannot open file: ' + htmpInputFile
         return 1
 
     #
@@ -338,7 +301,7 @@ def openFiles():
     # Open the Error file
     #
     try:
-        fpHTMPError = open(htmpErrorFile, 'w')
+        fpHTMPError = open(htmpErrorFile, 'a+')
     except:
         print 'Cannot open file: ' + htmpErrorFile
         return 1
@@ -366,7 +329,7 @@ def openFiles():
 
 #
 # Purpose: Close files.
-# Returns: 1 if file does not exist or is not readable, else 0
+# Returns: 0
 # Assumes: Nothing
 # Effects: Nothing
 # Throws: Nothing
@@ -379,11 +342,8 @@ def closeFiles():
     if fpLogCur:
         fpLogCur.close()
 
-    if fpBiomart:
-        fpBiomart.close()
-
-    if fpHTMPSkip:
-        fpHTMPSkip.close()
+    if fpHTMPInput:
+        fpHTMPInput.close()
 
     if fpHTMPDup:
         fpHTMPDup.close()
@@ -403,8 +363,9 @@ def closeFiles():
 
 
 #
-# Purpose: Read the HTMP file to verify the Genotypes or create new Genotype input file
-# Returns: 1 if file does not exist or is not readable, else 0
+# Purpose: Read the HTMP file to verify the Genotypes or create new 
+#	     Genotype input file
+# Returns: 0
 # Assumes: Nothing
 # Effects: Nothing
 # Throws: Nothing
@@ -412,27 +373,20 @@ def closeFiles():
 def getGenotypes():
 
     global genotypeOrderDict
-
     lineNum = 0
     genotypeOrder = 1
-
-    currentMP = ''
-    prevMP = ''
-    prevRow = ''
-    prevGender = ''
-
-    #
-    # all Strains will use 'Not Specified'
-    #
-    strainName = 'Not Specified'
-    strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
-    strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
+    
+    # annotations organized by order/mpID
+    # 'order' indicates uniq genotype
+    # key = order + '|' + mpID
+    # value = list of lines
+    annotDict = {}
 
     #
     # grab/save existing genotypes
     #
     db.sql('''
-        select a.accID, ap.*, t.term
+        select a.accID, ap.*, t.term, g._Strain_key
 	into #genotypes
         from GXD_Genotype g, GXD_AllelePair ap, 
              ACC_Accession a, GXD_AllelePair app, VOC_Term t, 
@@ -441,7 +395,6 @@ def getGenotypes():
         and a._MGIType_key = 12
         and a._LogicalDB_key = 1
         and a.preferred = 1
-        and g._Strain_key = %s
 	and g.isConditional = 0
         and g._Genotype_key = ap._Genotype_key
         and g._Genotype_key = app._Genotype_key
@@ -451,16 +404,14 @@ def getGenotypes():
 	and u1.login = '%s'
         and g._ModifiedBy_key = u2._User_key
 	and u2.login = '%s'
-	''' % (strainKey, createdBy, createdBy), None)
+	''' % (createdBy, createdBy), None)
+        #/*and g._Strain_key = %s */
+	#''' % (strainKey, createdBy, createdBy), None)
 
     db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
-
-    for line in fpBiomart.readlines():
-
+    for line in fpHTMPInput.readlines():
 	error = 0
 	lineNum = lineNum + 1
-
-	#print lineNum, line
 
         tokens = line[:-1].split('\t')
 
@@ -469,38 +420,16 @@ def getGenotypes():
 	phenotypingCenter = tokens[0]
 	annotationCenter = tokens[1]
 
-	mutantID = mutantID2 = tokens[2]
+	mutantID = tokens[2]
+	mutantID2 = mutantID
 	mpID = tokens[3]
-        alleleID = alleleID2 = tokens[4]
+        alleleID = tokens[4]
+	alleleID2 = alleleID
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
+	strainName= tokens[9]
         gender = tokens[10]
-
-	# skip
-	if alleleSymbol.find('not yet available') >= 0:
-	    fpHTMPSkip.write(line)
-	    continue
-
-	# skip if no MP annotation ID
-	if mpID == '':
-	    fpHTMPSkip.write(line)
-	    continue
-
-	# centers
-
-        if phenotypingCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (phenotypingCenter, lineNum, '1', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-
-        if annotationCenter not in ['WTSI', 'Europhenome']:
-            logit = errorDisplay % (annotationCenter, lineNum, '2', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-
 	# marker
 
 	if len(markerID) > 0:
@@ -540,19 +469,14 @@ def getGenotypes():
             fpLogCur.write(logit)
             error = 1
 
-	# gender
-
-        if gender not in ('Male', 'Female', 'Both', ''):
-            logit = errorDisplay % (gender, lineNum, '11', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
-	
-	# if allele is 'Het', then marker must have a wild-type allele
-        if alleleState == 'Het':
+	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
+	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
+	# if allele is 'Heterzygous', then marker must have a wild-type allele
+        if alleleState == 'Heterozygous':
 
 	    #
-	    # for heterzygous, allele 2 = the wild type allele (marker symbol + '<+>')
+	    # for heterzygous, allele 2 = the wild type allele 
+	    #    (marker symbol + '<+>')
 	    # find the wild type allele accession id
 	    #
 
@@ -567,7 +491,7 @@ def getGenotypes():
 		        and awt.preferred = 1
 		''' % (markerKey)
 
-	    print querySQL
+	    #print querySQL
 	    results = db.sql(querySQL, 'auto')
 	    for r in results:
 		# found the wild type, so set it
@@ -609,24 +533,9 @@ def getGenotypes():
 			and aa.accID = '%s'
 			''' % (alleleID)
 		    results = db.sql(checkAllele, 'auto')
-		    for r in results:
-		        print alleleID, alleleSymbol, r['symbol']
-
-	#
-	# blank = Indeterminate
-	# Hom => Homozygous
-	# Het => Heterozygous
-	#
-
-	if alleleState == '':
-	    alleleState = alleleStateDefault
-
-	alleleState = alleleState.replace('Hom', 'Homozygous')
-	alleleState = alleleState.replace('Het', 'Heterozygous')
 
 	#
 	# check alleleState
-	# Allele State ('Hom', 'Het', 'Hemi')
 	#
 
         if alleleState == 'Homozygous':
@@ -640,36 +549,23 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = %s
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+		print 'More than one genotype - last one wins'
 	    for r in results:
 		genotypeID = r['accID']
 
         elif alleleState == 'Heterozygous':
 
 	    #
-	    # for heterzygous, allele 2 = the wild type allele (marker symbol + '<+>')
+	    # for heterzygous, allele 2 = the wild type allele 
+	    #   (marker symbol + '<+>')
 	    # find the wild type allele accession id
 	    #
-
-	    #querySQL = '''
-	#	select awt.accID
-	#		from ALL_Allele wt, ACC_Accession awt
-	#		where wt._Marker_key = %s
-	#		and wt.name = 'wild type'
-	#		and wt._Allele_key = awt._Object_key
-	#	        and awt._MGIType_key = 11
-	#	        and awt._LogicalDB_key = 1
-	#	        and awt.preferred = 1
-	#	''' % (markerKey)
-
-	    #print querySQL
-#	    results = db.sql(querySQL, 'auto')
-#	    for r in results:
-#		alleleID2 = r['accID']
-#		mutantID2 = ''
 
 	    querySQL = '''
 		select g.accID
@@ -680,20 +576,25 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = null
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+                print 'More than one genotype - last one wins'
 	    for r in results:
 		genotypeID = r['accID']
 
-	elif alleleState in ('Hemi', 'Indeterminate'):
+	elif alleleState in ('Hemizygous', 'Indeterminate'):
 
 	    alleleID2 = ''
 	    mutantID2 = ''
 
-	    if alleleState == 'Hemi':
-	        querySQL = 'select chromosome from MRK_Marker where _Marker_key = %s' % (markerKey)
+	    if alleleState == 'Hemizygous':
+	        querySQL = '''select chromosome 
+			from MRK_Marker 
+			where _Marker_key = %s''' % markerKey
 	        results = db.sql(querySQL, 'auto')
 	        for r in results:
 		    if r['chromosome'] == 'X':
@@ -717,10 +618,13 @@ def getGenotypes():
 			and g._MutantCellLine_key_1 = %s
 			and g._MutantCellLine_key_2 = null
 			and g.term = '%s'
-		''' % (markerKey, alleleKey, mutantKey, alleleState)
+			and g._Strain_key = %s
+		''' % (markerKey, alleleKey, mutantKey, alleleState, strainKey)
 
 	    #print querySQL
 	    results = db.sql(querySQL, 'auto')
+	    if len(results) > 1:
+                print 'More than one genotype - last one wins'
 	    for r in results:
 		genotypeID = r['accID']
 
@@ -738,7 +642,6 @@ def getGenotypes():
 	#
 	# check genotype unique-ness
 	#
-
 	dupGeno = 0
 	useOrder = str(genotypeOrder)
 
@@ -746,37 +649,20 @@ def getGenotypes():
 	# set uniqueness
 	# isConditional is always 0, so we do not need to specify this value
 	#
-	key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey) + str(mutantKey)
+	key = str(markerKey) + str(alleleKey) + str(alleleState) + \
+		str(strainKey) + str(mutantKey)
 	if genotypeOrderDict.has_key(key):
 	    dupGeno = 1
 	    useOrder = str(genotypeOrderDict[key])
 
-	#
-	# check for duplicate gender within the same annotation
-	# assumes that the duplicates are next to each other in the input file
-	# if 2 consecutive rows are the same (based on genotype order & MP), then:
-	#    set the prevRow male/female to 'both'
-	#    write the prevRow
-	#    do not write the current row (the duplicate) by setting prevMP = ''
-	#
-	currentMP = useOrder + mpID
+	# uniq genotype/mpID key
+	currentMP = useOrder + '|' + mpID
 
-	if currentMP == prevMP:
-	    # if current gender != previous gender, then merge as "Both" (NA)
-	    # else leave gender as is
-	    if gender != prevGender:
-	        prevRow = prevRow.replace('Male', 'Both')
-	        prevRow = prevRow.replace('Female', 'Both')
-	    fpHTMP.write(prevRow)
-	    prevMP = ''
-	else:
-	    if prevMP != '':
-	        fpHTMP.write(prevRow)
-	    elif lineNum > 1:
-	        fpHTMPDup.write(prevRow)
-            prevMP = currentMP
-	    prevRow = useOrder + '\t' + line
-	    prevGender = gender
+	#### new code HDP-2 US161 support TR11792 ####
+	# add line to dictionary by currentMP key for later processing
+	if not annotDict.has_key(currentMP):
+	    annotDict[currentMP] = []
+	annotDict[currentMP].append(line)
 
 	if dupGeno:
 	    continue
@@ -790,13 +676,35 @@ def getGenotypes():
 	fpGenotype.write(genotypeLine % (\
 		genotypeOrder, genotypeID, strainID, strainName, \
 		markerID, alleleID, mutantID, alleleID2, mutantID2, \
-		conditional, existsAs, generalNote, privateNote, alleleState, compound, \
-		createdBy))
+		conditional, existsAs, generalNote, privateNote, alleleState, \
+		compound, createdBy))
 
 	genotypeOrder = genotypeOrder + 1
 
-    # don't forget the last row
-    fpHTMP.write(prevRow)
+    #### new code HDP-2 US161 support TR11792 ####
+    # iterate through annotDict
+    for key in annotDict.keys():
+	order, mpID = string.split(key, '|')
+	lineList = annotDict[key]
+	genderSet = set([])
+	# get the gender for each line and add to the set
+	for line in lineList:
+	    tokens = line.split('\t')
+	    genderSet.add(tokens[10])
+
+	# if multi lines, the only difference is gender
+	# just get the last (or only) line in the list; prepend the order number
+	line = order + '\t' + line
+
+	# if there are multi gender values in the set, update line to 'Both'
+	if len(genderSet) > 1:
+	    # Don't bother to look at values. If already 'Both', we're golden
+	    # otherwise just update the line to 'Both'
+	    line = line.replace('Male', 'Both')
+	    line = line.replace('Female', 'Both')
+
+	# now write out the line
+	fpHTMP.write(line)
 
     return 0
 
@@ -804,17 +712,20 @@ def getGenotypes():
 #
 #  MAIN
 #
-
+#print 'initialize'
 if initialize() != 0:
     sys.exit(1)
 
+#print 'open files'
 if openFiles() != 0:
     sys.exit(1)
 
+#print 'get genotypes'
 if getGenotypes() != 0:
     closeFiles()
     sys.exit(1)
 
+#print 'close files'
 closeFiles()
 sys.exit(0)
 

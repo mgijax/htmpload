@@ -1,3 +1,166 @@
+TAG: htmpload-5-2-1-1
+DATE: 12/02/2014
+STAFF: sc
+CHANGES: merge tr11674 to trunk
+
+TAG: htmpload-tr11674-14
+DATE: 10/28/2014
+STAFF: sc
+General cleanup:
+1) htmpload.sh
+a. uncomment last run file
+b. move removal of genotype/annot loads error and diagnostics files to after 
+   checking lastrun file and sanity check on line number - per Lori, bug in 
+   original code
+c. remove extraneous echos to stdout which end up in cron email
+2) makeAnnotation.sh, makeGenotype.sh, makeSanger.sh
+a. remove extraneous echos to stdout which end up in cron email
+3) makeIMPC.sh
+a. remove extraneous echos; send output of makeIMPCStrains.py to log
+4) makeGenotype.py, makeIMPC.py, makeSanger.py, runReports_IMPC.py
+a. removed extraneous debug; highighted curation log header
+5) impcmpload.config.default, sangermpload.config.default
+a. reinstated proper MAIL_LOG_CUR setting
+
+TAG: htmpload-tr11674-13
+DATE: 10/28/2014
+STAFF: sc
+CHANGES: commented out touch of the LASTRUN file. Need to uncomment
+    before production release!!!
+
+TAG: htmpload-tr11674-12
+DATE: 10/21/2014
+STAFF: sc
+CHANGES: US161 - TR11792 - Support
+1) makeGenotype.py - update to handle gender collapsing correctly. 
+    separated out writing of annotations (annotload input file) from writing 
+    of genotypes (genotypeload input file). While creating genotype file, 
+    load a dictionary key=order|mpID value=list of lines; parse the dictionary 
+    after genotype file is created collapsing Male/Female dups to 'Both'. 
+
+TAG: htmpload-tr11674-11
+DATE: 09/03/2014
+STAFF: sc
+CHANGES: US 6 - strain in db, diff colony id bug fixed
+1) makeIMPC.py  - removed this constraint, no longer applicable:
+    if dupStrainKey == 0 and strainName != 'Not Specified' and \
+2) makeIMPCStrains.py - missing 'continue'
+3) added system_docs directory with visio data flow diagram and jpg version
+    which is uploaded to the htmpload wiki
+
+TAG: htmpload-tr11674-10
+DATE: 09/02/2014
+STAFF: sc
+CHANGES: US 6 - add two properties, general load testing round 1
+1) makeAnnotation.py - add two properties
+2) makeIMPC.py - bug fix not writing new genotypes using 'Not Specified'
+	strain to the htmp load file
+3) makeIMPCStrains.sh - made not that this was convenience script used
+    during development
+4) makeSanger.py - removed testing if pheno center was Europhenome; just WTSI
+
+TAG: htmpload-tr11674-9
+TAG: htmpload-tr11674-8
+DATE: 09/02/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) renamed runReports.sh - runReports_Sanger.sh
+2) added runReports_IMPC.sh, runReports_IMPC.py
+3) makeIMPC.sh - removed DLA jobstream functions and set LOG properly
+4)impcmpload.config.default, sangermpload.config.default - added REPORT_SCRIPT_SUFFIX
+5) strip clone id note - char in db so whitespace at end
+6) makeSanger.sh - removed DLA jobstream functions and set LOG properly
+
+TAG: htmpload-tr11674-7
+DATE: 08/31/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) added makeIMPCStrains.py/sh
+2) impcmpload.config.default - added STRAINMODE, STRAINLOG, 
+	renamed STRAIN_PREFIX to STRAIN_INFO and added more attributes
+3) makeIMPC.sh - added call to makeIMPCStrains.py
+4) makeIMPC.py - 
+a) rename strainPrefix to strainInfo
+b) added writing to a strain file in impc strain load format
+c) factored out checkGender, checkAlleleState, doUniqStrainChecks
+
+TAG: htmpload-tr11674-6
+DATE: 08/28/2014
+STAFF: sc
+CHANGES:  US 5 - strain processing
+1) runReports.sh - update to comments/echo only
+2) makeGenotype.py - log to curation log 'makeGenotype Log'
+        to differentiate from makeIMPC.py and makeSanger.py
+3) makeSanger.py - log to curation log 'makeSanger Log'
+4) makeIMPC.sh - comments only
+5) makeIMPC.py - changes for US5, plus refactoring into functions and 
+	catching up on comments and consistency
+6) impcmpload.config.default - added STRAIN_PREFIX with'|' delimited  values 
+    for Expected strain prefix|MGI ID|strain root/strain template
+
+TAG: htmpload-tr11674-5
+DATE: 08/21/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+Test directory changes:
+1) removed all europhenome files
+2) removed several ./test files (see readme)
+3) updated remaining ./test files (see readme)
+4) htmpload.sh - fixed checking of file size
+5) bin/makeAnnotation.py - removed checking for  ['WTSI', 'Europhenome']
+   as this was factored out into the sanger preprocessor
+6) bin/makeIMPC.py - added logging to skip, error, cur, diag
+7) fixed Usage
+8) bin/makeSanger.py - added 'remaining' to report full input line, not just 
+   columns we are interested in. added logging to skip, error, cur, diag
+9) bin/makeSanger.sh - fixed usage
+ 
+TAG: htmpload-tr11674-4
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+1) removed europhenome config and index file
+2) makeSanger.py - tweaked, added some logs and moved gender checking from makeGenotype.py
+3) makeGenotype.py - factored out Sanger stuff, set up to use intermediate file
+   created by preprocessor
+4) runReports.sh - updated config settings used and references to 'Biomart'
+Note: have not yet updated anything in the test directory
+
+TAG: htmpload-tr11674-3
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US9 - factoring for Sanger & removal of EuroPhenome
+1) makeEuropheno.sh/py - removed
+2) makeSanger.sh/py - added
+3) makeIMPC.sh - factor copy of main IMPC file out to htmpload.sh
+4) makeIMPC.py - comments and change IMPC_COPY_* to SOURCE_COPY_*
+    added epCt for skipping EuroPhenome Debug 
+5) makeGenotype.sh - added proper usage statement
+6) makeGenotype.py - updated commenting, removed commented out code
+    renamed biomartFile to htmpInputFile (file descriptor too) 
+    strainName from input file, 
+    Note: this is still throwing some errors and needs work, but wanted to 
+      get everything into CVS
+7) sangermpload.config.default, impcmpload.config.default - added PREPROCESSOR
+    renamed INPUTFILE 
+
+TAG: htmpload-tr11674-2
+DATE: 08/12/2014
+STAFF: sc
+CHANGES: US4
+1) Added makeIMPC.sh, makeIMPC.py
+2) added impcmpload.config.default
+
+TAG: htmpload-tr11674-1
+DATE: 08/05/2014
+STAFF: sc
+CHANGES: 
+1) updated configuration variable string 'BIOMART_*' to 'SOURCE_*' to be more
+    generic
+a) europhenompload.config.default
+b) makeEuropheno.py
+c) htmpload.py
+
 TAG: htmpload-tr11674-BP
 DATE: 08/05/2014
 STAFF: sc

@@ -60,6 +60,7 @@ fi
 #
 # run DLAInstall for each configuration file
 #
+echo "HTMPLOAD: ${HTMPLOAD}"
 for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/europhenompload.config.test ${HTMPLOAD}/test/sangermpload.config.test
 do
 echo 'running DLAINSTALL:' ${c}
