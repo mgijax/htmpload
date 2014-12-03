@@ -4,11 +4,8 @@
 # Installation script
 #
 # 1) cp sangermpload.config.default sangermpload.config
-# 2) cp sangermpload.config.csh.default sangermpload.config.csh
-# 3) cp europhenompload.config.default europhenompload.config
-# 4) cp europhenompload.config.csh.default europhenompload.config.csh
-# 5) Install 
-# 6) Create empty text files for makeBucketsDiff.py
+# 2) cp impcmpload.config.default impcmpload.config
+# 3) Install 
 #
 
 Usage=Install
@@ -61,7 +58,7 @@ fi
 # run DLAInstall for each configuration file
 #
 echo "HTMPLOAD: ${HTMPLOAD}"
-for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/europhenompload.config.test ${HTMPLOAD}/test/sangermpload.config.test
+for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/sangermpload.config.test
 do
 echo 'running DLAINSTALL:' ${c}
 . ${c}
