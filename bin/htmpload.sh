@@ -180,7 +180,7 @@ checkStatus ${STAT} "Running ${PREPROCESSOR}"
 #
 echo "sorting pre-processed file ${HTMP_INPUT_FILE} ..." >> ${LOG}
 date >> ${LOG}
-sort -o ${HTMP_INPUT_FILE} -t"        " -k7,7 -k6,6 -k4,4 ${HTMP_INPUT_FILE}
+sort -o ${HTMP_INPUT_FILE} -t"	" -k7,7 -k6,6 -k4,4 ${HTMP_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "sorting pre-processed file"
 

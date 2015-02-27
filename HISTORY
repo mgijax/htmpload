@@ -1,3 +1,9 @@
+TAG: htmpload-5-2-1-4
+DATE: 02/27/2015
+STAFF: sc
+CHANGES: TR11946 sanger htmpload sort bug (revert to tab, spaces introduced
+    during impc development)
+
 TAG: htmpload-5-2-1-3
 DATE: 12/30/2014
 STAFF: sc
