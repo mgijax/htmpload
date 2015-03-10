@@ -116,7 +116,8 @@ LASTRUN_FILE=${INPUTDIR}/lastrun
 if [ -f ${LASTRUN_FILE} ]
 then
     if /usr/local/bin/test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
-       echo "\nLOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" >> ${LOG_CUR} 2>&1
+       echo "" >> ${LOG_CUR} 2>&1
+       echo "LOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" >> ${LOG_CUR} 2>&1
        STAT=0
        checkStatus ${STAT} "LOAD SKIPPED: No new input file ${SOURCE_INPUT_FILE}"
        shutDown
@@ -143,10 +144,14 @@ then
     thediff=`expr $newcount / $oldcount \* 100`
     if [ ${thediff} -lt 90 ]
 	then
-	    echo "\nLOAD SKIPPED: " >> ${LOG_CUR}
-	    echo "${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n" >> ${LOG_CUR}
+	    echo "" >> ${LOG_CUR}
+	    echo "LOAD SKIPPED: " >> ${LOG_CUR}
+	    echo "${SOURCE_INPUT_FILE}" >> ${LOG_CUR}
+	    echo "IS LESS THAN 90% OF" >> ${LOG_CUR}
+	    echo "${HTMP_INPUT_FILE}" >> ${LOG_CUR}
+	    echo "" >> ${LOG_CUR}
 	    STAT=0
-	    checkStatus ${STAT} "LOAD SKIPPED: ${SOURCE_INPUT_FILE}\n IS LESS THAN 90% OF\n ${HTMP_INPUT_FILE}\n"
+	    checkStatus ${STAT} "LOAD SKIPPED: ${SOURCE_INPUT_FILE} IS LESS THAN 90% OF ${HTMP_INPUT_FILE}"
 	    shutDown
 	    exit 0
     fi

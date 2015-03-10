@@ -63,7 +63,8 @@ fi
 LOG=${LOG_DIAG}
 
 htmpSource=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
-echo '\nSource file (contains all rows):' >> ${LOG_CUR}
+echo '' >> ${LOG_CUR}
+echo 'Source file (contains all rows):' >> ${LOG_CUR}
 echo '   ' ${htmpSource} >> ${LOG_CUR}
 
 htmpSkip=`/usr/bin/wc -l < ${HTMPSKIP_INPUT_FILE}`
@@ -97,7 +98,8 @@ fi
 # annotations
 #
 annotInput=`/usr/bin/wc -l < ${ANNOT_INPUT_FILE}`
-echo '\nMGI-format Annotation: ' ${annotInput} >> ${LOG_CUR}
+echo '' >> ${LOG_CUR}
+echo 'MGI-format Annotation: ' ${annotInput} >> ${LOG_CUR}
 echo 'MGI-format Annotation file: ' ${ANNOT_INPUT_FILE} >> ${LOG_CUR}
 
 annotOutput=`/usr/bin/wc -l < ${OUTPUTDIR}/mgi_annotload.txt.VOC_Annot.bcp`
@@ -117,7 +119,8 @@ fi
 # genotypes
 #
 genotypeInput1=`/usr/bin/wc -l < ${GENOTYPE_INPUT_FILE}`
-echo '\nMGI-format Genotype: ' ${genotypeInput1} >> ${LOG_CUR}
+echo '' >> ${LOG_CUR}
+echo 'MGI-format Genotype: ' ${genotypeInput1} >> ${LOG_CUR}
 echo 'MGI-format Genotype file: ' ${GENOTYPE_INPUT_FILE} >> ${LOG_CUR}
 
 genotypeInput2=`/usr/bin/wc -l < ${GENOTYPELOAD_OUTPUT}`

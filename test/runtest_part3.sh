@@ -29,7 +29,8 @@ LOG=${LOG_TEST}
 
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Run Test...(runtest_part3.sh)\n" | tee -a ${LOG}
+echo "Run Test...(runtest_part3.sh)" | tee -a ${LOG}
+echo "" | tee -a ${LOG}
 ./runtest_part3.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
