@@ -610,13 +610,16 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     rawStrainName = strainName
 
     # Production Center Lab Code Check US5 doc 4c2
-    if dupStrainKey == 0 and not procCtrToLabCodeDict.has_key(imits2ProdCtr):
-	msg = 'Production Center not in database: %s' % imits2ProdCtr
-	logIt(msg, line, 1)
-	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	#print '%s returning "error"' % msg
-	return 'error'
-
+    if not procCtrToLabCodeDict.has_key(imits2ProdCtr):
+	if dupStrainKey == 0:
+	    msg = 'Production Center not in database: %s' % imits2ProdCtr
+	    logIt(msg, line, 1)
+	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	    #print '%s returning "error"' % msg
+	    return 'error'
+	else: # we've seen this key already, just return 'error'
+	    #print 'returning "error"' 
+            return 'error'
     # Prefix Strain check #1/#2 US5 doc 4c3
     if dupStrainKey == 0 and not (strainRawPrefixDict.has_key(strainID) and \
 	strainRawPrefixDict[strainID] == strainName):
@@ -627,7 +630,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	    (strainID, strainName)
 	logIt(msg, line, 0)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	#print msg
+	#print '%s returning "Not Specified"' % msg
 	return 'Not Specified'
     
     # strain name construction US5 doc 4c4
@@ -677,6 +680,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	strainLineList.append(strainLine)
 	#print 'strainLine: %s' % strainLine
 	fpStrain.write(strainLine)
+    #print 'returning strainName: %s' % strainName
     return strainName
 
 #
@@ -790,6 +794,8 @@ def createHTMPfile():
     #
     
     for line in fpIMPCintRead.readlines():
+        #print '\n\nNEW RECORD'
+	#print 'line: %s' % line
 	error = 0
 	# We know this attributes are not blank - see parseJson
 	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
@@ -869,6 +875,7 @@ def createHTMPfile():
 	    # if key in the list, we've already processed this uniq record
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    # Nor does it include gender, multi gender per uniq allele
+	    #print 'calling doUniqStrainChecks uniqStrainProcessingKey: %s' % uniqStrainProcessingKey
 	    strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
 	    #print 'strainName from doUniqStrainChecks:%s' % strainName
 	    

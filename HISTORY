@@ -1,3 +1,12 @@
+TAG: htmpload-5-2-1-5
+DATE: 04/15/2015
+STAFF: sc
+CHANGES: TR11989
+1) makeIMPC.py - fixed bug whereby the load fails with a python traceback 
+   when uniqStrainProcessingKey is seen a second time AND the processing 
+   center is not in the database. Fix to code block lines 612-622 labeled
+   "Production Center Lab Code Check US5 doc 4c2"
+
 TAG: htmpload-5-2-1-4
 DATE: 02/27/2015
 STAFF: sc
