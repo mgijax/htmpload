@@ -130,6 +130,9 @@ error:%s
 
 # data structures
 
+# {errorNum:[msg1, msg2, ...], ...}
+errorDict = {}
+
 # iMits2 colony id mapped to iMits2 attributes
 # {colonyId:'productionCtr|mutantID|markerID', ...}
 colonyToMCLDict = {}
@@ -149,6 +152,9 @@ uniqStrainProcessingDict = {}
 
 # processing center mapped to lab code from database
 procCtrToLabCodeDict = {}
+
+# list of phenotyping centers in the database
+phenoCtrList = []
 
 # Expected MGI ID to strain info mapping from configuration
 strainInfoMapping = os.environ['STRAIN_INFO']
@@ -193,7 +199,7 @@ class Allele:
 def initialize():
     global impcFile, impcFileInt, impcFileDup, imits2File, htmpFile, strainFile
     global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
-    global allelesInDbDict, procCtrToLabCodeDict, strainInfoDict
+    global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global strainPrefixDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
 
@@ -277,6 +283,14 @@ def initialize():
 
     for r in results:
 	procCtrToLabCodeDict[r['term']] = r['abbreviation']
+
+    # load list of phenotyping centers in the database
+    results = db.sql('''select term
+        from VOC_Term
+        where _Vocab_key = 99''', 'auto')
+
+    for r in results:
+	phenoCtrList.append(r['term'])
 
     # load strain mappings from config
     tokens = map(string.strip, string.split(strainInfoMapping, ','))
@@ -438,18 +452,25 @@ def closeFiles():
     return 0
 
 #
-# Purpose: Log a message to the diagnostic and curation logs, optionally
-#	write a line to the error file
+# Purpose: Log a message to the diagnostic log, optionally
+#	write a line to the error file. Write to error Dict
+#	which is used to sort errors and will be written to 
+#	curation log later
 # Returns: 0
 # Assumes: file descriptors exist
 # Effects: Nothing
 # Throws: Nothing
 #
 
-def logIt(msg, line, isError):
+def logIt(msg, line, isError, typeError):
+    global errorDict
+
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
-    fpLogCur.write(logit)
+    if not errorDict.has_key(typeError):
+	errorDict[typeError] = []
+    errorDict[typeError].append(logit)
+    #fpLogCur.write(logit)
     if isError:
 	fpHTMPError.write(line)
     return 0
@@ -613,7 +634,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     if not procCtrToLabCodeDict.has_key(imits2ProdCtr):
 	if dupStrainKey == 0:
 	    msg = 'Production Center not in database: %s' % imits2ProdCtr
-	    logIt(msg, line, 1)
+	    logIt(msg, line, 1, 'prodCtrNotInDb')
 	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	    #print '%s returning "error"' % msg
 	    return 'error'
@@ -628,7 +649,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	# outside this block
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % \
 	    (strainID, strainName)
-	logIt(msg, line, 0)
+	logIt(msg, line, 0, 'strainIdNameDiscrep')
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print '%s returning "Not Specified"' % msg
 	return 'Not Specified'
@@ -659,7 +680,6 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	dbColonyID =  strainNameToColonyIdDict[strainName]
 	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % (dbColonyID, strainName, colonyID)
 	#print msg
-	#logIt(msg, line, 1)
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print '%s returning "error"' % msg
 	return 'error'
@@ -702,7 +722,7 @@ def checkAlleleState(alleleState, line):
     else:
 	# 8/22 all match
 	msg = 'Unrecognized allele state %s' % alleleState
-	logIt(msg, line, 1)
+	logIt(msg, line, 1, 'alleleState')
 	return  'error'
     return alleleState
 
@@ -722,9 +742,25 @@ def checkGender(gender, line):
     else:
 	# 8/22 all match
 	msg = 'Unrecognized gender %s' % gender
-	logIt(msg, line, 1)
+	logIt(msg, line, 1, 'gender')
 	return 'error'
     return gender 
+
+#
+# Purpose: check the IMPC phenotyping center for existence in the database
+# Returns: string 'error' IMPC center not recognized, else center
+# Assumes: Nothing
+# Effects: writes to error file and curation/diagnostic logs
+# Throws: Nothing
+#
+def checkPhenoCtr(phenoCtr, line):
+
+    if phenoCtr not in phenoCtrList:
+        msg = 'Unrecognized phenotyping center %s' % phenoCtr
+        logIt(msg, line, 1, 'phenoCtr')
+        return 'error'
+    return phenoCtr
+
 
 #
 # Purpose: checks if IMPC colony ID maps to iMits2 colony ID
@@ -737,7 +773,7 @@ def checkColonyID(colonyID, line):
     if not colonyToMCLDict.has_key(colonyID):
 	msg='No iMits2 colony id for %s' % colonyID
 	# 8/22 2 MFUN colony id records
-	logIt(msg, line, 1)
+	logIt(msg, line, 1, 'colonyID')
 	return 1
     return 0
 
@@ -756,10 +792,19 @@ def compareMarkers(markerID, imits2MrkID, line):
         #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
 	msg='No Marker ID match. IMPC: %s iMits2: %s' % \
 	    (markerID, imits2MrkID)
-	logIt(msg, line, 1)
+	logIt(msg, line, 1, 'noMrkIdMatch')
 	return 1
     return 0
-
+#
+# Purpose: write all errors in errorDict to curation log
+# Returns: Nothing
+# Assumes: Nothing
+# Effects: writes to curation log
+# Throws: Nothing
+#
+def writeCuratorLog():
+    for type in errorDict.keys():
+	fpLogCur.write(string.join(errorDict[type]))
 
 #
 # Purpose: Read the IMPC and iMits2 files and re-format it to create a 
@@ -799,6 +844,7 @@ def createHTMPfile():
 	error = 0
 	# We know this attributes are not blank - see parseJson
 	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
+
 	returnVal = checkAlleleState(alleleState, line)
 	if returnVal == 'error':
 	    error = 1
@@ -808,8 +854,12 @@ def createHTMPfile():
 	if returnVal == 'error':
             error = 1
 	else: gender = returnVal
+	
+	returnVal= checkPhenoCtr(phenotypingCenter, line)
+        if returnVal == 'error':
+            error = 1
 
-        # if alleleState or gender error, continue to next line
+        # if alleleState, gender or phenotyping error, continue to next line
         if error:
             continue
 
@@ -833,24 +883,25 @@ def createHTMPfile():
 	if allelesInDbDict.has_key(alleleID):
 	    dbAllele = allelesInDbDict[alleleID]
 
-	    msg=[]
 	    # US5 doc 4b2
 	    if alleleSymbol != dbAllele.s:
-		msg.append('For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % (alleleSymbol, dbAllele.s))
+		msg = 'For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % (alleleSymbol, dbAllele.s)
+		logIt(msg, line, 1, 'alleleNotMatch')
 		error = 1
 	    if markerID != dbAllele.m:
-		msg.append('Marker ID: %s does not match database marker ID: %s' % (markerID, dbAllele.m))
+		msg = 'Marker ID: %s does not match database marker ID: %s' % (markerID, dbAllele.m)
+		logIt(msg, line, 1, 'markerNotMatch')
 		error = 1
 	    if mutantID not in dbAllele.c:
-		msg.append('Mutant ID: %s not associated with %s in database' % (mutantID, alleleID))
+		msg = 'Mutant ID: %s not associated with %s in database' % (mutantID, alleleID)
+		logIt(msg, line, 1, 'mutIdNotAssoc')
 		error = 1
-	    msg = string.join(msg)
 	else: # US5 doc 4b2
 	    # 15 cases in impc.json e.g. NULL-114475FCF4
 	    msg = 'Allele not in the database: %s' % alleleID
+	    logIt(msg, line, 1, 'alleleNotInDb')
 	    error = 1
 	if error == 1:
-	    logIt(msg, line, 1)
 	    continue
 	#
 	# Now do checks on the uniq strains in the input file
@@ -903,9 +954,12 @@ def createHTMPfile():
 	msg = msgList[0]
 	for line in msgList[1:]:
 	    if 'Strain ID/Name discrepancy' in msg:
-		logIt(msg, line, 0)
+		logIt(msg, line, 0, 'strainIdNameDiscrep')
 	    else:
-		logIt(msg, line, 1)
+		logIt(msg, line, 1, 'strainIdNameDiscrep')
+    # write errors to curation log
+    writeCuratorLog()
+
     return 0
 
 #

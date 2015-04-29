@@ -1,3 +1,10 @@
+TAG: htmpload-5-2-1-6
+DATE: 04/29/2015
+STAFF: sc
+CHANGES: TR11989
+1) part2. Check that phenotyping center in vocabulary
+2) group errors by type in curation log
+
 TAG: htmpload-5-2-1-5
 DATE: 04/15/2015
 STAFF: sc
