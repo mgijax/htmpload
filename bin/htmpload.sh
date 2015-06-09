@@ -141,7 +141,7 @@ if [ -f ${SOURCE_COPY_INPUT_FILE} ]
 then
     oldcount=`/usr/bin/wc -l < ${SOURCE_COPY_INPUT_FILE}`
     newcount=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
-    thediff=`expr $newcount / $oldcount \* 100`
+    thediff=`expr "scale=3;  $newcount/$oldcount*100" | bc`
     if [ ${thediff} -lt 90 ]
 	then
 	    echo "" >> ${LOG_CUR}

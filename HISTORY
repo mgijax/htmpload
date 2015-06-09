@@ -1,3 +1,10 @@
+TAG: htmpload-5-2-1-7
+DATE: 06/09/2015
+STAFF: sc
+CHANGES: htmpload.sh - use 'bc' as integer division was being used
+   to test old/new file size % which was returning 0 when new file < old
+   file
+
 TAG: htmpload-5-2-1-6
 DATE: 04/29/2015
 STAFF: sc
