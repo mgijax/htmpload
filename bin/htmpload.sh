@@ -115,7 +115,7 @@ date >> ${LOG}
 LASTRUN_FILE=${INPUTDIR}/lastrun
 if [ -f ${LASTRUN_FILE} ]
 then
-    if /usr/local/bin/test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
+    if test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
        echo "" >> ${LOG_CUR} 2>&1
        echo "LOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" >> ${LOG_CUR} 2>&1
        STAT=0
