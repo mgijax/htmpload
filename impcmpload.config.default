@@ -161,9 +161,9 @@ export JOBSTREAM
 MAIL_LOADNAME="IMPC MP Load"
 
 #  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_CUR="mgiadmin@jax.org,mgi-hiphenoload@jax.org"
+MAIL_LOG_CUR="mgi-hiphenoload@jax.org"
 
-export MAIL_LOADNAME MAIL_LOG_PROC MAIL_LOG_CUR
+export MAIL_LOADNAME MAIL_LOG_CUR
 
 INSTALLDIR=${HTMPLOAD}
 
