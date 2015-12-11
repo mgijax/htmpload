@@ -90,6 +90,9 @@ import os
 import db
 import loadlib
 
+db.setAutoTranslate(False)
+db.setAutoTranslateBE(False)
+
 # LOG_DIAG
 # LOG_CUR
 # OUTPUTDIR
@@ -343,8 +346,8 @@ def getAnnotations():
 	gender = tokens[11]
 
 	# skip any row that does not contain an MP annotation
-	# sc - can't happen for Sanger, but could happen for impc
 	# makeIMPC needs to check for blank attributes
+
 	if mpID == '':
 	    continue
 

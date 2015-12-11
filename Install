@@ -3,9 +3,8 @@
 #
 # Installation script
 #
-# 1) cp sangermpload.config.default sangermpload.config
-# 2) cp impcmpload.config.default impcmpload.config
-# 3) Install 
+# 1) cp impcmpload.config.default impcmpload.config
+# 2) Install 
 #
 
 Usage=Install
@@ -34,7 +33,7 @@ fi
 cd `dirname $0`
 
 # establish the config files
-MAIN_CONFIG=sangermpload.config
+MAIN_CONFIG=impcmpload.config
 
 # Make sure config file exists and source it
 if [ -r ${MAIN_CONFIG} ]
@@ -58,7 +57,7 @@ fi
 # run DLAInstall for each configuration file
 #
 echo "HTMPLOAD: ${HTMPLOAD}"
-for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/sangermpload.config.test
+for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/impcmpload.config.test
 do
 echo 'running DLAINSTALL:' ${c}
 . ${c}

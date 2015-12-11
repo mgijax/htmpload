@@ -16,10 +16,6 @@ The following scripts/files have been updated to use any new config (rename)
 makeAnnotationTest.sh
 runtest_part3.sh
 runtest_part3.py
-mgi_sangermpload_test.txt
-sangermpload.config.test
-sanger.annotload.config.test
-
-~
-
-
+mgi_impcmpload_test.txt
+impcmpload.config.test
+impc.annotload.config.test

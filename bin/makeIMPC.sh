@@ -71,16 +71,16 @@ LOG=${LOG_DIAG}
 #
 # copy imits2 input file into working directory
 #
-echo "copying iMits2 input file..." >> ${LOG}
-date >> ${LOG}
-rm -rf ${IMITS2_COPY_INPUT_FILE}
-cp ${IMITS2_INPUT_FILE} ${IMITS2_COPY_INPUT_FILE}
-STAT=$?
-if [ ${STAT} -ne 0 ]
-then
-    echo "Error: copying ${IMITS2_INPUT_FILE} to ${IMITS2_COPY_INPUT_FILE}" | tee -a ${LOG}
-    exit 1
-fi
+#echo "copying iMits input file..." >> ${LOG}
+#date >> ${LOG}
+#rm -rf ${IMITS_COPY_INPUT_FILE}
+#cp ${IMITS_INPUT_FILE} ${IMITS_COPY_INPUT_FILE}
+#STAT=$?
+#if [ ${STAT} -ne 0 ]
+#then
+#    echo "Error: copying ${IMITS_INPUT_FILE} to ${IMITS_COPY_INPUT_FILE}" | tee -a ${LOG}
+#    exit 1
+#fi
 
 #
 # Create the IMPC HTMP input files

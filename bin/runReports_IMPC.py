@@ -49,6 +49,9 @@ import os
 import db
 import string
 
+db.setAutoTranslate(False)
+db.setAutoTranslateBE(False)
+
 # LOG_DIAG
 # LOG_CUR
 logDiagFile = None
@@ -115,8 +118,8 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('%s######################################\n# IMPC/IKMC Colony ID Discrepancies  #\n######################################%s%s' % (CRT, CRT, CRT))
-	fpLogCur.write('Allele%sIMPC%sIKMC%s' % (TAB, TAB, CRT) )
+	fpLogCur.write('\n***********\nIMPC/IKMC Colony ID Discrepancies\n\n')
+	fpLogCur.write('Allele\tIMPC\tIKMC\n')
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
@@ -163,8 +166,7 @@ def createColonyIdReport():
     for r in results:
 	ikmcDict[r['_Allele_key']] = string.strip(r['ikmcCID'])
 
-    results = db.sql('''select distinct nc1.note as impcCID, aa.accID, 
-	    a._Allele_key
+    results = db.sql('''select distinct nc1.note as impcCID, aa.accID, a._Allele_key
 	from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
 	    GXD_Genotype g, ACC_Accession aa
 	where n1._NoteType_key = 1012
@@ -186,11 +188,10 @@ def createColonyIdReport():
 	id = string.strip(r['impcCID'])
 	if ikmcDict.has_key(alleleKey):
 	    if id not in ikmcDict[alleleKey]:
-		fpLogCur.write('%s%s%s%s%s%s%s' % \
-		    (accID, TAB, id, TAB, TAB, ikmcDict[alleleKey], CRT) )
+		fpLogCur.write('%s\t%s\t\t%s\n' % (accID, id, ikmcDict[alleleKey]))
+
     return 0
 	
- 
 #
 #  MAIN
 #

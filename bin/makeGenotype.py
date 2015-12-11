@@ -14,6 +14,7 @@
 #	Only genotypes that are created or modified by the 
 #	    HTMP 'createdBy' user can be used otherwise a new Genotype
 #	    will be added.
+#
 #	Genotypes that are created or modified by a curator *cannot* be used
 #
 #  Usage:
@@ -107,7 +108,10 @@ import loadlib
 import sourceloadlib
 import alleleloadlib
 import Set
-import string
+
+db.setTrace(True)
+db.setAutoTranslate(False)
+db.setAutoTranslateBE(False)
 
 # LOG_DIAG
 # LOG_CUR
@@ -387,7 +391,7 @@ def getGenotypes():
     #
     db.sql('''
         select a.accID, ap.*, t.term, g._Strain_key
-	into #genotypes
+	into temporary table genotypes
         from GXD_Genotype g, GXD_AllelePair ap, 
              ACC_Accession a, GXD_AllelePair app, VOC_Term t, 
 	     MGI_User u1, MGI_User u2
@@ -405,10 +409,9 @@ def getGenotypes():
         and g._ModifiedBy_key = u2._User_key
 	and u2.login = '%s'
 	''' % (createdBy, createdBy), None)
-        #/*and g._Strain_key = %s */
-	#''' % (strainKey, createdBy, createdBy), None)
 
-    db.sql('''create index idx1 on #genotypes(_Marker_key)''', None)
+    db.sql('create index idx1 on genotypes(_Marker_key)', None)
+
     for line in fpHTMPInput.readlines():
 	error = 0
 	lineNum = lineNum + 1
@@ -430,6 +433,7 @@ def getGenotypes():
         markerID = tokens[7]
 	strainName= tokens[9]
         gender = tokens[10]
+
 	# marker
 
 	if len(markerID) > 0:
@@ -471,6 +475,7 @@ def getGenotypes():
 
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
+
 	# if allele is 'Heterzygous', then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
 
@@ -542,7 +547,7 @@ def getGenotypes():
 
 	    querySQL = '''
 		select g.accID
-			from #genotypes g
+			from genotypes g
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 = %s
@@ -569,7 +574,7 @@ def getGenotypes():
 
 	    querySQL = '''
 		select g.accID
-			from #genotypes g
+			from genotypes g
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 != %s
@@ -592,7 +597,8 @@ def getGenotypes():
 	    mutantID2 = ''
 
 	    if alleleState == 'Hemizygous':
-	        querySQL = '''select chromosome 
+	        querySQL = '''
+		    select chromosome 
 			from MRK_Marker 
 			where _Marker_key = %s''' % markerKey
 	        results = db.sql(querySQL, 'auto')
@@ -611,7 +617,7 @@ def getGenotypes():
 
 	    querySQL = '''
 		select g.accID
-			from #genotypes g
+			from genotypes g
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 = null
@@ -683,10 +689,12 @@ def getGenotypes():
 
     #### new code HDP-2 US161 support TR11792 ####
     # iterate through annotDict
+
     for key in annotDict.keys():
-	order, mpID = string.split(key, '|')
+	order, mpID = key.split('|')
 	lineList = annotDict[key]
 	genderSet = set([])
+
 	# get the gender for each line and add to the set
 	for line in lineList:
 	    tokens = line.split('\t')
@@ -708,10 +716,10 @@ def getGenotypes():
 
     return 0
 
-
 #
 #  MAIN
 #
+
 #print 'initialize'
 if initialize() != 0:
     sys.exit(1)

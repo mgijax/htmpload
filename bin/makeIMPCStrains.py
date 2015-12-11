@@ -14,7 +14,6 @@
 #	VOC_Annot
 #	MGI_Note/MGI_NoteChunk
 #
-#
 # Usage:
 #	makeIMPCStrains.py
 #
@@ -64,6 +63,10 @@ import db
 import mgi_utils
 import loadlib
 
+db.setTrace(True)
+db.setAutoTranslate(False)
+db.setAutoTranslateBE(False)
+
 # globals
 
 user = os.environ['MGD_DBUSER']
@@ -74,9 +77,6 @@ logDir = os.environ['LOGDIR']
 outputDir = os.environ['OUTPUTDIR']
 
 DEBUG = 0		# if 0, not in debug mode
-TAB = '\t'		# tab
-CRT = '\n'		# carriage return/newline
-
 bcpon = 1		# bcp into the database?  default is yes.
 
 diagFile = ''		# diagnostic file descriptor
@@ -96,12 +96,19 @@ annotTable = 'VOC_Annot'
 noteTable = 'MGI_Note'
 noteChunkTable = 'MGI_NoteChunk'
 
-strainFileName = outputDir + '/' + strainTable + '.bcp'
-markerFileName = outputDir + '/' + markerTable + '.bcp'
-accFileName = outputDir + '/' + accTable + '.bcp'
-annotFileName = outputDir + '/' + annotTable + '.bcp'
-noteFileName = outputDir + '/' + noteTable + '.bcp'
-noteChunkFileName = outputDir + '/' + noteChunkTable + '.bcp'
+strainTableBCP = strainTable + '.bcp'
+markerTableBCP = markerTable + '.bcp'
+accTableBCP = accTable + '.bcp'
+annotTableBCP = annotTable + '.bcp'
+noteTableBCP = noteTable + '.bcp'
+noteChunkTableBCP = noteChunkTable + '.bcp'
+
+strainFileName = outputDir + '/' + strainTableBCP
+markerFileName = outputDir + '/' + markerTableBCP
+accFileName = outputDir + '/' + accTableBCP
+annotFileName = outputDir + '/' + annotTableBCP
+noteFileName = outputDir + '/' + noteTableBCP
+noteChunkFileName = outputDir + '/' + noteChunkTableBCP
 
 diagFileName = ''	# diagnostic file name
 errorFileName = ''	# error file name
@@ -110,21 +117,19 @@ strainKey = 0           # PRB_Strain._Strain_key
 strainmarkerKey = 0	# PRB_Strain_Marker._StrainMarker_key
 accKey = 0              # ACC_Accession._Accession_key
 mgiKey = 0              # ACC_AccessionMax.maxNumericPart
-annotKey = 0
+annotKey = 0		# VOC_Annot._Annot_key
 noteKey = 0             # MGI_Note._Note_key
 
 isPrivate = 0
 isGeneticBackground = 0
-NULL = ''
 
-mgiTypeKey = 10		# ACC_MGIType._MGIType_key for Strains
-mgiPrefix = "MGI:"
-alleleTypeKey = 11	# ACC_MGIType._MGIType_key for Allele
-markerTypeKey = 2       # ACC_MGIType._MGIType_key for Marker
-mgiNoteObjectKey = 10   # MGI_Note._MGIType_key
-mgiNoteSeqNum = 1       # MGI_NoteChunk.sequenceNum
-mgiImpcColonyIdKey = 1012   # MGI_Note._NoteType_key
-mgiMutantOriginTypeKey = 1038   # MGI_Note._NoteType_key
+mgiTypeKey = 10		   # ACC_MGIType._MGIType_key for Strains
+mgiPrefix = 'MGI:'	   # ACC_Accession.prefixPart
+alleleTypeKey = 11	   # ACC_MGIType._MGIType_key for Allele
+markerTypeKey = 2          # ACC_MGIType._MGIType_key for Marker
+mgiNoteObjectKey = 10      # MGI_Note._MGIType_key
+mgiColonyNoteTypeKey = 1012    # MGI_Note._NoteType_key for colony id
+mgiMutOrigNoteTypeKey = 1038   # MGI_Note._NoteType_key for mutation of origin
 
 qualifierKey = 615427	# nomenclature
 
@@ -178,10 +183,8 @@ def init():
     db.set_sqlUser(user)
     db.set_sqlPasswordFromFile(passwordFileName)
  
-    fdate = mgi_utils.date('%m%d%Y')	# current date
-    head, tail = os.path.split(inputFileName) 
-    diagFileName = logDir + '/' + tail + '.' + fdate + '.diagnostics'
-    errorFileName = logDir + '/' + tail + '.' + fdate + '.error'
+    diagFileName = inputFileName + '.diagnostics'
+    errorFileName = inputFileName + '.error'
 
     try:
         diagFile = open(diagFileName, 'w')
@@ -229,10 +232,10 @@ def init():
         exit(1, 'Could not open file %s\n' % annotFileName)
 
     # Log all SQL
-    db.set_sqlLogFunction(db.sqlLogAll)
+    #db.set_sqlLogFunction(db.sqlLogAll)
 
     # Set Log File Descriptor
-    db.set_sqlLogFD(diagFile)
+    #db.set_sqlLogFD(diagFile)
 
     diagFile.write('Start Date/Time: %s\n' % (mgi_utils.date()))
     diagFile.write('Server: %s\n' % (db.get_sqlServer()))
@@ -326,19 +329,24 @@ def verifyStrainType(
 
 def checkColonyNote(strainKey):
     global colonyIdDict
+
     #print 'chacking colony note for strain key: %s' % strainKey
+
     if len(colonyIdDict)== 0:
 	#print 'loading colonyIdDict'
-        results = db.sql('''select _Note_key, _Object_key as strainKey
+        results = db.sql('''
+	        select _Note_key, _Object_key as strainKey
 		from MGI_Note 
 		where _MGIType_key = %s
-		and _NoteType_key = %s''' % \
-		    (mgiTypeKey, mgiImpcColonyIdKey), 'auto')
+		and _NoteType_key = %s
+		''' % (mgiTypeKey, mgiColonyNoteTypeKey), 'auto')
         for r in results:
             colonyIdDict[r['strainKey']] = r['_Note_key']
+
     if colonyIdDict.has_key(strainKey):
 	#print 'strain key %s has colony id: %s' % (strainKey, colonyIdDict[strainKey])
 	return 1
+
     return 0
 	
 # Purpose:  verify Strain
@@ -356,7 +364,9 @@ def verifyStrain(
 
     global strainDict
 
-    results = db.sql('select _Strain_key, strain from PRB_Strain where strain = "%s"' % (strain), 'auto')
+    results = db.sql('''
+    	select _Strain_key, strain from PRB_Strain where strain = '%s'
+	''' % (strain), 'auto')
 
     for r in results:
         strainDict[r['strain']] = r['_Strain_key']
@@ -380,23 +390,22 @@ def setPrimaryKeys():
 
     global strainKey, strainmarkerKey, accKey, mgiKey, annotKey, noteKey
 
-    results = db.sql('select maxKey = max(_Strain_key) + 1 from PRB_Strain', 'auto')
+    results = db.sql('select max(_Strain_key) + 1 as maxKey from PRB_Strain', 'auto')
     strainKey = results[0]['maxKey']
 
-    results = db.sql('select maxKey = max(_StrainMarker_key) + 1 from PRB_Strain_Marker', 'auto')
+    results = db.sql('select max(_StrainMarker_key) + 1 as maxKey from PRB_Strain_Marker', 'auto')
     strainmarkerKey = results[0]['maxKey']
 
-    results = db.sql('select maxKey = max(_Accession_key) + 1 from ACC_Accession', 'auto')
+    results = db.sql('select max(_Accession_key) + 1 as maxKey from ACC_Accession', 'auto')
     accKey = results[0]['maxKey']
 
-    results = db.sql('select maxKey = maxNumericPart + 1 from ACC_AccessionMax ' + \
-        'where prefixPart = "%s"' % (mgiPrefix), 'auto')
+    results = db.sql('''select maxNumericPart + 1 as maxKey from ACC_AccessionMax where prefixPart = '%s' ''' % (mgiPrefix), 'auto')
     mgiKey = results[0]['maxKey']
 
-    results = db.sql('select maxKey = max(_Annot_key) + 1 from VOC_Annot', 'auto')
+    results = db.sql('select max(_Annot_key) + 1 as maxKey from VOC_Annot', 'auto')
     annotKey = results[0]['maxKey']
 
-    results = db.sql('select maxKey = max(_Note_key) + 1 from MGI_Note', 'auto')
+    results = db.sql('select max(_Note_key) + 1 as maxKey from MGI_Note', 'auto')
     noteKey = results[0]['maxKey']
 
 # Purpose:  BCPs the data into the database
@@ -407,11 +416,6 @@ def setPrimaryKeys():
 
 def bcpFiles():
 
-    bcpdelim = "|"
-
-    if DEBUG or not bcpon:
-        return
-
     strainFile.close()
     markerFile.close()
     accFile.close()
@@ -419,44 +423,47 @@ def bcpFiles():
     noteFile.close()
     noteChunkFile.close()
 
-    bcpI = 'cat %s | bcp %s..' % (passwordFileName, db.get_sqlDatabase())
-    bcpII = '-c -t\"|" -S%s -U%s' % (db.get_sqlServer(), db.get_sqlUser())
-    truncateDB = 'dump transaction %s with truncate_only' % (db.get_sqlDatabase())
+    if DEBUG or not bcpon:
+        return
 
-    bcp1 = '%s%s in %s %s' % (bcpI, strainTable, strainFileName, bcpII)
-    bcp2 = '%s%s in %s %s' % (bcpI, markerTable, markerFileName, bcpII)
-    bcp3 = '%s%s in %s %s' % (bcpI, accTable, accFileName, bcpII)
-    bcp4 = '%s%s in %s %s' % (bcpI, annotTable, annotFileName, bcpII)
-    bcp5 = '%s%s in %s %s' % (bcpI, noteTable, noteFileName, bcpII)
+    db.commit()
 
-    for bcpCmd in [bcp1, bcp2, bcp3, bcp4, bcp5]:
+    bcpCommand = os.environ['PG_DBUTILS'] + '/bin/bcpin.csh'
+
+    bcp1 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), strainTable, outputDir, strainTableBCP)
+    bcp2 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), markerTable, outputDir, markerTableBCP)
+    bcp3 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), accTable, outputDir, accTableBCP)
+    bcp4 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), annotTable, outputDir, annotTableBCP)
+    bcp5 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), noteTable, outputDir, noteTableBCP)
+    bcp6 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
+        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), noteChunkTable, outputDir, noteChunkTableBCP)
+
+    for bcpCmd in [bcp1, bcp2, bcp3, bcp4, bcp5, bcp6]:
 	diagFile.write('%s\n' % bcpCmd)
 	os.system(bcpCmd)
-	db.sql(truncateDB, None)
-
-    #
-    # for MGI_NoteChunk use -t, -r to set field and line numbers
-    # so that "\n" can exist in the "note" itself
-    #
-    bcpII = '-c -t\"&=&" -r"#=#\n" -S%s -U%s' % (db.get_sqlServer(), db.get_sqlUser())
-    bcp6 = '%s%s in %s %s' % (bcpI, noteChunkTable, noteChunkFileName, bcpII)
-    diagFile.write('%s\n' % bcp6)
-    os.system(bcp6)
-    db.sql(truncateDB, None)
 
     return
 
-# colony ID note never longer than 255
-def createColonyNote(strainKey, colonyNote, createdByKey):
+# Purpose:  create note
+# Returns:  nothing
+# Assumes:  nothing
+# Effects:  write noteFile, noteChunkFile row
+# Throws:   nothing
+
+def createNote(strainKey, note, noteTypeKey, createdByKey):
     global noteKey
 
     noteFile.write('%s|%s|%s|%s|%s|%s|%s|%s\n' \
-	% (noteKey, strainKey, mgiNoteObjectKey, mgiImpcColonyIdKey, \
+	% (noteKey, strainKey, mgiNoteObjectKey, noteTypeKey, \
 	   createdByKey, createdByKey, cdate, cdate))
 
-    noteChunkFile.write('%s&=&%s&=&%s&=&%s&=&%s&=&%s&=&%s#=#\n' \
-	% (noteKey, 1, colonyNote, \
-	    createdByKey, createdByKey, cdate, cdate))
+    noteChunkFile.write('%s|1|%s|%s|%s|%s|%s\n' \
+	% (noteKey, note, createdByKey, createdByKey, cdate, cdate))
 
     noteKey = noteKey + 1
 
@@ -503,7 +510,7 @@ def processFile():
 	    #print 'strain in database : %s' % line
 	    if (not checkColonyNote(strainExistKey) ):
 		print 'colony note not in the database: %s' % colonyNote
-		createColonyNote(strainExistKey, colonyNote, createdByKey)
+		createNote(strainExistKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
 	    else:
 		print 'colony note in database: %s'  % colonyNote
 	    continue
@@ -548,29 +555,12 @@ def processFile():
         # Colony ID Note
 
         if len(colonyNote) > 0:
-	    createColonyNote(strainKey, colonyNote, createdByKey)
+	    createNote(strainKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
 
         # storing data in MGI_Note/MGI_NoteChunk
         # Mutant Cell Line of Origin Note
-        mgiNoteSeqNum = 1
         if len(mutantNote) > 0:
-
-            noteFile.write('%s|%s|%s|%s|%s|%s|%s|%s\n' \
-                % (noteKey, strainKey, mgiNoteObjectKey, mgiMutantOriginTypeKey, \
-                   createdByKey, createdByKey, cdate, cdate))
-
-            while len(mutantNote) > 255:
-                noteChunkFile.write('%s&=&%s&=&%s&=&%s&=&%s&=&%s&=&%s#=#\n' \
-                    % (noteKey, mgiNoteSeqNum, mutantNote[:255], createdByKey, createdByKey, cdate, cdate))
-                mutantNote = mutantNote[255:]
-                mgiNoteSeqNum = mgiNoteSeqNum + 1
-
-            if len(mutantNote) > 0:
-                #noteChunkFile.write('%s|%s|%s|%s|%s|%s|%s\n' \
-                noteChunkFile.write('%s&=&%s&=&%s&=&%s&=&%s&=&%s&=&%s#=#\n' \
-                    % (noteKey, mgiNoteSeqNum, mutantNote, createdByKey, createdByKey, cdate, cdate))
-
-            noteKey = noteKey + 1
+	    createNote(strainKey, mutantNote, mgiMutOrigNoteTypeKey, createdByKey)
 
 	#
         # Annotations
@@ -605,16 +595,26 @@ def processFile():
     #
 
     if not DEBUG:
-        db.sql('exec ACC_setMax %d' % (lineNum), None)
+        db.sql('select * from ACC_setMax (%d)' % (lineNum), None)
 
 #
 # Main
 #
 
+print 'initialize : %s' % (mgi_utils.date())
 init()
+
+print 'verifyMode : %s' % (mgi_utils.date())
 verifyMode()
+
+print 'set primary keys : %s' % (mgi_utils.date())
 setPrimaryKeys()
+
+print 'prcoess files : %s' % (mgi_utils.date())
 processFile()
+
+print 'bcp files : %s' % (mgi_utils.date())
 bcpFiles()
+
 exit(0)
 
