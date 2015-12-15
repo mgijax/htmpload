@@ -35,10 +35,8 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 #      1) Source the configuration file to establish the environment.
 #      2) Establish the log file.
 #      3) Copy the HTMP input file to the HTMP/Input directory
-#      4) Call makeGenotype.sh to make a Genotype-input file for the 
-#	    genotypeload & run it
-#      5) Call makeAnnotation.sh to make a Annotation-input file for the 
-#	    annotload & run it
+#      4) Call makeGenotype.sh to make a Genotype-input file for the genotypeload & run it
+#      5) Call makeAnnotation.sh to make a Annotation-input file for the annotload & run it
 #
 #  Notes:  None
 #
@@ -125,47 +123,14 @@ then
     fi
 fi
 
-# REWORK THIS SECTION - either do it for only sanger or do it after preprocessor
-# runs copying the old HTMP_INPUT_FILE to HTMP_INPUT_FILE_OLD for comparison
-# after HTMP_INPUT_FILE built
 #
-# Verify the percentage between the old input file and the new input file
-# If the percentage is < 90%, then abort the load
-# If the percentage is >= 90%, then continue the load
+# remove the genotypeload and annotload diagnostics and error files
+# copy source input file
 #
-# for testing:
-#oldcount=4000
-#newcount=2000
-#
-if [ -f ${SOURCE_COPY_INPUT_FILE} ]
-then
-    oldcount=`/usr/bin/wc -l < ${SOURCE_COPY_INPUT_FILE}`
-    newcount=`/usr/bin/wc -l < ${SOURCE_INPUT_FILE}`
-    thediff=`expr "scale=3;  $newcount/$oldcount*100" | bc`
-    if [ ${thediff} -lt 90 ]
-	then
-	    echo "" >> ${LOG_CUR}
-	    echo "LOAD SKIPPED: " >> ${LOG_CUR}
-	    echo "${SOURCE_INPUT_FILE}" >> ${LOG_CUR}
-	    echo "IS LESS THAN 90% OF" >> ${LOG_CUR}
-	    echo "${HTMP_INPUT_FILE}" >> ${LOG_CUR}
-	    echo "" >> ${LOG_CUR}
-	    STAT=0
-	    checkStatus ${STAT} "LOAD SKIPPED: ${SOURCE_INPUT_FILE} IS LESS THAN 90% OF ${HTMP_INPUT_FILE}"
-	    shutDown
-	    exit 0
-    fi
-fi
-
-#
-# Now that we know the load is going to run, remove the genotypeload and
-# annotload diagnostics and error files
-#
-rm -rf ${OUTPUTDIR}/*.diagnostics
-rm -rf ${OUTPUTDIR}/*.error
-
 echo "copying source input file..." >> ${LOG}
 date >> ${LOG}
+rm -rf ${OUTPUTDIR}/*.diagnostics
+rm -rf ${OUTPUTDIR}/*.error
 rm -rf ${SOURCE_COPY_INPUT_FILE}
 cp ${SOURCE_INPUT_FILE} ${SOURCE_COPY_INPUT_FILE}
 STAT=$?
