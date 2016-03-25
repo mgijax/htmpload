@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 #
-#  makeIMPC.py
+#  makeIMPCLacZ.py
 ###########################################################################
 #
 #  Purpose:
@@ -10,7 +10,7 @@
 #
 #  Usage:
 #
-#      makeIMPC.py
+#      makeIMPCLacZ.py
 #
 #  Env Vars:
 #
@@ -70,7 +70,7 @@
 #	    structures from the database
 #	2) open input/output files
 #	3) parse the IMITS File into a data structure
-#	4) parse the IMPC File into an intermediate file
+#	4) parse the IMPC File into HTMP load format
 #	5) create HTMP Load format file from IMPC/IMITS data
 #	6) close input/output files
 #
@@ -127,7 +127,6 @@ htmpSkipFile = None
 # file pointers
 fpIMPC = None
 fpIMPCintWrite = None
-fpIMPCintRead = None
 fpIMPCdup = None
 fpIMITS = None
 fpHTMP = None
@@ -138,9 +137,8 @@ fpHTMPError = None
 fpHTMPSkip = None
 
 errorDisplay = '''
-
 ***********
-error:%s
+error: %s
 %s
 '''
 
@@ -362,7 +360,6 @@ def initialize():
 
     return rc
 
-
 #
 # Purpose: Open input/output files.
 # Returns: 1 if file does not exist or is not readable, else 0
@@ -372,8 +369,7 @@ def initialize():
 #
 
 def openFiles():
-    global fpIMPC, fpIMITS, fpHTMP, fpStrain
-    global fpIMPCintWrite, fpIMPCdup
+    global fpIMPC, fpIMPCintWrite, fpIMPCdup, fpIMITS, fpHTMP, fpStrain
     global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
 
     #
@@ -386,24 +382,6 @@ def openFiles():
         return 1
 
     #
-    # Open the intermediate IMPC file
-    #
-    try:
-        fpIMPCintWrite = open(impcFileInt, 'w')
-    except:
-        print 'Cannot open file: ' + impcFileInt
-        return 1
-
-    #
-    # Open the intermediate IMPC Dup file
-    #
-    try:
-        fpIMPCdup = open(impcFileDup, 'w')
-    except:
-        print 'Cannot open file: ' + impcFileDup
-        return 1
-
-    #
     # Open the IMITS file
     #
     try:
@@ -413,21 +391,36 @@ def openFiles():
         return 1
 
     #
+    # Open the IMPC intermediate file
+    #
+    try:
+        fpIMPCintWrite = open(impcFileInt, 'w')
+    except:
+        print 'Cannot open file: ' + impcFileInt
+        return 1
+
+    #
+    # Open the IMPC dup file
+    #
+    try:
+        fpIMPCdup = open(impcFileDup, 'w')
+    except:
+        print 'Cannot open file: ' + impcFileDup
+        return 1
+
+    #
     # Open the htmp output file 
     #
     try:
-	#print 'htmpfile: %s' % htmpFile
         fpHTMP = open(htmpFile, 'w')
     except:
         print 'Cannot open file: ' + htmpFile
         return 1
 
-
     #
     # Open the strain output file
     #
     try:
-        #print 'strainfile: %s' % strainFile
         fpStrain = open(strainFile, 'w')
     except:
         print 'Cannot open file: ' + strainFile
@@ -447,9 +440,7 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n\n######################################\n')
-	fpLogCur.write('########## makeIMPC Log ##############\n')
-	fpLogCur.write('######################################\n\n')
+	fpLogCur.write('##\n## makeIMPCLacZ log\n##\n')
 
     except:
         print 'Cannot open file: ' + logCurFile
@@ -526,10 +517,14 @@ def logIt(msg, line, isError, typeError):
 
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
+
     if not errorDict.has_key(typeError):
 	errorDict[typeError] = []
+
     errorDict[typeError].append(logit)
+
     #fpLogCur.write(logit)
+
     if isError:
 	fpHTMPError.write(line)
 
@@ -542,16 +537,10 @@ def logIt(msg, line, isError, typeError):
 # Effects: Nothing
 # Throws: Nothing
 #
-
 def parseIMITSFile():
     global colonyToMCLDict
 
     print 'Parsing IMITS, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-
-    # create lookup mapping IMITS colony id to MCL ID
-    # US5 - add production center and marker MGI ID
-    # US5 - skip if any attributes don't exist
-
     jFile = json.load(fpIMITS)
 
     for f in jFile['response']['docs']:
@@ -579,49 +568,71 @@ def parseIMITSFile():
 
     return 0
 
-#
 # Purpose: parse IMPC json file into intermediate file
-#	lines with missing data reported to the skip file
-#	duplicate entries in json file collapsed
-# Returns: 1 if file cannot be opened, else 0
+# Returns: 0
 # Assumes: json file descriptor has been created
 # Effects: writes intermediate file to file system
 # Throws: Nothing
 #
-def parseIMPCFile():
-    global fpIMPCintWrite, fpIMPCdup
-    
-    #print 'creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+def parseIMPCLacZFile():
+    global fpHTMP, fpIMCPdup
+
+    print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpIMPC)
-    #print 'done creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
     lineSet = set([])
+    sGroupValList = []
+    totalCt = 0
+    notExpCt = 0
+    nopasId = 0
+    rcdWrittenCt = 0
 
     for f in jFile['response']['docs']:
 
-        # exclude europhenome for now
-        # 8/20 - decided to restrict to impc data via mirror_wget
-        #if f['resource_name'] == 'EuroPhenome':
-        #    continue
+	totalCt += 1
+	sGroup = f['biological_sample_group']
 
-	try:
-        	mpID = f['mp_term_id']
-        except:
-		mpID = ''
+	if sGroup.lower() != 'experimental':
+	    if sGroup not in sGroupValList:
+		sGroupValList.append(sGroup)
+	    notExpCt += 1
+	    continue
 
 	phenotypingCenter = f['phenotyping_center']
-        alleleID = alleleID2 = f['allele_accession_id']
-        alleleState = f['zygosity']
+	alleleID = f['allele_accession_id']
+	alleleState = f['zygosity']
         alleleSymbol = f['allele_symbol']
         strainName = f['strain_name']
         strainID = f['strain_accession_id']
-        markerID = f['marker_accession_id']
+        markerID = f['gene_accession_id']
+        markerSymbol = f['gene_symbol']
         gender = f['sex']
         colonyID = f['colony_id']
 
-        # line representing data from the IMPC input file 
-	line = phenotypingCenter + '\t' + \
-             mpID + '\t' + \
+	download_url = f['download_url'] 
+	jpeg_url = f['jpeg_url']  
+	full_resolution_file_path = f['full_resolution_file_path']  
+	parameter_name  = f['parameter_name']  
+	parameter_stable_id  = f['parameter_stable_id']  
+
+	try:
+	   parameter_association_stable_id = f['parameter_association_stable_id'] 
+	except:
+	    # skip if no parameter_association_stable_id
+	    nopasId += 1
+	    continue
+	try: 
+	    parameter_association_name = f['parameter_association_name'] 
+	except:
+	    parameter_association_name = []
+
+	try:
+	    parameter_association_value = f['parameter_association_value'] 
+	except:
+	    parameter_association_value = []
+
+        # line representing data from the IMPC input file
+        line = phenotypingCenter + '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
              alleleSymbol + '\t' + \
@@ -633,30 +644,72 @@ def parseIMPCFile():
 
         # skip if blank field in IMPC data and report to the skip file
         if phenotypingCenter == '' or \
-	        mpID == '' or \
-		alleleID == '' or \
-            	alleleState == '' or \
-		alleleSymbol == '' or \
-		strainName == '' or \
-            	strainID == '' or \
-		markerID == '' or  \
-		gender == '' or \
-            	colonyID == '':
+                alleleID == '' or \
+                alleleState == '' or \
+                alleleSymbol == '' or \
+                strainName == '' or \
+                strainID == '' or \
+                markerID == '' or  \
+                gender == '' or \
+                colonyID == '':
             fpHTMPSkip.write(line)
             continue
 
-        # lineSet assures dups are filtered out
-	if line in lineSet:
-	    fpIMPCdup.write(line)
-	    continue
+	lineSet.add(line)
 
-        lineSet.add(line)
+        # line representing data from the IMPC input file 
+	#line1 = gene_accession_id + '\t' + \
+        #     gene_symbol + '\t' + \
+        #     allele_accession_id + '\t' + \
+        #     allele_symbol + '\t' + \
+        #     strain_accession_id + '\t' + \
+        #     strain_name + '\t' + \
+        #     zygosity + '\t' + \
+        #     sex + '\t' + \
+        #     colony_id + '\t' + \
+	#     download_url + '\t' + \
+	#     jpeg_url + '\t' + \
+	#     full_resolution_file_path + '\t' + \
+	#     phenotypingCenter + '\t' + \
+	#     parameter_name + '\t' + \
+	#     parameter_stable_id + '\t' 
+
+	# now finish the line; one line per stable_id, name and 
+	# value; skipping lines where parameter_association_value is 'imageOnly' 
+	# or 'tissue not available'
+	#ctr = 0
+	#for value in parameter_association_stable_id:
+
+	#    if parameter_association_value[ctr] == 'imageOnly' \
+	#    	or parameter_association_value[ctr] == 'tissue not available':
+	#	continue
+
+	#    line2 = value + '\t' + \
+	#	parameter_association_name[ctr] + '\t' + \
+	#	parameter_association_value[ctr] + '\n'
+	    
+	#    line = line1 + line2 
+
+	#    if line in lineSet:
+	#	fpIMPCdup.write(line)
+	#	continue
+
+	    # add to the set of lines we will write to the file
+	#    lineSet.add(line)
+	#    ctr += 1
 
     for line in lineSet:
 	fpIMPCintWrite.write(line)
+	rcdWrittenCt += 1
 
     fpIMPCintWrite.close()
     fpIMPCdup.close()
+
+    print 'notExpCt: %s' % notExpCt
+    print 'nopasId: %s' % nopasId
+    print 'non experimental values: %s' % sGroupValList
+    print 'total records written: %s' % rcdWrittenCt
+    print 'totalCt: %s' % totalCt
 
     return 0
 
@@ -789,8 +842,7 @@ def checkAlleleState(alleleState, line):
 	alleleState = 'Hemizygous'
 
     else:
-	# 8/22 all match
-	msg = 'Unrecognized allele state %s' % alleleState
+	msg = 'Unrecognized allele state : %s' % alleleState
 	logIt(msg, line, 1, 'alleleState')
 	return  'error'
 
@@ -812,7 +864,7 @@ def checkGender(gender, line):
 	gender = 'Female'
 
     else:
-	msg = 'Unrecognized gender %s' % gender
+	msg = 'Unrecognized gender : %s' % gender
 	logIt(msg, line, 1, 'gender')
 	return 'error'
 
@@ -828,12 +880,11 @@ def checkGender(gender, line):
 def checkPhenoCtr(phenoCtr, line):
 
     if phenoCtr not in phenoCtrList:
-        msg = 'Unrecognized phenotyping center %s' % phenoCtr
+        msg = 'Unrecognized phenotyping center : %s' % phenoCtr
         logIt(msg, line, 1, 'phenoCtr')
         return 'error'
 
     return phenoCtr
-
 
 #
 # Purpose: checks if IMPC colony ID maps to IMITS colony ID
@@ -845,7 +896,7 @@ def checkPhenoCtr(phenoCtr, line):
 def checkColonyID(colonyID, line):
 
     if not colonyToMCLDict.has_key(colonyID):
-	msg='No IMITS colony id for %s' % colonyID
+	msg = 'No IMITS colony id : %s' % colonyID
 	logIt(msg, line, 1, 'colonyID')
 	return 1
 
@@ -865,7 +916,7 @@ def compareMarkers(markerID, imitsMrkID, line):
         # 8/22 all match
         # test file:
         #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
-	msg='No Marker ID match. IMPC: %s IMITS: %s' % (markerID, imitsMrkID)
+	msg = 'No Marker ID match. IMPC: %s IMITS: %s' % (markerID, imitsMrkID)
 	logIt(msg, line, 1, 'noMrkIdMatch')
 	return 1
 
@@ -900,17 +951,13 @@ def createHTMPFile():
     # Open the intermediate IMPC file
     #
     try:
-    if fpIMPC:
-        fpIMPC.close()
-
         fpIMPCintRead = open(impcFileInt, 'r')
     except:
         print 'Cannot open file: ' + impcFileInt
         return 1
 
     # 
-    # Parse the intermediate file where 1) dups are removed 2) lines w/missing 
-    #    data skipped
+    # Parse the file where 1) dups are removed 2) lines w/missing data skipped
     #
     
     for line in fpIMPCintRead.readlines():
@@ -921,7 +968,7 @@ def createHTMPFile():
 	error = 0
 
 	# We know this attributes are not blank - see parseJson
-	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
+	phenotypingCenter, alleleID, alleleState, alleleSymbol, \
 		strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
 
 	returnVal = checkAlleleState(alleleState, line)
@@ -1029,7 +1076,7 @@ def createHTMPFile():
 	htmpLine = phenotypingCenter + '\t' + \
 	     interpretationCenter + '\t' + \
 	     mutantID + '\t' + \
-	     mpID + '\t' + \
+	     '\t' + \
 	     alleleID + '\t' + \
 	     alleleState + '\t' + \
 	     alleleSymbol + '\t' + \
@@ -1071,8 +1118,8 @@ print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(t
 if parseIMITSFile() != 0:
     sys.exit(1)
 
-print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-if parseIMPCFile() != 0:
+print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+if parseIMPCLacZFile() != 0:
     sys.exit(1)
 
 print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
