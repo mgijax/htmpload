@@ -102,6 +102,10 @@ db.setTrace(True)
 db.setAutoTranslate(False)
 db.setAutoTranslateBE(False)
 
+# load type
+isMP = 0
+isLacZ = 0
+
 # strain constants
 species = 'laboratory mouse'
 standard = '1'
@@ -224,6 +228,7 @@ def initialize():
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global strainPrefixDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
+    global isMP, isLacZ
 
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     impcFileInt = '%s_int' % impcFile
@@ -235,8 +240,21 @@ def initialize():
     logCurFile = os.getenv('LOG_CUR')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
+    loadType = os.getenv('LOADTYPE')
 
     rc = 0
+
+    #
+    # determine load type
+    # 
+
+    if loadType == 'mp':
+    	isMP = 1
+    elif loadType == 'lacz':
+    	isLacZ = 1
+    else:
+        print 'Environment variable not set: LOADTYPE'
+        rc = 1
 
     #
     # Make sure the environment variables are set.
@@ -672,7 +690,7 @@ def parseIMPCFile():
 # Throws: Nothing
 #
 def parseIMPCLacZFile():
-    global fpHTMP, fpIMCPdup
+    global fpIMPCintWrite, fpIMCPdup
 
     print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpIMPC)
@@ -1201,9 +1219,14 @@ print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(t
 if parseIMITSFile() != 0:
     sys.exit(1)
 
-print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-if parseIMPCFile() != 0:
-    sys.exit(1)
+if isMP:
+    print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    if parseIMPCFile() != 0:
+        sys.exit(1)
+elif isLacZ
+    print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    if parseIMPCLacZFile() != 0:
+        sys.exit(1)
 
 print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 if createHTMPFile() != 0:

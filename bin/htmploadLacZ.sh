@@ -131,9 +131,9 @@ checkStatus ${STAT} "copying IMPC/LacZ input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-${HTMPLOAD}/bin/makeIMPCLacZ.sh ${CONFIG}
+${HTMPLOAD}/bin/makeIMPC.sh ${CONFIG}
 STAT=$?
-checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPCLacZ.sh"
+checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPC.sh"
 
 #
 # sort the pre-processed file
