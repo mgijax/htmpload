@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-#  htmpload.sh
+#  htmploadLacZ.sh
 ###########################################################################
 #
 #  Purpose:
 #
 #      This script is a wrapper around the entire HTMP load process.
 #
-Usage="Usage: htmpload.sh *load.config annotload.config"
+Usage="Usage: htmploadLacZ.sh *load.config"
 #
 #  Env Vars:
 #
@@ -36,7 +36,6 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 #      2) Establish the log file.
 #      3) Copy the HTMP input file to the HTMP/Input directory
 #      4) Call makeGenotype.sh to make a Genotype-input file for the genotypeload & run it
-#      5) Call makeAnnotation.sh to make a Annotation-input file for the annotload & run it
 #
 #  Notes:  None
 #
@@ -44,14 +43,13 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 
 cd `dirname $0`
 
-if [ $# -lt 2 ]
+if [ $# -lt 1 ]
 then
     echo ${Usage}
     exit 1
 fi
 
 CONFIG=$1
-ANNOTCONFIG=$2
 
 #
 # Make sure the configuration file exists and source it.
@@ -61,11 +59,6 @@ then
     . ${CONFIG}
 else
     echo "Missing configuration file: ${CONFIG}"
-    exit 1
-fi
-if [ ! -f ${ANNOTCONFIG} ]
-then
-    echo "Missing configuration file: ${ANNOTCONFIG}"
     exit 1
 fi
 
@@ -134,23 +127,22 @@ rm -rf ${OUTPUTDIR}/*.error
 rm -rf ${SOURCE_COPY_INPUT_FILE}
 cp ${SOURCE_INPUT_FILE} ${SOURCE_COPY_INPUT_FILE}
 STAT=$?
-checkStatus ${STAT} "copying IMPC input file"
+checkStatus ${STAT} "copying IMPC/LacZ input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-${HTMPLOAD}/bin/makeIMPC.sh ${CONFIG}
+${HTMPLOAD}/bin/makeIMPCLacZ.sh ${CONFIG}
 STAT=$?
-checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPC.sh"
+checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPCLacZ.sh"
 
 #
 # sort the pre-processed file
 # sort by column 7 (allele name)
 # sort by column 6 (allele state)
-# sort by column 4 (mp id)
 #
 echo "sorting pre-processed file ${HTMP_INPUT_FILE} ..." >> ${LOG}
 date >> ${LOG}
-sort -o ${HTMP_INPUT_FILE} -t"	" -k7,7 -k6,6 -k4,4 ${HTMP_INPUT_FILE}
+sort -o ${HTMP_INPUT_FILE} -t"	" -k7,7 -k6,6 ${HTMP_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "sorting pre-processed file"
 
@@ -162,15 +154,6 @@ date >> ${LOG}
 ./makeGenotype.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 checkStatus ${STAT} "makeGenotype.sh ${CONFIG}"
-
-#
-# Create the Annotation, if ANNOTCONFIG file exists
-#
-echo "" >> ${LOG}
-date >> ${LOG}
-./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
-STAT=$?
-checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 
 #
 # Run reports
