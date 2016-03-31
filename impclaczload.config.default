@@ -92,9 +92,8 @@ export REPORT_SCRIPT_SUFFIX
 
 # input file from iMits
 #
-
-IMITS_INPUT_FILE=${DATADOWNLOADS}/ikmc.vm.bytemark.co.uk/imits.json
-IMITS_COPY_INPUT_FILE=${INPUTDIR}/imits.json
+IMITS_INPUT_FILE=${DATADOWNLOADS}/www.mousephenotype.org/mp2_load_phenotyping_colonies_report.tsv
+IMITS_COPY_INPUT_FILE=${INPUTDIR}/mp2_load_phenotyping_colonies_report.tsv
 
 export IMITS_INPUT_FILE IMITS_COPY_INPUT_FILE
 
