@@ -1,13 +1,13 @@
 #!/bin/sh
 #
-#  htmploadLacZ.sh
+#  htmploadlacz.sh
 ###########################################################################
 #
 #  Purpose:
 #
 #      This script is a wrapper around the entire HTMP load process.
 #
-Usage="Usage: htmploadLacZ.sh *load.config"
+Usage="Usage: htmploadlacz.sh *load.config"
 #
 #  Env Vars:
 #

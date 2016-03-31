@@ -754,6 +754,7 @@ def parseIMPCLacZFile():
 
         # line representing data from the IMPC input file
         line = phenotypingCenter + '\t' + \
+             '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
              alleleSymbol + '\t' + \
