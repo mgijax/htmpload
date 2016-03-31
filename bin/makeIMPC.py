@@ -96,12 +96,13 @@
 #  Notes: 
 #
 # US5 refers to
-#	http://mgiwiki/mediawiki/index.php/si:IMPC_htmpload#Strains
+#	http://mgiwiki/mediawiki/index.php/sw:IMPC_htmpload#Strains
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
 #
 #  03/30/2016
 #	- TR12273/use new IMITS report input file to verify IMPC colony/marker
-#	  and to find production_centre.
+#	  and to find production_centre and es_cell_name. the json IMITS file
+#	  is incorrect. using mirror_wget/www.mousephenotype.org instead.
 #
 #  12/08/2015	lec
 #	- TR12070 epic
@@ -405,7 +406,6 @@ def initialize():
     db.useOneConnection(0)
 
     return rc
-
 
 #
 # Purpose: Open input/output files.
@@ -910,7 +910,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     		strainNameToColonyIdDict[strainName] != '':
 
 	dbColonyID =  strainNameToColonyIdDict[strainName]
-	msg = 'Database colony ID %s for strain %s does not match IMPC colony id %s' % \
+	msg = 'MGI/database colony ID %s for strain %s does not match IMPC colony id %s' % \
 		(dbColonyID, strainName, colonyID)
 	#print msg
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
@@ -1131,26 +1131,26 @@ def createHTMPFile():
 
 	    dbAllele = allelesInDbDict[alleleID]
 
-	    # US5 doc 4b2
+	    # report this but don't exclude it
 	    if alleleSymbol != dbAllele.s:
-		msg = 'For matched Allele accID, Allele symbol: %s does not match database symbol: %s' % \
+		msg = 'not a fatal error: Allele Symbol: %s does not match MGI-database symbol: %s' % \
 			(alleleSymbol, dbAllele.s)
 		logIt(msg, line, 1, 'alleleNotMatch')
-		error = 1
+		#error = 1
 
 	    if markerID != dbAllele.m:
-		msg = 'Marker ID: %s does not match database marker ID: %s' % (markerID, dbAllele.m)
+		msg = 'Marker ID: %s does not match MGI-database marker ID: %s' % (markerID, dbAllele.m)
 		logIt(msg, line, 1, 'markerNotMatch')
 		error = 1
 
 	    if mutantID not in dbAllele.c:
-		msg = 'Mutant ID: %s not associated with %s in database' % (mutantID, alleleID)
+		msg = 'Mutant ID: %s is not associated with %s in MGI-database' % (mutantID, alleleID)
 		logIt(msg, line, 1, 'mutIdNotAssoc')
 		error = 1
 
 	else: # US5 doc 4b2
 	    # 15 cases in impc.json e.g. NULL-114475FCF4
-	    msg = 'Allele not in the database: %s' % alleleID
+	    msg = 'Allele not in the MGI-database: %s' % alleleID
 	    logIt(msg, line, 1, 'alleleNotInDb')
 	    error = 1
 
