@@ -80,6 +80,8 @@
 #	http://mgiwiki/mediawiki/index.php/si:IMPC_htmpload#Strains
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
 #
+#  03/30/2016
+#	- TR :wq
 #  12/08/2015	lec
 #	- TR12070 epic
 #
@@ -104,6 +106,9 @@ db.setAutoTranslateBE(False)
 species = 'laboratory mouse'
 standard = '1'
 createdBy = 'htmpload'
+# not specified strain
+strainNameNS = 'Not Specified'
+strainIDNS = 'MGI:4867032'
 
 # htmp file constants
 interpretationCenter = 'IMPC'
@@ -660,6 +665,151 @@ def parseIMPCFile():
 
     return 0
 
+# Purpose: parse IMPC json file into intermediate file
+# Returns: 0
+# Assumes: json file descriptor has been created
+# Effects: writes intermediate file to file system
+# Throws: Nothing
+#
+def parseIMPCLacZFile():
+    global fpHTMP, fpIMCPdup
+
+    print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    jFile = json.load(fpIMPC)
+
+    lineSet = set([])
+    sGroupValList = []
+    totalCt = 0
+    notExpCt = 0
+    nopasId = 0
+    rcdWrittenCt = 0
+
+    for f in jFile['response']['docs']:
+
+	totalCt += 1
+	sGroup = f['biological_sample_group']
+
+	if sGroup.lower() != 'experimental':
+	    if sGroup not in sGroupValList:
+		sGroupValList.append(sGroup)
+	    notExpCt += 1
+	    continue
+
+	phenotypingCenter = f['phenotyping_center']
+	alleleID = f['allele_accession_id']
+	alleleState = f['zygosity']
+        alleleSymbol = f['allele_symbol']
+        strainName = f['strain_name']
+        strainID = f['strain_accession_id']
+        markerID = f['gene_accession_id']
+        markerSymbol = f['gene_symbol']
+        gender = f['sex']
+        colonyID = f['colony_id']
+
+	download_url = f['download_url'] 
+	jpeg_url = f['jpeg_url']  
+	full_resolution_file_path = f['full_resolution_file_path']  
+	parameter_name  = f['parameter_name']  
+	parameter_stable_id  = f['parameter_stable_id']  
+
+	try:
+	   parameter_association_stable_id = f['parameter_association_stable_id'] 
+	except:
+	    # skip if no parameter_association_stable_id
+	    nopasId += 1
+	    continue
+	try: 
+	    parameter_association_name = f['parameter_association_name'] 
+	except:
+	    parameter_association_name = []
+
+	try:
+	    parameter_association_value = f['parameter_association_value'] 
+	except:
+	    parameter_association_value = []
+
+        # line representing data from the IMPC input file
+        line = phenotypingCenter + '\t' + \
+             alleleID + '\t' + \
+             alleleState + '\t' + \
+             alleleSymbol + '\t' + \
+             strainName + '\t' + \
+             strainID + '\t' + \
+             markerID + '\t' + \
+             gender + '\t' + \
+             colonyID + '\n'
+
+        # skip if blank field in IMPC data and report to the skip file
+        if phenotypingCenter == '' or \
+                alleleID == '' or \
+                alleleState == '' or \
+                alleleSymbol == '' or \
+                strainName == '' or \
+                strainID == '' or \
+                markerID == '' or  \
+                gender == '' or \
+                colonyID == '':
+            fpHTMPSkip.write(line)
+            continue
+
+	lineSet.add(line)
+
+        # line representing data from the IMPC input file 
+	#line1 = gene_accession_id + '\t' + \
+        #     gene_symbol + '\t' + \
+        #     allele_accession_id + '\t' + \
+        #     allele_symbol + '\t' + \
+        #     strain_accession_id + '\t' + \
+        #     strain_name + '\t' + \
+        #     zygosity + '\t' + \
+        #     sex + '\t' + \
+        #     colony_id + '\t' + \
+	#     download_url + '\t' + \
+	#     jpeg_url + '\t' + \
+	#     full_resolution_file_path + '\t' + \
+	#     phenotypingCenter + '\t' + \
+	#     parameter_name + '\t' + \
+	#     parameter_stable_id + '\t' 
+
+	# now finish the line; one line per stable_id, name and 
+	# value; skipping lines where parameter_association_value is 'imageOnly' 
+	# or 'tissue not available'
+	#ctr = 0
+	#for value in parameter_association_stable_id:
+
+	#    if parameter_association_value[ctr] == 'imageOnly' \
+	#    	or parameter_association_value[ctr] == 'tissue not available':
+	#	continue
+
+	#    line2 = value + '\t' + \
+	#	parameter_association_name[ctr] + '\t' + \
+	#	parameter_association_value[ctr] + '\n'
+	    
+	#    line = line1 + line2 
+
+	#    if line in lineSet:
+	#	fpIMPCdup.write(line)
+	#	continue
+
+	    # add to the set of lines we will write to the file
+	#    lineSet.add(line)
+	#    ctr += 1
+
+    for line in lineSet:
+	fpIMPCintWrite.write(line)
+	rcdWrittenCt += 1
+
+    fpIMPCintWrite.close()
+    fpIMPCdup.close()
+
+    print 'notExpCt: %s' % notExpCt
+    print 'nopasId: %s' % nopasId
+    print 'non experimental values: %s' % sGroupValList
+    print 'total records written: %s' % rcdWrittenCt
+    print 'totalCt: %s' % totalCt
+
+    return 0
+
 #
 # Purpose: do strain checks on a set of attributes representing a unique
 #	strain in the input
@@ -811,6 +961,10 @@ def checkGender(gender, line):
     elif gender.lower() == 'female':
 	gender = 'Female'
 
+    elif gender.lower() == 'no_data':
+	# will be converted to NA laster in makeAnnotation.py
+	gender = ''
+
     else:
 	msg = 'Unrecognized gender %s' % gender
 	logIt(msg, line, 1, 'gender')
@@ -833,23 +987,6 @@ def checkPhenoCtr(phenoCtr, line):
         return 'error'
 
     return phenoCtr
-
-
-#
-# Purpose: checks if IMPC colony ID maps to IMITS colony ID
-# Returns: 1 if not IMITS colony ID for IMPC colony ID
-# Assumes: Nothing
-# Effects: writes to error file and curation/diagnostic logs
-# Throws: Nothing
-#
-def checkColonyID(colonyID, line):
-
-    if not colonyToMCLDict.has_key(colonyID):
-	msg='No IMITS colony id for %s' % colonyID
-	logIt(msg, line, 1, 'colonyID')
-	return 1
-
-    return 0
 
 #
 # Purpose: compares IMPC marker ID to IMITS marker ID
@@ -900,9 +1037,6 @@ def createHTMPFile():
     # Open the intermediate IMPC file
     #
     try:
-    if fpIMPC:
-        fpIMPC.close()
-
         fpIMPCintRead = open(impcFileInt, 'r')
     except:
         print 'Cannot open file: ' + impcFileInt
@@ -943,21 +1077,16 @@ def createHTMPFile():
             continue
 
 	#
-	# US20/5 checks for strain processing
-	# these checks short circuit i.e. only first one found reported
+	# does IMPC colony_id match IMITS colony_name?
 	#
-        # Get the mutantID, production Ctr and markerID from the IMITS data
-	# US 5 doc 4a1
-	# MFUN not in imits (2 impc records)
-	#
-
-	if checkColonyID(colonyID, line):
-	    continue
-
-	imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
-
-        if compareMarkers(markerID, imitsMrkID, line):
-	    continue
+        if not colonyToMCLDict.has_key(colonyID):
+	    strainName = strainNameNS
+	    strainID = strainIDNS
+        else:
+	    # does IMPC marker match IMITS marker?
+	    imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+            if compareMarkers(markerID, imitsMrkID, line):
+	        continue
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
@@ -1005,6 +1134,7 @@ def createHTMPFile():
   	    strainName = colonyToStrainNameDict[colonyID]
 	    #print 'found strain in db %s' % strainName
 	    #uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
+
 	else:
 	    #
 	    # if strain not determined by colony ID first do checks on the 

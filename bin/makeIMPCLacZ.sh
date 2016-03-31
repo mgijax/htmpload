@@ -83,9 +83,7 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-pwd
-./makeIMCPLacZ.py
-#./makeIMCPLacZ.py 2>&1 >> ${LOG}
+./makeIMCPLacZ.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
@@ -96,14 +94,14 @@ fi
 #
 # Create the IMPC HTMP strains
 #
-#echo "" >> ${LOG}
-#date >> ${LOG}
-#./makeIMPCLacZStrains.py 2>&1 >> ${LOG}
-#STAT=$?
-#if [ ${STAT} -ne 0 ]
-#then
-#    echo "Error: Create the IMPC HTMP strains (makeIMPCLacZ.py)" | tee -a ${LOG}
-#    exit 1
-#fi
+echo "" >> ${LOG}
+date >> ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    echo "Error: Create the IMPC HTMP strains (makeIMPCLacZ.py)" | tee -a ${LOG}
+    exit 1
+fi
 
 exit 0
