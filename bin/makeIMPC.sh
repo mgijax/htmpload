@@ -44,7 +44,7 @@ Usage="Usage: makeIMPC.sh config"
 
 cd `dirname $0`
 
-if [ $# -lt 1 ]
+if [ $# -lt 2 ]
 then
     echo ${Usage}
     exit 1

@@ -25,7 +25,7 @@ fi
 #
 ###########################################################################
 
-FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/impcmpload
+FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/impclaczload
 ARCHIVEDIR=${FILEDIR}/archive
 INPUTDIR=${FILEDIR}/input
 OUTPUTDIR=${FILEDIR}/output
@@ -35,7 +35,7 @@ QCOUTPUTDIR=${RPTDIR}
 
 export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR 
 
-LOADTYPE=mp
+LOADTYPE=lacz
 export LOADTYPE
 
 ###########################################################################
@@ -79,14 +79,14 @@ export STRAIN_INFO
 
 # input file from IMPC
 #
-SOURCE_INPUT_FILE=${DATADOWNLOADS}/www.ebi.ac.uk/impc.json
-SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc.json
+SOURCE_INPUT_FILE=${DATADOWNLOADS}/www.ebi.ac.uk/impc_lacz.json
+SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc_lacz.json
 
 export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE
 
 #
 # IMPC report script suffix
-REPORT_SCRIPT_SUFFIX=IMPC.sh
+REPORT_SCRIPT_SUFFIX=IMPCLacZ.sh
 
 export REPORT_SCRIPT_SUFFIX
 
@@ -125,11 +125,10 @@ HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_impcload.txt
 # Genotype & Annotation input file
 #
 GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
-ANNOT_INPUT_FILE=${INPUTDIR}/mgi_annotload.txt
 
 export HTMP_INPUT_FILE STRAIN_INPUT_FILE
 export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE 
-export HTMPUNIQ_INPUT_FILE GENOTYPE_INPUT_FILE ANNOT_INPUT_FILE
+export HTMPUNIQ_INPUT_FILE GENOTYPE_INPUT_FILE
 
 # Log files
 #
@@ -142,7 +141,7 @@ LOG_TEST=${LOGDIR}/htmpload.test.log
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
 CREATEDBY=htmpload
-JNUMBER=J:211773
+JNUMBER=J:228563
 
 export CREATEDBY JNUMBER
 
@@ -171,10 +170,11 @@ JOBSTREAM=htmpload
 export JOBSTREAM
 
 #  The name of the load for the subject of an email notification
-MAIL_LOADNAME="IMPC MP Load"
+MAIL_LOADNAME="IMPC LacZ Load"
 
 #  Recipient list for mailing the log files (comma-separated)
-MAIL_LOG_CUR="mgi-hiphenoload@jax.org"
+MAIL_LOG_CUR="lori.corbani@jax.org"
+#MAIL_LOG_CUR="mgi-hiphenoload@jax.org"
 
 export MAIL_LOADNAME MAIL_LOG_CUR
 

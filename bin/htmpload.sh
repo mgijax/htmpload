@@ -138,7 +138,7 @@ checkStatus ${STAT} "copying IMPC input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-${HTMPLOAD}/bin/makeIMPC.sh ${CONFIG} mp
+${HTMPLOAD}/bin/makeIMPC.sh ${CONFIG}
 STAT=$?
 checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPC.sh"
 
