@@ -18,13 +18,32 @@
 #
 #  Inputs:
 #
-#      IMPC input file (SOURCE_COPY_INPUT_FILE)
+#   IMPC input file (SOURCE_COPY_INPUT_FILE)
 #
-#	This is a json format file
+#   This is a json format file
 #
-#      IMITS input file (IMITS_COPY_INPUT_FILE)
+#   1. Phenotyping Centre
+#   2. MGI Allele ID
+#   3. Zygosity
+#   4. Allele Symbol
+#   5. Strain Name
+#   6. Strain Accession ID
+#   7. MGI Marker ID
+#   8. Gender
+#   9. Colony ID
 #
-#	This is a json format file
+#   IMITS input file (IMITS_COPY_INPUT_FILE)
+#
+#   This is a imits/tsv (tab-delimited) file
+#	
+#   1. Marker Symbol
+#   2. MGI Accession ID
+#   3. Colony Name
+#   4. ES Cell Name 
+#   5. Colony Background Strain
+#   6. Production Centre
+#   7. Production Consortium
+#   8. Phenotyping Centre
 #
 #  Outputs:
 #
@@ -81,7 +100,9 @@
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
 #
 #  03/30/2016
-#	- TR :wq
+#	- TR12273/use new IMITS report input file to verify IMPC colony/marker
+#	  and to find production_centre.
+#
 #  12/08/2015	lec
 #	- TR12070 epic
 #
@@ -445,7 +466,6 @@ def openFiles():
         print 'Cannot open file: ' + htmpFile
         return 1
 
-
     #
     # Open the strain output file
     #
@@ -543,7 +563,6 @@ def closeFiles():
 # Effects: Nothing
 # Throws: Nothing
 #
-
 def logIt(msg, line, isError, typeError):
     global errorDict
 
@@ -559,37 +578,29 @@ def logIt(msg, line, isError, typeError):
     return 0
 
 #
-# Purpose: parse IMITS json file into a data structure
+# Purpose: parse IMITS report (tab-delimited) file into a data structure
 # Returns: 0
 # Assumes: fpIMITS exists 
 # Effects: Nothing
 # Throws: Nothing
 #
-
 def parseIMITSFile():
     global colonyToMCLDict
 
     print 'Parsing IMITS, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
-    # create lookup mapping IMITS colony id to MCL ID
-    # US5 - add production center and marker MGI ID
-    # US5 - skip if any attributes don't exist
+    for line in fpIMITS.readlines():
 
-    jFile = json.load(fpIMITS)
+        tokens = line[:-1].split('\t')
 
-    for f in jFile['response']['docs']:
-        productionCtr = f['production_centre']
-        mutantID = f['es_cell_name']
-        markerID = f['mgi_accession_id']
-        colonyID = f['colony_name']
+	if tokens[0] == 'Marker Symbol':
+	    continue
 
-        # if any of the attributes are empty, skip, (majority of records
-        # have some blank attributes; too many to bother reporting)
-        if productionCtr == '' or \
-	   	mutantID == '' or \
-	   	markerID == '' or \
-           	colonyID == '': 
-            continue
+	markerID = tokens[1]
+	colonyID = tokens[2]
+	mutantID = tokens[3]
+	colonyBackgroun = tokens[4]
+	productionCtr = tokens[5]
 
         # map the colony id to productionCtr, mutantID and markerID
         value = '%s|%s|%s' % (productionCtr, mutantID, markerID)
@@ -621,11 +632,6 @@ def parseIMPCFile():
     lineSet = set([])
 
     for f in jFile['response']['docs']:
-
-        # exclude europhenome for now
-        # 8/20 - decided to restrict to impc data via mirror_wget
-        #if f['resource_name'] == 'EuroPhenome':
-        #    continue
 
 	try:
         	mpID = f['mp_term_id']
@@ -859,7 +865,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # Production Center Lab Code Check US5 doc 4c2
     if not procCtrToLabCodeDict.has_key(imitsProdCtr):
 	if dupStrainKey == 0:
-	    msg = 'Production Center not in database: %s' % imitsProdCtr
+	    msg = 'Production Center not in MGI (voc_term table): %s' % imitsProdCtr
 	    logIt(msg, line, 1, 'prodCtrNotInDb')
 	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	    #print '%s returning "error"' % msg
@@ -871,11 +877,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # Prefix Strain check #1/#2 US5 doc 4c3
     if dupStrainKey == 0 and not (strainRawPrefixDict.has_key(strainID) and \
 	strainRawPrefixDict[strainID] == strainName):
-
-	# This is just a check - the strain name will be determined
-	# outside this block
-	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % \
-	    (strainID, strainName)
+	# This is just a check - the strain name will be determined outside this block
+	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % (strainID, strainName)
 	logIt(msg, line, 0, 'strainIdNameDiscrep')
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print '%s returning "Not Specified"' % msg
@@ -963,6 +966,22 @@ def checkAlleleState(alleleState, line):
 	return  'error'
 
     return alleleState
+
+#
+# Purpose: checks if IMPC colony ID maps to IMITS colony ID
+# Returns: 1 if not IMITS colony ID for IMPC colony ID
+# Assumes: Nothing
+# Effects: writes to error file and curation/diagnostic logs
+# Throws: Nothing
+#
+def checkColonyID(colonyID, line):
+
+    if not colonyToMCLDict.has_key(colonyID):
+	msg='No IMITS colony id for %s' % colonyID
+	logIt(msg, line, 1, 'colonyID')
+	return 1
+
+    return 0
 
 #
 # Purpose: resolves the IMPC gender term to MGI gender term
@@ -1094,17 +1113,16 @@ def createHTMPFile():
         if error:
             continue
 
-	#
-	# does IMPC colony_id match IMITS colony_name?
-	#
-        if not colonyToMCLDict.has_key(colonyID):
-	    strainName = strainNameNS
-	    strainID = strainIDNS
-        else:
-	    # does IMPC marker match IMITS marker?
-	    imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
-            if compareMarkers(markerID, imitsMrkID, line):
-	        continue
+	# verify the IMPC/colony_id with the IMITS/colonyName
+	if checkColonyID(colonyID, line):
+	    continue
+
+	# verify the IMPC/markerID with the IMITS/marker ID
+	# note that the IMITS file also provides the 'mutantID' (es cell line)
+	imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+
+        if compareMarkers(markerID, imitsMrkID, line):
+	    continue
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
@@ -1223,7 +1241,7 @@ if isMP:
     print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCFile() != 0:
         sys.exit(1)
-elif isLacZ
+elif isLacZ:
     print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCLacZFile() != 0:
         sys.exit(1)
