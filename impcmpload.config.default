@@ -51,7 +51,7 @@ STRAINLOG=${LOGDIR}/strainload.log
 export STRAINMODE STRAINLOG
 
 # related constant strain info for the load, '| delimited
-# strain mapping from impc->MGI : see bin/makeIKMC.py/strainInfoMapping[]
+# strain mapping from impc->MGI : see bin/makeIMPC.py/strainInfoMapping[]
 # strain prefix|prefix ID|strain root/name template|strain type/attributes
 # note: attributes ':' delimited
 #

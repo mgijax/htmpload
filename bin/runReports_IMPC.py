@@ -5,7 +5,7 @@
 #
 #  Purpose:
 #
-#      This script will query the database comparing IMPC and IKMC colony IDs
+#      This script will query the database comparing IMPC and IMITS colony IDs
 #
 #  Usage:
 #
@@ -118,8 +118,8 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n***********\nIMPC/IKMC Colony ID Discrepancies\n\n')
-	fpLogCur.write('Allele\tIMPC\tIKMC\n')
+	fpLogCur.write('\n***********\nIMPC/IMITS Colony ID Discrepancies\n\n')
+	fpLogCur.write('Allele\tIMPC\tIMITs\n')
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
@@ -147,7 +147,7 @@ def closeFiles():
     return 0
 
 #
-# Purpose: report discrepancies between IKMC allele colony ID and IMPC strain
+# Purpose: report discrepancies between IMITS allele colony ID and IMPC strain
 #	colony ID
 # Returns: 0
 # Assumes: Nothing
