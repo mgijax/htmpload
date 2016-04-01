@@ -9,16 +9,14 @@
 #      create a High-Throughput MP input file
 #
 #  Usage:
-#
 #      makeIMPC.py
 #
 #  Env Vars:
-#
 #	See the configuration file (impcmpload.config)
 #
 #  Inputs:
 #
-#   IMPC/Pheontypes/MP input file (SOURCE_COPY_INPUT_FILE)
+#   IMPC/Pheontypes/MP input file (SOURCE_COPY_INPUT_FILE from impcmpload.config)
 #   This is a json format file
 #   1. Phenotyping Centre
 #   2. MGI Allele ID
@@ -30,19 +28,18 @@
 #   8. Gender
 #   9. Colony ID
 #
-#   IMPC/LacZ input file (SOURCE_COPY_INPUT_FILE)
+#   IMPC/LacZ input file (SOURCE_COPY_INPUT_FILE from impclaczload.config)
 #   This is a json format file
-#   1. Phenotyping Centre
-#   phenotypingCenter = f['phenotyping_center']
-#   alleleID = f['allele_accession_id']
-#   alleleState = f['zygosity']
-#   alleleSymbol = f['allele_symbol']
-#   strainName = f['strain_name']
-#   strainID = f['strain_accession_id']
-#   markerID = f['gene_accession_id']
-#   markerSymbol = f['gene_symbol']
-#   gender = f['sex']
-#   colonyID = f['colony_id']
+#   1.  Phenotyping Center
+#   2.  MGI Allele ID
+#   3.  Allele State
+#   4.  Allele Symbol
+#   5.  Strain Name
+#   6.  MGI Strain ID
+#   7.  MGI Marker ID
+#   8.  Marker Symbol
+#   9.  Gender
+#   10. Colony ID
 #
 #   IMITS input file (IMITS_COPY_INPUT_FILE)
 #   This is a imits/tsv (tab-delimited) file
@@ -58,11 +55,10 @@
 #  Outputs:
 #
 #   htmpload format (HTMP_INPUT_FILE):
-#
 #   1.  Phenotyping Center 
 #   2.  Interpretation (Annotation) Center 
 #   3.  Mutant ES Cell ID
-#   4.  MP ID (null if LacZ/GXD)
+#   4.  MP ID (Phenotypes/MP only)
 #   5.  MGI Allele ID
 #   6.  Allele State 
 #   7.  Allele Symbol
@@ -73,7 +69,6 @@
 #   12. Colony ID
 #
 #   IMPC strainload format file (STRAIN_INPUT_FILE)
-#
 #    1. Strain Name
 #    2. MGI Allele ID 
 #    3. Strain Type
@@ -85,18 +80,12 @@
 #    9. Strain Attributes
 #    
 #  Exit Codes:
-#
 #      0:  Successful completion
 #      1:  An exception occurred
 #
-#  Assumes:  Nothing
-#
 #  Implementation:
-#
 #      This script will perform following steps:
-#
-#       1) initialize - get values from the environment, load lookup
-#	    structures from the database
+#       1) initialize - get values from the environment, load lookups
 #	2) open input/output files
 #	3) parse the IMITS File into a data structure
 #	4) parse the IMPC File into an intermediate file
@@ -105,7 +94,7 @@
 #
 #  Notes: 
 #
-# US5 refers to
+#  US5 refers to
 #	http://mgiwiki/mediawiki/index.php/sw:IMPC_htmpload#Strains
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
 #
@@ -143,9 +132,6 @@ isLacZ = 0
 species = 'laboratory mouse'
 standard = '1'
 createdBy = 'htmpload'
-# not specified strain
-strainNameNS = 'Not Specified'
-strainIDNS = 'MGI:4867032'
 
 # htmp file constants
 interpretationCenter = 'IMPC'
