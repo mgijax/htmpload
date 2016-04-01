@@ -1,0 +1,183 @@
+#format: sh
+###########################################################################
+#
+# Configuration.default
+#
+###########################################################################
+
+###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+###########################################################################
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
+
+###########################################################################
+#
+# Directory paths
+#
+###########################################################################
+
+FILEDIR=${DATALOADSOUTPUT}/mgi/htmpload/impclaczload
+ARCHIVEDIR=${FILEDIR}/archive
+INPUTDIR=${FILEDIR}/input
+OUTPUTDIR=${FILEDIR}/output
+LOGDIR=${FILEDIR}/logs
+RPTDIR=${FILEDIR}/reports
+QCOUTPUTDIR=${RPTDIR}
+
+export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR 
+
+LOADTYPE=lacz
+export LOADTYPE
+
+###########################################################################
+#
+# IMPC Strain Load settings
+#
+###########################################################################	
+
+STRAINMODE=load
+#STRAINMODE=preview
+STRAINLOG=${LOGDIR}/strainload.log
+
+export STRAINMODE STRAINLOG
+
+# related constant strain info for the load, '| delimited
+# strain mapping from impc->MGI : see bin/makeIKMC.py/strainInfoMapping[]
+# strain prefix|prefix ID|strain root/name template|strain type/attributes
+# note: attributes ':' delimited
+#
+#pStrain, pID, rStrain, rTemplate, pType, pAttr
+#
+#B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation
+# 
+#C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
+# 
+#C57BL/6NCrl|MGI:2683688|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
+# 
+#C57BL/6NJ|MGI:3056279|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
+# 
+#C57BL/6NTac|MGI:2164831|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
+#
+STRAIN_INFO="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation, C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NCrl|MGI:2683688|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NJ|MGI:3056279|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NTac|MGI:2164831|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation"
+
+export STRAIN_INFO
+
+###########################################################################
+#
+# Input/Output files
+#
+###########################################################################
+
+# input file from IMPC
+#
+SOURCE_INPUT_FILE=${DATADOWNLOADS}/www.ebi.ac.uk/impc_lacz.json
+SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc_lacz.json
+
+export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE
+
+#
+# IMPC report script suffix
+REPORT_SCRIPT_SUFFIX=IMPCLacZ.sh
+
+export REPORT_SCRIPT_SUFFIX
+
+# input file from iMits
+#
+IMITS_INPUT_FILE=${DATADOWNLOADS}/www.mousephenotype.org/mp2_load_phenotyping_colonies_report.tsv
+IMITS_COPY_INPUT_FILE=${INPUTDIR}/mp2_load_phenotyping_colonies_report.tsv
+
+export IMITS_INPUT_FILE IMITS_COPY_INPUT_FILE
+
+# htmp input file created from IMPC/iMits data
+#
+HTMP_INPUT_FILE=${INPUTDIR}/mgi_htmp_impc.txt
+
+# strain load input file created from IMPC/iMits data
+#
+STRAIN_INPUT_FILE=${INPUTDIR}/mgi_htmp_impc_strain.txt
+
+# input file that contains data that was skipped
+#
+HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_impcload_skipped.txt
+
+# input file that contains data that had data errors
+#
+HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_impcload_error.txt
+
+# input file that contains data that was merged (duplicates)
+#
+HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_impcload_dup.txt
+
+# input file that contains a unique genotype # (1 thru ...)
+#
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_impcload.txt
+
+# Genotype & Annotation input file
+#
+GENOTYPE_INPUT_FILE=${INPUTDIR}/mgi_genotypeload.txt
+
+export HTMP_INPUT_FILE STRAIN_INPUT_FILE
+export HTMPSKIP_INPUT_FILE HTMPDUP_INPUT_FILE HTMPERROR_INPUT_FILE 
+export HTMPUNIQ_INPUT_FILE GENOTYPE_INPUT_FILE
+
+# Log files
+#
+LOG_PROC=${LOGDIR}/htmpload.proc.log
+LOG_DIAG=${LOGDIR}/htmpload.diag.log
+LOG_CUR=${LOGDIR}/htmpload.cur.log
+LOG_VAL=${LOGDIR}/htmpload.val.log
+LOG_TEST=${LOGDIR}/htmpload.test.log
+
+export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
+
+CREATEDBY=htmpload
+JNUMBER=J:228563
+
+export CREATEDBY JNUMBER
+
+# Genotype load
+#
+# is this call a stand-alone or is it being called from another product?
+GENOTYPELOAD_STANDALONE=0
+
+# run in 'load' mode (default)
+GENOTYPELOAD_MODE=load
+
+# new genotype file (output from genotypeload)
+GENOTYPELOAD_OUTPUT=${INPUTDIR}/mgi_genotypeload_new.txt
+
+export GENOTYPELOAD_STANDALONE GENOTYPELOAD_MODE GENOTYPELOAD_OUTPUT
+
+###########################################################################
+#
+#  MISCELLANEOUS SETTINGS
+#
+###########################################################################
+
+#  The name of the job stream for the load
+JOBSTREAM=htmpload
+
+export JOBSTREAM
+
+#  The name of the load for the subject of an email notification
+MAIL_LOADNAME="IMPC LacZ Load"
+
+#  Recipient list for mailing the log files (comma-separated)
+MAIL_LOG_CUR="lori.corbani@jax.org"
+#MAIL_LOG_CUR="mgi-hiphenoload@jax.org"
+
+export MAIL_LOADNAME MAIL_LOG_CUR
+
+INSTALLDIR=${HTMPLOAD}
+
+export INSTALLDIR
+

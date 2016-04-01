@@ -5,8 +5,7 @@
 #
 #  Purpose:
 #
-#      This script will query the database comparing IMPC and IKMC
-#	colony IDs
+#      This script will query the database comparing IMPC and IKMC colony IDs
 #
 #  Usage:
 #
@@ -19,6 +18,7 @@
 #
 #    	   LOG_DIAG
 #    	   LOG_CUR
+#
 #  Inputs:
 #
 #

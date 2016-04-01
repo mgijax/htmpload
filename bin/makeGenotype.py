@@ -54,7 +54,6 @@
 #
 #  Outputs:
 #
-#
 #      input data that was merged (duplicates)
 #      HTMPDUP_INPUT_FILE
 #	  field 1-11
@@ -416,15 +415,14 @@ def getGenotypes():
     db.sql('create index idx1 on genotypes(_Marker_key)', None)
 
     for line in fpHTMPInput.readlines():
+
 	if DEBUG:
-	    print ''
-	    print 'NEW LINE'
-	    print line
+	    print '\nNEW LINE: ', line
+
 	error = 0
 	lineNum = lineNum + 1
 
         tokens = line[:-1].split('\t')
-
 
         # sc 2/6/2016 - a subtlety:
         # if genotypeID  remains '', the genotype is not in the database
@@ -461,6 +459,7 @@ def getGenotypes():
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
+
 	if DEBUG:
 	    print '    markerID: %s markerKey: %s' % (markerID, markerKey)
 
@@ -476,6 +475,7 @@ def getGenotypes():
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
+
 	if DEBUG:
 	    print '    alleleID: %s alleleKey: %s' % (alleleID, alleleKey)
 
@@ -491,17 +491,21 @@ def getGenotypes():
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
+
 	if DEBUG:
 	    print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
       
 	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
 	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
+
 	if DEBUG:
 	    print '    strainName: %s strainID: %s strainKey: %s\n' % (strainName, strainID, strainKey)
-	# if allele is 'Heterzygous', then marker must have a wild-type allele
+
+	# if allele is Heterzygous, then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
+
 	    if DEBUG:
-		print "    if allele is 'Heterzygous', then marker must have a wild-type allele, get it"
+		print '    if allele is Heterzygous, then marker must have a wild-type allele, get it'
 	    #
 	    # for heterzygous, allele 2 = the wild type allele 
 	    #    (marker symbol + '<+>')
@@ -518,13 +522,16 @@ def getGenotypes():
 		        and awt._LogicalDB_key = 1
 		        and awt.preferred = 1
 		''' % (markerKey)
+
 	    if DEBUG:
 		print querySQL
+
 	    results = db.sql(querySQL, 'auto')
 	    for r in results:
 		# found the wild type, so set it
 		alleleID2 = r['accID']
 		mutantID2 = ''
+
 	    if DEBUG:
 		print '    found wild type and alleleID2: %s mutantID2: %s' % (alleleID2, mutantID2)
 
@@ -540,41 +547,18 @@ def getGenotypes():
 	    fpHTMPError.write(line)
             continue
 
-	# SC 2/5 - this code block has no effect
-
-	# verify that the Allele ID matches the Allele Symbol
-	# currently, this is not an error...just an FYI 
-	if len(alleleID) > 0:
-
-		checkAllele = '''
-			select a.*
-			from ALL_Allele a, ACC_Accession aa
-			where a.symbol = '%s'
-			and a._Allele_key = aa._Object_key
-			and aa._MGIType_key = 11
-			and aa.accID = '%s'
-			''' % (alleleSymbol, alleleID)
-
-		results = db.sql(checkAllele, 'auto')
-		if len(results) == 0:
-		    checkAllele = '''
-			select a.symbol
-			from ALL_Allele a, ACC_Accession aa
-			where a._Allele_key = aa._Object_key
-			and aa._MGIType_key = 11
-			and aa.accID = '%s'
-			''' % (alleleID)
-		    results = db.sql(checkAllele, 'auto')
-
 	#
 	# check alleleState
 	#
 
-	'\n    Check AlleleState:'
+	if DEBUG:
+	    print '\n    Check AlleleState:'
+
         if alleleState == 'Homozygous':
+
 	    if DEBUG:
-		print '    Homozygous'
-		print '    querying to find genotype'
+		print '    Homozygous : querying to find genotype'
+
 	    querySQL = '''
 		select g.accID
 			from genotypes g
@@ -586,15 +570,20 @@ def getGenotypes():
 			and g.term = '%s'
 			and g._Strain_key = %s
 		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState, strainKey)
+
 	    if DEBUG:
 		print querySQL
+
 	    results = db.sql(querySQL, 'auto')
+
 	    if len(results) > 1:
 		if DEBUG:
 		    print '    More than one genotype - last one wins'
 		    print '    %s' % results
+
 	    for r in results:
 		genotypeID = r['accID']
+
 	    if DEBUG:
 		print '    genotypeID: %s' % genotypeID
 
@@ -605,9 +594,10 @@ def getGenotypes():
 	    #   (marker symbol + '<+>')
 	    # find the wild type allele accession id
 	    #
+
 	    if DEBUG:
-		print '    Heterozygous'
-		print '    querying to find genotype'
+		print '    Heterozygous : querying to find genotype'
+
 	    querySQL = '''
 		select g.accID
 			from genotypes g
@@ -619,44 +609,57 @@ def getGenotypes():
 			and g.term = '%s'
 			and g._Strain_key = %s
 		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState, strainKey)
+
 	    if DEBUG:
 		print querySQL
+
 	    results = db.sql(querySQL, 'auto')
+
 	    if len(results) > 1:
 		if DEBUG:
 		    print '    More than one genotype - last one wins'
 		    print '    %s' % results
+
 	    for r in results:
 		genotypeID = r['accID']
+
 	    if DEBUG:
 		print '    genotypeID: %s' % genotypeID
+
 	elif alleleState in ('Hemizygous', 'Indeterminate'):
+
 	    if DEBUG:
-		print '    querying to find genotype'
-		print '    %s' % alleleState
+		print '    querying to find genotype : ', alleleState
+
 	    alleleID2 = ''
 	    mutantID2 = ''
 
 	    if alleleState == 'Hemizygous':
+
 	        querySQL = '''
 		    select chromosome 
 			from MRK_Marker 
 			where _Marker_key = %s''' % markerKey
+
 	        results = db.sql(querySQL, 'auto')
+
 	        for r in results:
+
 		    if r['chromosome'] == 'X':
 		        alleleState = 'Hemizygous X-linked'
-			if DEBUG:
-			    print '    Hemizygous X-linked'
+		        if DEBUG:
+		            print '    ', alleleState
+
 		    elif r['chromosome'] == 'Y':
 		        alleleState = 'Hemizygous Y-linked'
-			if DEBUG:
-			    print '    Hemizygous Y-linked'
+		        if DEBUG:
+		            print '    ', alleleState
+
 		    else:
             		logit = errorDisplay % (alleleState, lineNum, '6', line)
 			logit = logit + 'pair state %s does not match chromosome %s' % (alleleState, r['chromosome'])
 			if DEBUG:
-			    print '    pair state %s does not match chromosome %s' % (alleleState, r['chromosome'])
+			    print '    ', logit
 
             		fpLogDiag.write(logit)
             		fpLogCur.write(logit)
@@ -674,22 +677,30 @@ def getGenotypes():
 			and g.term = '%s'
 			and g._Strain_key = %s
 		''' % (markerKey, alleleKey, mutantKey, alleleState, strainKey)
+
 	    if DEBUG:
 		print querySQL
+
 	    results = db.sql(querySQL, 'auto')
+
 	    if len(results) > 1:
 		if DEBUG:
 		    print '    More than one genotype - last one wins'
 		    print '    %s' % results
+
 	    for r in results:
 		genotypeID = r['accID']
+
 	    if DEBUG:
 		print '    genotypeID: %s' % genotypeID
+
 	else:
             logit = errorDisplay % (alleleState, lineNum, '6', line)
+
 	    if DEBUG:
 		print '    logging error:'
 		print '    ' + errorDisplay % (alleleState, lineNum, '6', line)
+
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
 	    error = 1
@@ -707,14 +718,17 @@ def getGenotypes():
 
 	dupGeno = 0
 	useOrder = str(genotypeOrder)
+
 	if DEBUG:
 	    print '    check genotype uniqueness'
+
 	#
 	# set uniqueness
 	# isConditional is always 0, so we do not need to specify this value
 	#
 	key = str(markerKey) + str(alleleKey) + str(alleleState) + \
 		str(strainKey) + str(mutantKey)
+
 	if DEBUG:
 	    print '    unique key is: %s' % key
 
@@ -737,7 +751,9 @@ def getGenotypes():
 	    fpHTMPDup.write(line)
 	    continue
 
+	#
 	# save genotype order
+	#
 	if DEBUG:
 	    print '    saving genotype order genotypeOrderDict[%s] = %s' % (key, genotypeOrder)
         genotypeOrderDict[key] = genotypeOrder
@@ -745,8 +761,10 @@ def getGenotypes():
 	#
 	# add to genotype mgi-format file
 	#
+
 	if DEBUG:
 	    print '    writing genotype to  genotype file'
+
 	fpGenotype.write(genotypeLine % (\
 		genotypeOrder, genotypeID, strainID, strainName, \
 		markerID, alleleID, mutantID, alleleID2, mutantID2, \
@@ -790,22 +808,26 @@ def getGenotypes():
 
 if DEBUG:
     print 'initialize'
+
 if initialize() != 0:
     sys.exit(1)
 
 if DEBUG:
     print 'open files'
+
 if openFiles() != 0:
     sys.exit(1)
 
 if DEBUG:
     print 'get genotypes'
+
 if getGenotypes() != 0:
     closeFiles()
     sys.exit(1)
 
 if DEBUG:
     print 'close files'
+
 closeFiles()
 sys.exit(0)
 
