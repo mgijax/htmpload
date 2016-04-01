@@ -155,8 +155,8 @@ def closeFiles():
 # Throws: Nothing
 #
 def createColonyIdReport():
-    ikmcDict = {}
-    results = db.sql('''select distinct nc1.note as ikmcCID, a._Allele_key
+    imitsDict = {}
+    results = db.sql('''select distinct nc1.note as imitsCID, a._Allele_key
 	from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a
 	where n1._NoteType_key = 1041
 	and n1._MGIType_key = 11
@@ -164,7 +164,7 @@ def createColonyIdReport():
 	and n1._Object_key = a._Allele_key''', 'auto')
 
     for r in results:
-	ikmcDict[r['_Allele_key']] = string.strip(r['ikmcCID'])
+	imitsDict[r['_Allele_key']] = string.strip(r['imitsCID'])
 
     results = db.sql('''select distinct nc1.note as impcCID, aa.accID, a._Allele_key
 	from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
@@ -186,9 +186,9 @@ def createColonyIdReport():
 	alleleKey = r['_Allele_key']
 	accID = r['accID']
 	id = string.strip(r['impcCID'])
-	if ikmcDict.has_key(alleleKey):
-	    if id not in ikmcDict[alleleKey]:
-		fpLogCur.write('%s\t%s\t\t%s\n' % (accID, id, ikmcDict[alleleKey]))
+	if imitsDict.has_key(alleleKey):
+	    if id not in imitsDict[alleleKey]:
+		fpLogCur.write('%s\t%s\t\t%s\n' % (accID, id, imitsDict[alleleKey]))
 
     return 0
 	
