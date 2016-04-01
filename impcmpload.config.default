@@ -35,6 +35,9 @@ QCOUTPUTDIR=${RPTDIR}
 
 export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR 
 
+LOADTYPE=mp
+export LOADTYPE
+
 ###########################################################################
 #
 # IMPC Strain Load settings
@@ -82,20 +85,15 @@ SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc.json
 export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE
 
 #
-# IMPC pre-processor script
-PREPROCESSOR=${HTMPLOAD}/bin/makeIMPC.sh
-
-#
 # IMPC report script suffix
 REPORT_SCRIPT_SUFFIX=IMPC.sh
 
-export PREPROCESSOR REPORT_SCRIPT_SUFFIX
+export REPORT_SCRIPT_SUFFIX
 
 # input file from iMits
 #
-
-IMITS_INPUT_FILE=${DATADOWNLOADS}/ikmc.vm.bytemark.co.uk/imits.json
-IMITS_COPY_INPUT_FILE=${INPUTDIR}/imits.json
+IMITS_INPUT_FILE=${DATADOWNLOADS}/www.mousephenotype.org/mp2_load_phenotyping_colonies_report.tsv
+IMITS_COPY_INPUT_FILE=${INPUTDIR}/mp2_load_phenotyping_colonies_report.tsv
 
 export IMITS_INPUT_FILE IMITS_COPY_INPUT_FILE
 
