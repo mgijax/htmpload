@@ -18,10 +18,8 @@
 #
 #  Inputs:
 #
-#   IMPC input file (SOURCE_COPY_INPUT_FILE)
-#
+#   IMPC/Pheontypes/MP input file (SOURCE_COPY_INPUT_FILE)
 #   This is a json format file
-#
 #   1. Phenotyping Centre
 #   2. MGI Allele ID
 #   3. Zygosity
@@ -32,10 +30,22 @@
 #   8. Gender
 #   9. Colony ID
 #
-#   IMITS input file (IMITS_COPY_INPUT_FILE)
+#   IMPC/LacZ input file (SOURCE_COPY_INPUT_FILE)
+#   This is a json format file
+#   1. Phenotyping Centre
+#   phenotypingCenter = f['phenotyping_center']
+#   alleleID = f['allele_accession_id']
+#   alleleState = f['zygosity']
+#   alleleSymbol = f['allele_symbol']
+#   strainName = f['strain_name']
+#   strainID = f['strain_accession_id']
+#   markerID = f['gene_accession_id']
+#   markerSymbol = f['gene_symbol']
+#   gender = f['sex']
+#   colonyID = f['colony_id']
 #
+#   IMITS input file (IMITS_COPY_INPUT_FILE)
 #   This is a imits/tsv (tab-delimited) file
-#	
 #   1. Marker Symbol
 #   2. MGI Accession ID
 #   3. Colony Name
@@ -52,7 +62,7 @@
 #   1.  Phenotyping Center 
 #   2.  Interpretation (Annotation) Center 
 #   3.  Mutant ES Cell ID
-#   4.  MP ID
+#   4.  MP ID (null if LacZ/GXD)
 #   5.  MGI Allele ID
 #   6.  Allele State 
 #   7.  Allele Symbol
@@ -103,6 +113,7 @@
 #	- TR12273/use new IMITS report input file to verify IMPC colony/marker
 #	  and to find production_centre and es_cell_name. the json IMITS file
 #	  is incorrect. using mirror_wget/www.mousephenotype.org instead.
+#	- added 'parseIMPCLacZFile' for parsing IMPC/LacZ input file
 #
 #  12/08/2015	lec
 #	- TR12070 epic
@@ -254,7 +265,7 @@ def initialize():
 
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     impcFileInt = '%s_int' % impcFile
-    impcFileDup = '%s_jsondup' % impcFile
+    impcFileDup = '%s_dup' % impcFile
     imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     strainFile = os.getenv('STRAIN_INPUT_FILE')
@@ -267,9 +278,8 @@ def initialize():
     rc = 0
 
     #
-    # determine load type
+    # determine load type (LOADTYPE)
     # 
-
     if loadType == 'mp':
     	isMP = 1
     elif loadType == 'lacz':
@@ -1238,6 +1248,9 @@ print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(t
 if parseIMITSFile() != 0:
     sys.exit(1)
 
+#
+# process either IMPC/MP or IMPC/LacZ input file
+#
 if isMP:
     print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCFile() != 0:
