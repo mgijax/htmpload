@@ -5,7 +5,7 @@
 #
 #  Purpose:
 #
-#      This script is a wrapper around the entire HTMP load process.
+#      This script is a wrapper around the HTMP/MP load process.
 #
 Usage="Usage: htmpload.sh *load.config annotload.config"
 #
@@ -110,18 +110,18 @@ date >> ${LOG}
 # the last time the load was run for this input file. If this file exists
 # and is more recent than the input file, the load does not need to be run.
 #
-#LASTRUN_FILE=${INPUTDIR}/lastrun
-#if [ -f ${LASTRUN_FILE} ]
-#then
-#    if test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
-#       echo "" >> ${LOG_CUR} 2>&1
-#       echo "LOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" >> ${LOG_CUR} 2>&1
-#       STAT=0
-#       checkStatus ${STAT} "LOAD SKIPPED: No new input file ${SOURCE_INPUT_FILE}"
-#       shutDown
-#       exit 0
-#    fi
-#fi
+LASTRUN_FILE=${INPUTDIR}/lastrun
+if [ -f ${LASTRUN_FILE} ]
+then
+    if test ${LASTRUN_FILE} -nt ${SOURCE_INPUT_FILE}; then
+       echo "" >> ${LOG_CUR} 2>&1
+       echo "LOAD SKIPPED: No new input file: ${SOURCE_INPUT_FILE}" >> ${LOG_CUR} 2>&1
+       STAT=0
+       checkStatus ${STAT} "LOAD SKIPPED: No new input file ${SOURCE_INPUT_FILE}"
+       shutDown
+       exit 0
+    fi
+fi
 
 #
 # remove the genotypeload and annotload diagnostics and error files
@@ -185,7 +185,7 @@ checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
 #
 # Touch the "lastrun" file to note when the load was run.
 #
-#touch ${LASTRUN_FILE}
+touch ${LASTRUN_FILE}
 
 #
 # run postload cleanup and email logs
