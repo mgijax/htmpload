@@ -298,8 +298,15 @@ def initialize():
         rc = 1
 
     #
-    # In Progress, Approved and Autoload allele status
-    # Targeted allele type
+    # Allele Status where _vocab_key = 37
+    # In Progress (847111)
+    # Approved  (847114)
+    # Autoload  (3983021)
+    #
+    # Allele Types where _vocab_key = 38
+    # Targeted  (847116)
+    # Endonuclease-mediated (11927650)
+    #
     # preferred MGI IDs
     #
 
@@ -310,7 +317,7 @@ def initialize():
 	into temporary table all_tmp
 	from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
 	where ll._Allele_Status_key in (847111, 847114, 3983021)
-	and ll._Allele_Type_key = 847116
+	and ll._Allele_Type_key in (847116)
 	and ll._Allele_key = a1._Object_key
 	and a1._MGIType_key = 11
 	and a1.preferred = 1
