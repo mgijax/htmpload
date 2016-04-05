@@ -51,6 +51,9 @@
 #   6. Production Centre
 #   7. Production Consortium
 #   8. Phenotyping Centre
+#   9. Phenotyping Consortium Centre
+#   10. Productin Centre
+#   11. Allele Symbol
 #
 #  Outputs:
 #
@@ -602,7 +605,7 @@ def parseIMITSFile():
 	markerID = tokens[1]
 	colonyID = tokens[2]
 	mutantID = tokens[3]
-	colonyBackgroun = tokens[4]
+	colonyBackgroun = tokens[4] # not used
 	productionCtr = tokens[5]
 
         # map the colony id to productionCtr, mutantID and markerID
@@ -612,6 +615,7 @@ def parseIMITSFile():
         if colonyToMCLDict.has_key(colonyID) and colonyToMCLDict[colonyID] == value:
             #print 'Dup colony ID record: %s|%s' (colonyID, value)
             continue
+
         colonyToMCLDict[colonyID] = value
 
     return 0

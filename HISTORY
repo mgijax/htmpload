@@ -3,6 +3,8 @@ DATE: 04/01/2016
 STAFF: lec
 CHANGES: TR12223/TR12273/merge to trunk
 to fix the TR12273/IMPC issues
+1) use new IMITS input file
+2) wiki page updated
 
 TAG: htmpload-tr12223-BP
 DATE: 03/24/2016
