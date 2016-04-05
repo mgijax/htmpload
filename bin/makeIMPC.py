@@ -23,7 +23,7 @@
 #   3. Zygosity
 #   4. Allele Symbol
 #   5. Strain Name
-#   6. Strain Accession ID
+#   6. MGI Strain ID
 #   7. MGI Marker ID
 #   8. Gender
 #   9. Colony ID
@@ -44,7 +44,7 @@
 #   IMITS input file (IMITS_COPY_INPUT_FILE)
 #   This is a imits/tsv (tab-delimited) file
 #   1. Marker Symbol
-#   2. MGI Accession ID
+#   2. MGI Marker ID
 #   3. Colony Name
 #   4. ES Cell Name 
 #   5. Colony Background Strain
