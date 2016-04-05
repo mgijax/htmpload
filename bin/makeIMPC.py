@@ -621,7 +621,7 @@ def parseIMITSFile():
     return 0
 
 #
-# Purpose: parse IMPC json file into intermediate file
+# Purpose: parse IMPC/MP json file into intermediate file
 #	lines with missing data reported to the skip file
 #	duplicate entries in json file collapsed
 # Returns: 1 if file cannot be opened, else 0
@@ -696,7 +696,7 @@ def parseIMPCFile():
 
     return 0
 
-# Purpose: parse IMPC json file into intermediate file
+# Purpose: parse IMPC/LacZ json file into intermediate file
 # Returns: 0
 # Assumes: json file descriptor has been created
 # Effects: writes intermediate file to file system
@@ -785,47 +785,6 @@ def parseIMPCLacZFile():
             continue
 
 	lineSet.add(line)
-
-        # line representing data from the IMPC input file 
-	#line1 = gene_accession_id + '\t' + \
-        #     gene_symbol + '\t' + \
-        #     allele_accession_id + '\t' + \
-        #     allele_symbol + '\t' + \
-        #     strain_accession_id + '\t' + \
-        #     strain_name + '\t' + \
-        #     zygosity + '\t' + \
-        #     sex + '\t' + \
-        #     colony_id + '\t' + \
-	#     download_url + '\t' + \
-	#     jpeg_url + '\t' + \
-	#     full_resolution_file_path + '\t' + \
-	#     phenotypingCenter + '\t' + \
-	#     parameter_name + '\t' + \
-	#     parameter_stable_id + '\t' 
-
-	# now finish the line; one line per stable_id, name and 
-	# value; skipping lines where parameter_association_value is 'imageOnly' 
-	# or 'tissue not available'
-	#ctr = 0
-	#for value in parameter_association_stable_id:
-
-	#    if parameter_association_value[ctr] == 'imageOnly' \
-	#    	or parameter_association_value[ctr] == 'tissue not available':
-	#	continue
-
-	#    line2 = value + '\t' + \
-	#	parameter_association_name[ctr] + '\t' + \
-	#	parameter_association_value[ctr] + '\n'
-	    
-	#    line = line1 + line2 
-
-	#    if line in lineSet:
-	#	fpIMPCdup.write(line)
-	#	continue
-
-	    # add to the set of lines we will write to the file
-	#    lineSet.add(line)
-	#    ctr += 1
 
     for line in lineSet:
 	fpIMPCintWrite.write(line)
