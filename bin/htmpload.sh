@@ -138,9 +138,9 @@ checkStatus ${STAT} "copying IMPC input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-${HTMPLOAD}/bin/makeIMPC.sh ${CONFIG}
+./makeIMPC.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
-checkStatus ${STAT} "Running ${HTMPLOAD}/bin/makeIMPC.sh"
+checkStatus ${STAT} "Running makeIMPC.sh ${CONFIG}"
 
 #
 # sort the pre-processed file
@@ -171,16 +171,6 @@ date >> ${LOG}
 ./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
 STAT=$?
 checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
-
-#
-# Run reports
-#
-reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
-echo "" >> ${LOG}
-date >> ${LOG}
-./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
-STAT=$?
-checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
 
 #
 # Touch the "lastrun" file to note when the load was run.
