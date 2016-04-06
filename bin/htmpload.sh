@@ -173,6 +173,16 @@ STAT=$?
 checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 
 #
+# Run reports
+#
+reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
+echo "" >> ${LOG}
+date >> ${LOG}
+./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
+STAT=$?
+checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
+
+#
 # Touch the "lastrun" file to note when the load was run.
 #
 touch ${LASTRUN_FILE}
