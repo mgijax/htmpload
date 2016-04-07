@@ -1,16 +1,17 @@
-<TITLE>IMPC/MP Strain, Genotype, MP Annotation Load</TITLE>
-<H1>IMPC/MP Strain, Genotype, MP Annotation Load</H1>
+<TITLE>IMPC/Strain, Genotype, Annotation Load for Mammalian Phentypes and LacZ</TITLE>
+<H1>IMPC/Strain, Genotype, Annotation Load for Mammalian Phentypes and LacZ</H1>
 Cross-reference the file numbers below with those in the data flow diagram : <A HREF="http://mgiwiki/mediawiki/images/f/f4/HTMPLoadDataFlow.jpg">IMPC Data flow diagram</A>
 
 <UL>
 
 <H3>Source Input Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json">IMPC input file</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mp2_load_phenotyping_colonies_report.tsv">IMITS inpup file/A>
+<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json">Mammlian Phenotype/IMPC json file</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/impc_lacz.json">LacZ/IMPC json file</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mp2_load_phenotyping_colonies_report.tsv">IMITS tsv file</A>
 </UL>
 
-<H3>Input Files</H3>
+<H3>Mammalian Phenotype:Input Files</H3>
 <UL>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json_int">Intermediate file of IMPC data with versioning duplicates removed</A> (1c)
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/impc.json_dup">The versioning duplicates from the IMPC file</A> (1d)
@@ -25,30 +26,55 @@ Cross-reference the file numbers below with those in the data flow diagram : <A 
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/input/mgi_annotload.txt">MGI Annotation load format file</A> (4a)
 </UL>
 
-<H3>Log Files</H3>
+<H3>Mammalian Phenotype:Log Files</H3>
 <UL>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs/htmpload.diag.log">HTMP Load Diagnostic Log</A>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs/htmpload.cur.log">HTMP Load Curation Log</A>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs">Strain Processor Logs</A> - mgi_htmp_impc_strain.txt.date.diagnostics; mgi_htmp_impc_strain.txt.date.error
+<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/logs">Strain Processor Logs</A>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.diagnostics">Genotype Load Diagnostics Log</A>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_genotypeload.txt.error">Genotype Load Error Log</A>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_annotload.txt.diagnostics">Annotation Load Diagnostics Log</A>
 <LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/mgi_annotload.txt.error">Annotation Load Error Log</A>
 </UL>
 
+<H3>LacZ:Input Files</H3>
+<UL>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/impc.json_int">Intermediate file of IMPC data with versioning duplicates removed</A> (1c)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/impc.json_dup">The versioning duplicates from the IMPC file</A> (1d)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_htmp_impc.txt">HTMP load format file created from source IMPC/iMits2 data</A> (1e)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_htmp_impc_strain.txt">IMPC Strain file created from source IMPC/iMits2 data</A> (1f)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_impcload_error.txt">HTMP error file</A> - Input lines for errors that are reported to the curation log (1g)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_impcload_skipped.txt">Lines missing required data</A> (1h)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_impcload.txt">HTMP Unique Genotype file</A> - Contains unique genotypes; field 2 contains new genotype IDs (3a)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_impcload_dup.txt">HTMP duplicate file</A> - male/female records collapsed to 'both'(3b)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_genotypeload.txt">MGI Genotype load format file</A> - Contains unique genotypes; field 2 contains existing genotype IDs (3c)
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/input/mgi_genotypeload_new.txt">MGI Genotype load format file (new)</A> - Contains unique genotypes; field 2 contains both new and existing genotype IDs (3d)
+</UL>
+
+<H3>LacZ:Log Files</H3>
+<UL>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/logs/htmpload.diag.log">HTMP Load Diagnostic Log</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/logs/htmpload.cur.log">HTMP Load Curation Log</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/logs">Strain Processor Logs</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/output/mgi_genotypeload.txt.diagnostics">Genotype Load Diagnostics Log</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/output/mgi_genotypeload.txt.error">Genotype Load Error Log</A>
+</UL>
+
 <H3>BCP Files</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/"><B>BCP</B></A> - BCP Files for htmpload
+<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/output/">Mammalian Phenotype</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/output/">LacZ</A>
 </UL>
 
 <H3>Archives</H3>
 <UL>
-<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/archive/"><B>Archive</B></A> - Logs, Reports and Output files from previous loads.
+<LI><A HREF="/data/loads/mgi/htmpload/impcmpload/archive/">Mammalian Phenotype</A>
+<LI><A HREF="/data/loads/mgi/htmpload/impclaczload/archive/">LacZ</A>
 </UL>
 
 <H3>Wiki</H3>
 <UL>
-<LI><A HREF="http://mgiwiki/mediawiki/index.php/sw:Htmpload"><B>Wiki page</B></A>
+<LI><A HREF="http://mgiwiki/mediawiki/index.php/sw:Htmpload">Wiki page</A>
 </UL>
 
 </UL>
