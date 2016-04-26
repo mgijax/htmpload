@@ -137,7 +137,6 @@ standard = '1'
 createdBy = 'htmpload'
 
 # htmp file constants
-interpretationCenter = 'IMPC'
 evidenceCode = 'EXP'
 
 # Input 
@@ -154,6 +153,7 @@ logDiagFile = None
 logCurFile = None
 htmpErrorFile = None
 htmpSkipFile = None
+cindyColonyIdFile = None
 
 # file pointers
 fpIMPC = None
@@ -167,7 +167,7 @@ fpLogDiag = None
 fpLogCur = None
 fpHTMPError = None
 fpHTMPSkip = None
-
+fpCindyColonyID = None
 errorDisplay = '''
 
 ***********
@@ -206,6 +206,10 @@ phenoCtrList = []
 # Expected MGI ID to strain info mapping from configuration
 strainInfoMapping = os.environ['STRAIN_INFO']
 
+# resolve eurocurate IDs to strain MGI IDs
+euroCurateMapping = os.environ['EURO_CURATE_MAP']
+euroCurateDict = {}
+
 # Strain MGI ID to  strain raw prefix mapping from configuration
 strainRawPrefixDict = {}
 
@@ -223,6 +227,9 @@ strainAttribDict = {}
 
 # uniq set of strain lines written to strainload input file
 strainLineList = []
+
+# mapping of colonyID to imitsProdCtr and MCL
+cindyColonyIdToMCLDict = {}
 
 # convenience object for allele information 
 #
@@ -250,8 +257,8 @@ def initialize():
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global strainPrefixDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
-    global isMP, isLacZ
-
+    global isMP, isLacZ, euroCurateDict, cindyColonyIdToMCLDict
+    cindyColonyIdFile = os.genenv('CINDY_COLONY_ID_FILE')
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     impcFileInt = '%s_int' % impcFile
     impcFileDup = '%s_dup' % impcFile
@@ -299,7 +306,9 @@ def initialize():
     if not htmpSkipFile:
         print 'Environment variable not set: HTMPSKIP_INPUT_FILE'
         rc = 1
-
+    if not cindyColonyIdFile:
+	print 'Environment variable not set: CINDY_COLONY_ID_FILE'
+        rc = 1
     #
     # Allele Status where _vocab_key = 37
     # In Progress (847111)
@@ -380,6 +389,13 @@ def initialize():
 	strainTypeDict[pID]  = pType
 	strainAttribDict[pID] = pAttr
 
+    # load euro-curate mappings from config
+    tokens = string.split(euroCurateMapping, ',')
+    for mapping in tokens:
+	eID, sID = string.split(mapping, '|')
+	euroCurateDict[string.strip(eID)] = string.strip(sID)
+    print 'euroCurateDict:'
+    print euroCurateDict
     #
     # load colony code to strain ID mappings
     # strain types 'coisogenic' and 'Not Specified'
@@ -411,6 +427,10 @@ def initialize():
 
     db.useOneConnection(0)
 
+    for line in fpCindyColonyID.readlines:
+	map(string.strip, string.split(strainInfoMapping, ','))
+	cId, mclID, pCtr = map(string.strip, string.split(line, '\t'))
+	cindyColonyIdToMCLDict[cId] = [mclID, pCtr]
     return rc
 
 #
@@ -425,6 +445,16 @@ def openFiles():
     global fpIMPC, fpIMITS, fpHTMP, fpStrain
     global fpIMPCintWrite, fpIMPCdup
     global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
+    global fpCindyColonyID
+
+    #
+    # Open Cindy's colony ID file
+    #
+    try:
+	fpCindyColonyID = open(cindyColonyIdFile, 'r')
+    except:
+        print 'Cannot open file: ' + cindyColonyIdFile
+        return 1
 
     #
     # Open the IMPC file
@@ -557,6 +587,9 @@ def closeFiles():
     if fpHTMPSkip:
         fpHTMPSkip.close()
 
+    if fpCindyColonyID:
+	fpCindyColonyID.close()
+
     return 0
 
 #
@@ -644,7 +677,9 @@ def parseIMPCFile():
         	mpID = f['mp_term_id']
         except:
 		mpID = ''
-
+	interpretationCenter = f['resource_name']
+	if interpretationCenter == 'EuroPhenome':
+	    interpretationCenter = 'Euph'
 	phenotypingCenter = f['phenotyping_center']
         alleleID = alleleID2 = f['allele_accession_id']
         alleleState = f['zygosity']
@@ -654,9 +689,14 @@ def parseIMPCFile():
         markerID = f['marker_accession_id']
         gender = f['sex']
         colonyID = f['colony_id']
-
+	print 'before: %s' % strainID
+	if string.find(strainID, 'EURO-CURATE') == 0: # and strainID in euroCurateDict.keys():
+	    strainID = euroCurateDict[strainID]
+	    print 'after: %s' % strainID
+	    
         # line representing data from the IMPC input file 
-	line = phenotypingCenter + '\t' + \
+	line = interpretationCenter + '\t' + \
+	     phenotypingCenter + '\t' + \
              mpID + '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -668,7 +708,8 @@ def parseIMPCFile():
              colonyID + '\n'
 
         # skip if blank field in IMPC data and report to the skip file
-        if phenotypingCenter == '' or \
+        if interpretationCenter == '' or \
+	        phenotypingCenter == '' or \
 	        mpID == '' or \
 		alleleID == '' or \
             	alleleState == '' or \
@@ -812,8 +853,8 @@ def parseIMPCLacZFile():
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict
     
-    #print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
-    #print 'doUniqStrainChecks line: %s' % line
+    print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
+    print 'doUniqStrainChecks line: %s' % line
 
     dupStrainKey = 0
 
@@ -828,7 +869,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     	string.split(uniqStrainProcessingKey, '|') 
 
     rawStrainName = strainName
-
+    print 'strain ID: %s strainName: %s' % (strainID, strainName)
     # Production Center Lab Code Check US5 doc 4c2
     if not procCtrToLabCodeDict.has_key(imitsProdCtr):
 	if dupStrainKey == 0:
@@ -943,8 +984,8 @@ def checkAlleleState(alleleState, line):
 #
 def checkColonyID(colonyID, line):
 
-    if not colonyToMCLDict.has_key(colonyID):
-	msg='No IMITS colony id for %s' % colonyID
+    if not colonyToMCLDict.has_key(colonyID) and not cindyColonyIdToMCLDict.has_key(colonyID):
+	msg='No IMITS or Cindy colony id for %s' % colonyID
 	logIt(msg, line, 1, 'colonyID')
 	return 1
 
@@ -1053,15 +1094,16 @@ def createHTMPFile():
     
     for line in fpIMPCintRead.readlines():
 
-        #print '\n\nNEW RECORD'
-	#print 'line: %s' % line
+        print '\n\nNEW RECORD'
+	print 'line: %s' % line
 
 	error = 0
 
 	# We know this attributes are not blank - see parseJson
-	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
-		strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
-
+	interpretationCenter, phenotypingCenter, mpID, alleleID, alleleState, \
+		alleleSymbol, strainName, strainID, markerID, gender, \
+		colonyID = line[:-1].split('\t')
+        print 'strainID in int: %s' % strainID
 	returnVal = checkAlleleState(alleleState, line)
 	if returnVal == 'error':
 	    error = 1
@@ -1086,10 +1128,21 @@ def createHTMPFile():
 
 	# verify the IMPC/markerID with the IMITS/marker ID
 	# note that the IMITS file also provides the 'mutantID' (es cell line)
-	imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+        
+	# if we get here, the colony ID is either in colonyToMCLDict or in cindyColonyIdToMCLDict	
 
-        if compareMarkers(markerID, imitsMrkID, line):
-	    continue
+	# if in imits:
+	if colonyToMCLDict.has_key(colonyID):
+	    imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+	# otherwise it's in Cindy's file
+	else:
+	    mutantID = cindyColonyIdToMCLDict[colonyID][0]
+	    imitsProdCtrD = cindyColonyIdToMCLDict[colonyID][1]
+	    # we don't want to do the marker
+	    imitsMrkID = ''
+        if imitsMrkID != '':
+	    if compareMarkers(markerID, imitsMrkID, line):
+		continue
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
@@ -1131,7 +1184,6 @@ def createHTMPFile():
 	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s|%s' % \
 	    (alleleID, alleleSymbol, strainName, strainID, markerID, \
 		colonyID, mutantID, imitsProdCtr)
-
 	# resolve the colonyID to a strain in the database
 	if colonyToStrainNameDict.has_key(colonyID):
   	    strainName = colonyToStrainNameDict[colonyID]
