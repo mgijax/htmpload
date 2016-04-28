@@ -95,4 +95,17 @@ then
     exit 1
 fi
 
+#
+# Create the IMPC HTMP strains
+#
+echo "" >> ${LOG}
+date >> ${LOG}
+./makeIMPCStrains.py 2>&1 >> ${LOG}
+STAT=$?
+if [ ${STAT} -ne 0 ]
+then
+    echo "Error: Create the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
+    exit 1
+fi
+
 exit 0

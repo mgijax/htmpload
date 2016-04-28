@@ -1,7 +1,7 @@
 #!/bin/csh -f
 
 #
-# config variables for Sanger/Annotation load
+# config variables for IMPC Annotation load
 #
 
 setenv ANNOTDATADIR		${OUTPUTDIR}
