@@ -29,8 +29,18 @@ then
 fi
 
 #
-# Make sure config files exist
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
 #
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+# establish name of master config and source it
+. ${MGICONFIG}/master.config.sh
+
 cd `dirname $0`
 
 # Check to see if this is a development installation
@@ -45,7 +55,7 @@ fi
 # run DLAInstall for each configuration file
 #
 echo "HTMPLOAD: ${HTMPLOAD}"
-
+echo ${HTMPLOAD}/[b-z]*config
 for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/impcmpload.config.test
 do
 

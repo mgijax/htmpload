@@ -137,7 +137,6 @@ standard = '1'
 createdBy = 'htmpload'
 
 # htmp file constants
-interpretationCenter = 'IMPC'
 evidenceCode = 'EXP'
 
 # Input 
@@ -644,7 +643,7 @@ def parseIMPCFile():
         	mpID = f['mp_term_id']
         except:
 		mpID = ''
-
+        interpretationCenter = f['resource_name']
 	phenotypingCenter = f['phenotyping_center']
         alleleID = alleleID2 = f['allele_accession_id']
         alleleState = f['zygosity']
@@ -656,7 +655,8 @@ def parseIMPCFile():
         colonyID = f['colony_id']
 
         # line representing data from the IMPC input file 
-	line = phenotypingCenter + '\t' + \
+	line = interpretationCenter + '\t' + \
+	     phenotypingCenter + '\t' + \
              mpID + '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -668,7 +668,8 @@ def parseIMPCFile():
              colonyID + '\n'
 
         # skip if blank field in IMPC data and report to the skip file
-        if phenotypingCenter == '' or \
+        if interpretationCenter == '' or \
+	 	phenotypingCenter == '' or \
 	        mpID == '' or \
 		alleleID == '' or \
             	alleleState == '' or \
@@ -1059,7 +1060,7 @@ def createHTMPFile():
 	error = 0
 
 	# We know this attributes are not blank - see parseJson
-	phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
+	interpretationCenter, phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
 		strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
 
 	returnVal = checkAlleleState(alleleState, line)
