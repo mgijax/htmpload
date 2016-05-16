@@ -969,7 +969,9 @@ def checkGender(gender, line):
     elif gender.lower() == 'no_data':
 	# will be converted to NA laster in makeAnnotation.py
 	gender = ''
-
+    elif gender.lower() == 'both':
+	# will be converted to NA laster in makeAnnotation.py
+	gender = 'Both'
     else:
 	msg = 'Unrecognized gender %s' % gender
 	logIt(msg, line, 1, 'gender')
