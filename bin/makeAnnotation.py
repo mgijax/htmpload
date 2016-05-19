@@ -126,7 +126,7 @@ annotLine = '%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\t%s\n'
 #
 #propertiesLine = 'MP-Sex-Specificity&=&%s&==&MP-HTLink-WTSI&=&http://www.sanger.ac.uk/mouseportal/'
 #'MP-Sex-Specificity&=&%s'
-propertiesLine = 'MP-Sex-Specificity&=&%s&==&Data Interpretation Center&=&%s&==&Phenotyping Center&=&%s'
+propertiesLine = 'MP-Sex-Specificity&=&%s&==&Data Interpretation Center&=&%s&==&Phenotyping Center&=&%s&==&Resource Name&=&%s'
 
 # defaults
 inferredFrom = ''
@@ -344,6 +344,7 @@ def getAnnotations():
 	mpID = tokens[4]
 	evidence = tokens[9]
 	gender = tokens[11]
+	resourceName = tokens[13]
 
 	# skip any row that does not contain an MP annotation
 	# makeIMPC needs to check for blank attributes
@@ -380,7 +381,7 @@ def getAnnotations():
 	#
 
 	genotypeID = genotypeOrderDict[genotypeOrder][0]
-	properties = propertiesLine % (gender, annotationCenter, phenotypingCenter)
+	properties = propertiesLine % (gender, annotationCenter, phenotypingCenter, resourceName)
 
 	#
 	# add to annotation mgi-format file
