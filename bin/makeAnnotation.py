@@ -344,7 +344,7 @@ def getAnnotations():
 	mpID = tokens[4]
 	evidence = tokens[9]
 	gender = tokens[11]
-	resourceName = tokens[12]
+	resourceName = tokens[13]
 
 	# skip any row that does not contain an MP annotation
 	# makeIMPC needs to check for blank attributes
