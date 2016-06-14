@@ -265,7 +265,8 @@ def initialize():
 
     cindyColonyIdFile = os.getenv('CINDY_COLONY_ID_FILE')
     impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
-    impcFileInt = '%s_int' % impcFile
+    #impcFileInt = '%s_int' % impcFile
+    impcFileInt = '%s' % impcFile
     impcFileDup = '%s_dup' % impcFile
     imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
     htmpFile = os.getenv('HTMP_INPUT_FILE')

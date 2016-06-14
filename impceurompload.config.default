@@ -105,8 +105,7 @@ export CINDY_COLONY_ID_FILE
 # input file from IMPC
 #
 SOURCE_INPUT_FILE=${DATADOWNLOADS}/www.ebi.ac.uk.europhenome/impc.json.europhenome
-SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc.json.europhenome
-
+SOURCE_COPY_INPUT_FILE=${INPUTDIR}/impc.json.europhenome_int
 export SOURCE_INPUT_FILE SOURCE_COPY_INPUT_FILE
 
 #
@@ -119,7 +118,6 @@ export REPORT_SCRIPT_SUFFIX
 #
 IMITS_INPUT_FILE=${DATADOWNLOADS}/www.mousephenotype.org/mp2_load_phenotyping_colonies_report.tsv
 IMITS_COPY_INPUT_FILE=${INPUTDIR}/mp2_load_phenotyping_colonies_report.tsv
-
 export IMITS_INPUT_FILE IMITS_COPY_INPUT_FILE
 
 # htmp input file created from MGP/iMits data
