@@ -470,11 +470,11 @@ def openFiles():
     #
     # Open the IMPC file
     #
-    try:
-        fpIMPC = open(impcFile, 'r')
-    except:
-        print 'Cannot open file: ' + impcFile
-        return 1
+    #try:
+    #    fpIMPC = open(impcFile, 'r')
+    #except:
+    #    print 'Cannot open file: ' + impcFile
+    #    return 1
 
     #
     # Open the intermediate IMPC file
