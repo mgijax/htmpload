@@ -1,3 +1,14 @@
+TAG: htmpload-tr12317-4
+TAG: htmpload-tr12317-3
+DATE: 06/23/2016
+STAFF: sc
+CHANGES: US146 multi colony ids
+1) htmpload.sh - checking for exit code 2 which means multi colony ids
+   strains created, but no genotypes or annotations
+2) makeIMPC.py - multi colony ids per strain, multi strains per colony id
+3) makeIMPC.sh - checking for exit code 2 which means multi colony ids
+   strains created, but no genotypes or annotations
+
 TAG: htmpload-tr12317-2
 DATE: 06/23/2016
 STAFF: sc
