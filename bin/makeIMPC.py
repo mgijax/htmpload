@@ -199,6 +199,10 @@ allelesInDbDict = {}
 # unique key from input data mapped to error code, for strain processing
 uniqStrainProcessingDict = {}
 
+# map all new strains to their strain lines 
+#{strainName:[set of strain lines], ...}
+newStrainDict = {}
+
 # processing center mapped to lab code from database
 procCtrToLabCodeDict = {}
 
@@ -357,7 +361,7 @@ def initialize():
 	s = r['aSymbol']
 	m = r['markerMgiID']
 	c = r['mclID']
-	if allelesInDbDict.has_key(a):
+	if a in allelesInDbDict:
 	    allelesInDbDict[a].c.append(c)
 	else:
 	    allelesInDbDict[a] = Allele(a, s, m, [c])
@@ -404,12 +408,20 @@ def initialize():
 	''', 'auto')
 
     for r in results:
-	cID =  r['colonyID']
-	if cID == None:
-	    cID = ''
-	if cID != '':
-	    colonyToStrainNameDict[cID] = r['strain']
-	strainNameToColonyIdDict[r['strain']] = cID
+	# HIPPO US146
+	# colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
+        cIDs =  r['colonyID']
+        str = r['strain']
+	cIDList = []
+	if cIDs != None:
+	    cIDList = string.split(cIDs, '|')
+	# HIPPO 6/2016 handle multi strains/colony ID
+	for cID in cIDList:
+	    if not cID in colonyToStrainNameDict:
+		 colonyToStrainNameDict[cID] = [] 
+	    colonyToStrainNameDict[cID].append(str)
+	# HIPPO 6/2016 - handle multi colonyIDs/strain
+	strainNameToColonyIdDict[str] = cIDList
 
     db.useOneConnection(0)
 
@@ -576,7 +588,7 @@ def logIt(msg, line, isError, typeError):
 
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
-    if not errorDict.has_key(typeError):
+    if not typeError in errorDict:
 	errorDict[typeError] = []
     errorDict[typeError].append(logit)
     #fpLogCur.write(logit)
@@ -614,7 +626,7 @@ def parseIMITSFile():
         value = '%s|%s|%s' % (productionCtr, mutantID, markerID)
 
         # if we find a dup, just print for now to see what we get 
-        if colonyToMCLDict.has_key(colonyID) and colonyToMCLDict[colonyID] == value:
+        if colonyID in colonyToMCLDict and colonyToMCLDict[colonyID] == value:
             #print 'Dup colony ID record: %s|%s' (colonyID, value)
             continue
 
@@ -814,7 +826,7 @@ def parseIMPCLacZFile():
 # Throws: Nothing
 #
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
-    global uniqStrainProcessingDict
+    global uniqStrainProcessingDict, newStrainDict
     
     #print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
     #print 'doUniqStrainChecks line: %s' % line
@@ -834,7 +846,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     rawStrainName = strainName
 
     # Production Center Lab Code Check US5 doc 4c2
-    if not procCtrToLabCodeDict.has_key(imitsProdCtr):
+    if not imitsProdCtr in procCtrToLabCodeDict:
 	if dupStrainKey == 0:
 	    msg = 'Production Center not in MGI (voc_term table): %s' % imitsProdCtr
 	    logIt(msg, line, 1, 'prodCtrNotInDb')
@@ -846,7 +858,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
             return 'error'
 
     # Prefix Strain check #1/#2 US5 doc 4c3
-    if dupStrainKey == 0 and not (strainRawPrefixDict.has_key(strainID) and \
+    if dupStrainKey == 0 and not (strainID in strainRawPrefixDict and \
 	strainRawPrefixDict[strainID] == strainName):
 	# This is just a check - the strain name will be determined outside this block
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % (strainID, strainName)
@@ -858,7 +870,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
 
-    if strainPrefixDict.has_key(strainID):
+    if strainID in strainPrefixDict:
 	strainRoot = strainPrefixDict[strainID]
 	labCode = procCtrToLabCodeDict[imitsProdCtr]
 	# if strainPrefixDict has key strainID so does strainTemplateDict
@@ -874,20 +886,18 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # Not Specified strain will not have colonyID in db
     # if there is a colony ID at this point we know it doesn't match
     # because we didn't find it in check US5 4c1
-    # NEED TO TEST THIS CHECK, no colony ids in db now
 
-    if strainNameToColonyIdDict.has_key(strainName) and \
-    		strainNameToColonyIdDict[strainName] != '':
+    if strainName in strainNameToColonyIdDict and \
+    		strainNameToColonyIdDict[strainName] != []:
 
-	dbColonyID =  strainNameToColonyIdDict[strainName]
-	msg = 'MGI/database colony ID %s for strain %s does not match IMPC colony id %s' % \
-		(dbColonyID, strainName, colonyID)
-	#print msg
+	dbColonyIdList =  strainNameToColonyIdDict[strainName]
+	msg = 'MGI/database colony ID(s) %s for strain %s does not match IMPC colony id %s' % \
+		(string.join(dbColonyIdList), strainName, colonyID)
+	
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	#print '%s returning "error"' % msg
+	
 	return 'error'
-
-    #print 'writing to strain line'
+    
     strainType = strainTypeDict[strainID]
     attributes = strainAttribDict[strainID]
     attributes = attributes.replace(':', '|')
@@ -904,10 +914,15 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
     if strainLine not in strainLineList:
 	strainLineList.append(strainLine)
-	#print 'strainLine: %s' % strainLine
-	fpStrain.write(strainLine)
 
-    #print 'returning strainName: %s' % strainName
+    # save all the new strains with their colony id(s) for later checking
+    # and writing to bcp file
+    # HIPPO project US146 'Report cases where there are multiple colonyIDs 
+    # in the input file for a new strain.'
+    if not strainName in newStrainDict:
+	newStrainDict[strainName] = set([])
+    newStrainDict[strainName].add(string.strip(strainLine))
+    
     return strainName
 
 #
@@ -947,7 +962,7 @@ def checkAlleleState(alleleState, line):
 #
 def checkColonyID(colonyID, line):
 
-    if not colonyToMCLDict.has_key(colonyID):
+    if not colonyID in colonyToMCLDict:
 	msg='No IMITS colony id for %s' % colonyID
 	logIt(msg, line, 1, 'colonyID')
 	return 1
@@ -1025,7 +1040,15 @@ def compareMarkers(markerID, imitsMrkID, line):
 # Throws: Nothing
 #
 def writeCuratorLog():
+    # HIPPO - US146 write fatal errors first
+    if 'newStrainMultiColId' in errorDict:
+	fatal = errorDict['newStrainMultiColId']
+	fpLogCur.write(string.join(fatal))
 
+	# remove the fatal error from the dict so not repeated
+	del errorDict['newStrainMultiColId']
+
+    # report remaining error types to curator log
     for type in errorDict.keys():
 	fpLogCur.write(string.join(errorDict[type]))
 
@@ -1038,6 +1061,9 @@ def writeCuratorLog():
 # Throws: Nothing
 #
 def createHTMPFile():
+    
+    # return code from this function
+    returnCode = 0
 
     # Values to be calculated
     strainName = ''
@@ -1099,7 +1125,7 @@ def createHTMPFile():
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
-	if allelesInDbDict.has_key(alleleID):
+	if alleleID in allelesInDbDict:
 
 	    dbAllele = allelesInDbDict[alleleID]
 
@@ -1139,10 +1165,15 @@ def createHTMPFile():
 		colonyID, mutantID, imitsProdCtr)
 
 	# resolve the colonyID to a strain in the database
-	if colonyToStrainNameDict.has_key(colonyID):
-  	    strainName = colonyToStrainNameDict[colonyID]
-	    #print 'found strain in db %s' % strainName
-	    #uniqStrainProcessingDict[uniqStrainProcessingKey] = strainName 
+	if colonyID in colonyToStrainNameDict:
+	    # HIPPO US146 case #4
+	    # multiple strains for a colony ID
+	    if len(colonyToStrainNameDict[colonyID]) > 1:
+		msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, string.join(colonyToStrainNameDict[colonyID], ', ') )
+		logIt(msg, line, 1, 'colIdMultiStrains')
+		continue
+	    # if we get here we have a single strain
+  	    strainName = colonyToStrainNameDict[colonyID][0]
 
 	else:
 	    #
@@ -1153,17 +1184,13 @@ def createHTMPFile():
 	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
 	    # Nor does it include gender, multi gender per uniq allele
 
-	    #print 'calling doUniqStrainChecks uniqStrainProcessingKey: %s' % uniqStrainProcessingKey
 	    strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
-	    #print 'strainName from doUniqStrainChecks:%s' % strainName
 	    
 	# if all the checks passed write it out to the HTMP load format file
 	if strainName == 'error':
 	    # just print out for now for verification
             #print 'rejected Uniq strain check line%s' % line
 	    continue
-
-	#print 'writing to htmp file'
 
 	htmpLine = phenotypingCenter + '\t' + \
 	     interpretationCenter + '\t' + \
@@ -1180,7 +1207,7 @@ def createHTMPFile():
 	     resourceName + '\n'
 
 	fpHTMP.write(htmpLine)
-
+    print 'reporting uniq strain processing errors'
     for key in uniqStrainProcessingDict.keys():
 	msgList = uniqStrainProcessingDict[key]
 	msg = msgList[0]
@@ -1189,11 +1216,42 @@ def createHTMPFile():
 		logIt(msg, line, 0, 'strainIdNameDiscrep')
 	    else:
 		logIt(msg, line, 1, 'strainIdNameDiscrep')
+    #
+    # HIPPO US146 - check for new strains with multiple colony ids
+    #
+    print 'reporting new strains with multi colony ids'
+    for s in newStrainDict:
+	# we have multi colony ids for this strain, pick one to load, report
+	# the rest
+	if len(newStrainDict[s]) > 1:
+	    msg = 'New strain with multiple Colony IDs. Strain created, with Colony ID note:%s. Genotype and annotations not created. The following colonyID note(s) not created:'
+	    # get the strain with its multi colony IDs
+	    multiSet = newStrainDict[s]
 
+	    # get then delete the first in the list, we'll load the straain
+	    # with this colony ID
+	    strainToLoad = multiSet.pop()
+
+	    # plug the colony ID which WAS loaded into the error message
+	    msg = msg % string.split(strainToLoad)[8]
+
+	    # write out the strain to load
+	    fpStrain.write(strainToLoad)
+
+	    # get the  lines with the remaining colony ids for the strain,
+	    # report and exit 2
+	    strainLines = string.join(multiSet, '\n')
+	    returnCode = 2
+	    logIt(msg, strainLines, 1, 'newStrainMultiColId')
+	else:
+	    # we have only one colony id, write the strain to the strain file
+	    # its a set so convert to list to index
+	    fpStrain.write(list(newStrainDict[s])[0])
     # write errors to curation log
+    print 'writing to curator log'
     writeCuratorLog()
 
-    return 0
+    return returnCode
 
 #
 #  MAIN
@@ -1224,9 +1282,10 @@ elif isLacZ:
         sys.exit(1)
 
 print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-if createHTMPFile() != 0:
+returnCode = createHTMPFile()
+if returnCode != 0:
     closeFiles()
-    sys.exit(1)
+    sys.exit(returnCode)
 
 closeFiles()
 print 'done: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))

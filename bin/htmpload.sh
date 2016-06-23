@@ -138,9 +138,18 @@ checkStatus ${STAT} "copying IMPC input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
+msg='FATAL Error: Multi Colony IDs for new Strain(s) (makeIMPC.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
 ./makeIMPC.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
+if [ ${STAT} -eq 2 ]
+then
+checkStatus ${STAT} ${msg}
+fi
+
+if [ ${STAT} -ne 2 ]
+then 
 checkStatus ${STAT} "Running makeIMPC.sh ${CONFIG}"
+fi 
 
 #
 # sort the pre-processed file

@@ -88,8 +88,8 @@ fi
 echo "" >> ${LOG}
 date >> ${LOG}
 ./makeIMPC.py 2>&1 >> ${LOG}
-STAT=$?
-if [ ${STAT} -ne 0 ]
+MAKEIMPC_STAT=$?
+if [ ${MAKEIMPC_STAT} -eq 1 ]
 then
     echo "Error: creating the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
     exit 1
@@ -102,10 +102,18 @@ echo "" >> ${LOG}
 date >> ${LOG}
 ./makeIMPCStrains.py 2>&1 >> ${LOG}
 STAT=$?
-if [ ${STAT} -ne 0 ]
+if [ ${STAT} -eq 1 ]
 then
-    echo "Error: Create the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
+    echo "Error: Creating the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
     exit 1
 fi
 
-exit 0
+# if there are multi colony ids, we want to create the new strains,
+# but not create the genotypes or annotations
+if [ ${MAKEIMPC_STAT} -eq 2 ]
+then
+    echo "FATAL Error: Multi Colony IDs for new Strain(s) (makeIMPC.py). Strains created, with arbitrary Colony ID note. Genotype and annotations not created."  | tee -a ${LOG}
+    exit 
+fi
+
+exit ${MAKEIMPC_STAT}
