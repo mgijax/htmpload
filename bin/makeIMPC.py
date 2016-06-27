@@ -410,11 +410,15 @@ def initialize():
     for r in results:
 	# HIPPO US146
 	# colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
-        cIDs =  r['colonyID']
+        cIDs =  string.strip(r['colonyID'])
         str = r['strain']
+	print 'cIDs: %s' % cIDs
+	print 'str: %s' % str
 	cIDList = []
 	if cIDs != None:
-	    cIDList = string.split(cIDs, '|')
+	    #cIDList = string.split(cIDs, '|')
+	    cIDList = map(string.strip, string.split(cIDs, '|'))
+	    print 'cIDList:%s' % cIDList
 	# HIPPO 6/2016 handle multi strains/colony ID
 	for cID in cIDList:
 	    if not cID in colonyToStrainNameDict:
@@ -1227,7 +1231,7 @@ def createHTMPFile():
 	    msg = 'New strain with multiple Colony IDs. Strain created, with Colony ID note:%s. Genotype and annotations not created. The following colonyID note(s) not created:'
 	    # get the strain with its multi colony IDs
 	    multiSet = newStrainDict[s]
-
+	    print multiSet
 	    # get then delete the first in the list, we'll load the straain
 	    # with this colony ID
 	    strainToLoad = multiSet.pop()
@@ -1236,7 +1240,7 @@ def createHTMPFile():
 	    msg = msg % string.split(strainToLoad)[8]
 
 	    # write out the strain to load
-	    fpStrain.write(strainToLoad)
+	    fpStrain.write('%s%s' % (strainToLoad, '\n'))
 
 	    # get the  lines with the remaining colony ids for the strain,
 	    # report and exit 2
@@ -1246,7 +1250,7 @@ def createHTMPFile():
 	else:
 	    # we have only one colony id, write the strain to the strain file
 	    # its a set so convert to list to index
-	    fpStrain.write(list(newStrainDict[s])[0])
+	    fpStrain.write('%s%s' % (list(newStrainDict[s])[0], '\n'))
     # write errors to curation log
     print 'writing to curator log'
     writeCuratorLog()
