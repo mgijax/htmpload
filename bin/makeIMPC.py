@@ -412,13 +412,13 @@ def initialize():
 	# colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
         cIDs =  string.strip(r['colonyID'])
         str = r['strain']
-	print 'cIDs: %s' % cIDs
-	print 'str: %s' % str
+	#print 'cIDs: %s' % cIDs
+	#print 'str: %s' % str
 	cIDList = []
 	if cIDs != None:
 	    #cIDList = string.split(cIDs, '|')
 	    cIDList = map(string.strip, string.split(cIDs, '|'))
-	    print 'cIDList:%s' % cIDList
+	    #print 'cIDList:%s' % cIDList
 	# HIPPO 6/2016 handle multi strains/colony ID
 	for cID in cIDList:
 	    if not cID in colonyToStrainNameDict:
@@ -919,7 +919,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     if strainLine not in strainLineList:
 	strainLineList.append(strainLine)
 
-    # save all the new strains with their colony id(s) for later checking
+    # save all the new strains with their strain lines for later checking
     # and writing to bcp file
     # HIPPO project US146 'Report cases where there are multiple colonyIDs 
     # in the input file for a new strain.'
@@ -1073,6 +1073,12 @@ def createHTMPFile():
     strainName = ''
     mutantID = ''
 
+    # the htmp lines we will write to a file; some may get filtered out later
+    htmpLineDict = {}
+
+    # annotations that should be filtered out i.e not written to the htmp file
+    noLoadAnnotList = []
+
     #
     # Open the intermediate IMPC file
     #
@@ -1210,7 +1216,17 @@ def createHTMPFile():
 	     colonyID + '\t' + \
 	     resourceName + '\n'
 
-	fpHTMP.write(htmpLine)
+	#fpHTMP.write(htmpLine)
+
+	# save the lines to a data structure with 'strain|colonyID' key
+	# later we look for multiple colony IDs per strain and annotations
+	# to load for just ONE colony ID. We DO NOT want to load annotations
+	# for the rejected colony ID(s), we just want to report them
+	key = '%s|%s' % (strainName, colonyID)
+	if key not in htmpLineDict:
+	    htmpLineDict[key] = []
+	htmpLineDict[key].append(htmpLine)
+
     print 'reporting uniq strain processing errors'
     for key in uniqStrainProcessingDict.keys():
 	msgList = uniqStrainProcessingDict[key]
@@ -1229,11 +1245,22 @@ def createHTMPFile():
 	# the rest
 	if len(newStrainDict[s]) > 1:
 	    msg = 'New strain with multiple Colony IDs. Strain created, with Colony ID note:%s. Genotype and annotations not created. The following colonyID note(s) not created:'
-	    # get the strain with its multi colony IDs
-	    multiSet = newStrainDict[s]
-	    print multiSet
-	    # get then delete the first in the list, we'll load the straain
-	    # with this colony ID
+
+            # get input lines for this new strain
+            multiSet = newStrainDict[s]
+            #print multiSet
+
+	    # Add strain/cID(s) to the list whose genotypes/annotations we 
+	    # will not load
+            for line in list(multiSet):
+                cID = string.split(line, '\t')[7]
+                # this corresponds to the key in htmpLineDict
+                key = '%s|%s' % (s, cID)
+                #print 'adding %s to noLoadAnnotList\n' % key
+                noLoadAnnotList.append(key)
+
+	    # get a arbitrary line from the list, the strain will be loaded with
+	    # this colony ID
 	    strainToLoad = multiSet.pop()
 
 	    # plug the colony ID which WAS loaded into the error message
@@ -1251,6 +1278,19 @@ def createHTMPFile():
 	    # we have only one colony id, write the strain to the strain file
 	    # its a set so convert to list to index
 	    fpStrain.write('%s%s' % (list(newStrainDict[s])[0], '\n'))
+
+    # write lines to the htmp file checking the noloadAnnotList first
+    #print 'noLoadAnnotList: %s' % noLoadAnnotList
+    for key in htmpLineDict:
+	#print 'htmpLineDict key: "%s"' % key
+	#print 'htmpLineDict lines: "%s"' % htmpLineDict[key]
+	if key in noLoadAnnotList:
+	    #print 'key "%s" in noLoadAnnotList' % key
+	    continue
+	#print 'adding line to HTMP file'
+	for line in htmpLineDict[key]:
+	    fpHTMP.write(line)
+
     # write errors to curation log
     print 'writing to curator log'
     writeCuratorLog()

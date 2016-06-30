@@ -1,3 +1,19 @@
+TAG: htmpload-tr12317-5
+DATE: 06/30/2016
+STAFF: sc
+CHANGES: US146 multi colony ids
+case1 - update the load to parse the IMPC Colony ID Notes field so that it 
+    can check for colonyID matches to multiple distinct colonyIDs for a strain.
+case2 - Continue to report and skip colonyIDs for existing strains that are not 
+    associated with the strain in MGI.
+case3 - If the input file has multiple colonyIDs for a new strain that the 
+    strain load constructs, the load should add one of these colonyIDs to the 
+    IMPC Colony ID Notes field and report the other(s).  No genotypes or 
+    annotations should be made
+case4 -  The load should detect and report cases where two different strains 
+    have the same colonyID, and the IMPC data should not be loaded (since it 
+    is possible that curators may generate this case inadvertently).
+
 TAG: htmpload-tr12317-4
 TAG: htmpload-tr12317-3
 DATE: 06/23/2016
