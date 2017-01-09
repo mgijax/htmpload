@@ -49,9 +49,6 @@ import os
 import db
 import string
 
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
-
 # LOG_DIAG
 # LOG_CUR
 logDiagFile = None

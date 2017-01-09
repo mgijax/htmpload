@@ -124,8 +124,6 @@ import db
 import time
 
 db.setTrace(True)
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 # load type
 isMP = 0

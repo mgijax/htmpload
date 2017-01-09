@@ -64,8 +64,6 @@ import mgi_utils
 import loadlib
 
 db.setTrace(True)
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 # globals
 
@@ -230,12 +228,6 @@ def init():
         annotFile = open(annotFileName, 'w')
     except:
         exit(1, 'Could not open file %s\n' % annotFileName)
-
-    # Log all SQL
-    #db.set_sqlLogFunction(db.sqlLogAll)
-
-    # Set Log File Descriptor
-    #db.set_sqlLogFD(diagFile)
 
     diagFile.write('Start Date/Time: %s\n' % (mgi_utils.date()))
     diagFile.write('Server: %s\n' % (db.get_sqlServer()))

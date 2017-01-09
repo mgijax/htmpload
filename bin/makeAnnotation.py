@@ -90,9 +90,6 @@ import os
 import db
 import loadlib
 
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
-
 # LOG_DIAG
 # LOG_CUR
 # OUTPUTDIR

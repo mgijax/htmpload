@@ -109,8 +109,6 @@ import alleleloadlib
 import Set
 
 db.setTrace(True)
-db.setAutoTranslate(False)
-db.setAutoTranslateBE(False)
 
 # set to 1 for debug printout
 DEBUG = 0
