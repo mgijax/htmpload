@@ -311,17 +311,21 @@ def initialize():
     # Autoload  (3983021)
     #
     # Allele Types where _vocab_key = 38
-    # Targeted  (847116)
-    # Endonuclease-mediated (11927650)
     #
     # preferred MGI IDs
     #
 
     db.useOneConnection(1)
 
+    #
+    # start: Targeted (847116)
+    # these Alleles *do* have Mutant Cell Lines
+    #
+
+	#where ll._Allele_Status_key in (847111, 847114, 3983021)
     db.sql('''select distinct a1.accid as alleleMgiID, a2.accid as markerMgiID, 
 	    ll.symbol as aSymbol, ll._Allele_key
-	into temporary table all_tmp
+	into temporary table all_targeted
 	from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
 	where ll._Allele_Status_key in (847111, 847114, 3983021)
 	and ll._Allele_Type_key in (847116)
@@ -335,7 +339,7 @@ def initialize():
 	and a2.prefixPart = 'MGI:' 
 	''', None)
 
-    db.sql('create index idx1 on all_tmp(_Allele_key)', None)
+    db.sql('create index idx_targeted on all_targeted(_Allele_key)', None)
 
     #
     # select alleles and their mutant cell line ids
@@ -343,7 +347,7 @@ def initialize():
     #
     results = db.sql('''
     	select distinct a.*, a1.accid as mclID
-	from all_tmp a
+	from all_targeted a
 	LEFT OUTER JOIN ALL_Allele_CellLine ac ON (
 			a._Allele_key = ac._Allele_key
 		)
@@ -364,6 +368,44 @@ def initialize():
 	else:
 	    allelesInDbDict[a] = Allele(a, s, m, [c])
    
+    # end: Targeted
+
+    #
+    # start: Endonuclease-mediated (11927650)
+    # these Alleles do *not* have Mutant Cell Lines
+    #
+
+    db.sql('''select distinct a1.accid as alleleMgiID, a2.accid as markerMgiID, 
+	    ll.symbol as aSymbol, ll._Allele_key
+	into temporary table all_endo
+	from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
+	where ll._Allele_Status_key in (847111, 847114, 3983021)
+	and ll._Allele_Type_key in (11927650)
+	and ll._Allele_key = a1._Object_key
+	and a1._MGIType_key = 11
+	and a1.preferred = 1
+	and a1.prefixPart = 'MGI:'
+	and ll._Marker_key = a2._Object_key
+	and a2._MGIType_key = 2
+	and a2.preferred = 1
+	and a2.prefixPart = 'MGI:' 
+	''', None)
+
+    db.sql('create index idx_endo on all_endo(_Allele_key)', None)
+
+    results = db.sql('select distinct * from all_endo', 'auto')
+    for r in results:
+	a = r['alleleMgiID']
+	s = r['aSymbol']
+	m = r['markerMgiID']
+	c = ''
+	if a in allelesInDbDict:
+	    allelesInDbDict[a].c.append(c)
+	else:
+	    allelesInDbDict[a] = Allele(a, s, m, [c])
+
+    # end: Endonuclease-mediated
+
     # load production center/labcode mapping 
     results = db.sql('select term, abbreviation from VOC_Term where _Vocab_key = 98', 'auto')
     for r in results:
