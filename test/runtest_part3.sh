@@ -3,7 +3,7 @@
 #
 # runtest_part3.sh
 #
-# compare input file to sybase data
+# verifying many of the vocabularies used in Allele tables
 #
 
 cd `dirname $0`
