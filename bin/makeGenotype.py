@@ -424,7 +424,7 @@ def getGenotypes():
 
         # sc 2/6/2016 - a subtlety:
         # if genotypeID  remains '', the genotype is not in the database
-        # if it is assigned and ID from the database, it is still written to
+        # if it is assigned an ID from the database, it is still written to
         # the genotypeload input file because this file is used as input to the
 	# annotation load.  The genotypeload will only create
         # a genotype if the genotypeID field is ''
@@ -480,8 +480,10 @@ def getGenotypes():
 	# mutant
 
 	if len(mutantID) > 0:
+	    mutantSQL = '='
 	    mutantKey = alleleloadlib.verifyMutnatCellLineByAllele(mutantID, alleleKey, lineNum, fpLogDiag)
         else:
+	    mutantSQL = 'is'
 	    mutantKey = 'null'
 
         if mutantKey == 0:
@@ -563,11 +565,11 @@ def getGenotypes():
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 = %s
-			and g._MutantCellLine_key_1 = %s
-			and g._MutantCellLine_key_2 = %s
+			and g._MutantCellLine_key_1 %s %s
+			and g._MutantCellLine_key_2 %s %s
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, mutantKey, alleleState, strainKey)
+		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL, mutantKey, alleleState, strainKey)
 
 	    if DEBUG:
 		print querySQL
@@ -602,11 +604,11 @@ def getGenotypes():
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 != %s
-			and g._MutantCellLine_key_1 = %s
+			and g._MutantCellLine_key_1 %s %s
 			and g._MutantCellLine_key_2 is null
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, alleleKey, mutantKey, alleleState, strainKey)
+		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
 
 	    if DEBUG:
 		print querySQL
@@ -670,11 +672,11 @@ def getGenotypes():
 			where g._Marker_key = %s
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 is null
-			and g._MutantCellLine_key_1 = %s
+			and g._MutantCellLine_key_1 %s %s
 			and g._MutantCellLine_key_2 is null
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, mutantKey, alleleState, strainKey)
+		''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
 
 	    if DEBUG:
 		print querySQL
@@ -724,8 +726,7 @@ def getGenotypes():
 	# set uniqueness
 	# isConditional is always 0, so we do not need to specify this value
 	#
-	key = str(markerKey) + str(alleleKey) + str(alleleState) + \
-		str(strainKey) + str(mutantKey)
+	key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey) + str(mutantKey)
 
 	if DEBUG:
 	    print '    unique key is: %s' % key
