@@ -159,7 +159,7 @@ loaddate = loadlib.loaddate
 errorDisplay = '''
 
 ***********
-error:%s
+error: %s
 line: %s
 field: %s
 %s
@@ -486,11 +486,18 @@ def getGenotypes():
 	    mutantSQL = 'is'
 	    mutantKey = 'null'
 
+	#
+	# if the MCL in the input file does not match the Allele/MCL association in MGD,
+	# (i.e. the mutantKey returned from the alleleloadlib lookup is null),
+	# then add the Genotype with null MCLs (see TR12508).
+	#
         if mutantKey == 0:
-            logit = errorDisplay % (mutantID, lineNum, '3', line)
-            fpLogDiag.write(logit)
-            fpLogCur.write(logit)
-            error = 1
+	    mutantID = ''
+	    mutantID2 = ''
+            #logit = errorDisplay % (mutantID, lineNum, '3', line)
+            #fpLogDiag.write(logit)
+            #fpLogCur.write(logit)
+            #error = 1
 
 	if DEBUG:
 	    print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
