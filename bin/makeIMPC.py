@@ -1171,24 +1171,24 @@ def createHTMPFile():
 
 	    # report this but don't exclude it
 	    if alleleSymbol != dbAllele.s:
-		msg = 'not a fatal error: Allele Symbol: %s does not match MGI-database symbol: %s' % \
-			(alleleSymbol, dbAllele.s)
+		msg = 'not fatal: Allele Symbol: %s does not match MGI symbol: %s' % (alleleSymbol, dbAllele.s)
 		logIt(msg, line, 1, 'alleleNotMatch')
 		#error = 1
 
 	    if markerID != dbAllele.m:
-		msg = 'Marker ID: %s does not match MGI-database marker ID: %s' % (markerID, dbAllele.m)
+		msg = 'Marker ID: %s does not match MGI marker ID: %s' % (markerID, dbAllele.m)
 		logIt(msg, line, 1, 'markerNotMatch')
 		error = 1
 
 	    if mutantID not in dbAllele.c:
-		msg = 'Mutant ID: %s is not associated with %s in MGI-database' % (mutantID, alleleID)
+		msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI/loading data with null-MCL' % (mutantID, alleleID)
 		logIt(msg, line, 1, 'mutIdNotAssoc')
-		error = 1
+	        allelesInDbDict[alleleID].c.append('')
+		#error = 1
 
 	else: # US5 doc 4b2
 	    # 15 cases in impc.json e.g. NULL-114475FCF4
-	    msg = 'Allele not in the MGI-database: %s' % alleleID
+	    msg = 'Allele not in MGI: %s' % alleleID
 	    logIt(msg, line, 1, 'alleleNotInDb')
 	    error = 1
 
