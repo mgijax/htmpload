@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-#  makeIMPC.sh
+#  preprocess.sh
 ###########################################################################
 #
 #  Purpose:
 #
-#      This script is a wrapper around the process that creates the 
-#	IMPC HTMP file
+#      This script is a wrapper around the process that parses an input file
+#	to create a common format HTMP load file
 #
-Usage="Usage: makeIMPC.sh config"
+Usage="Usage: preprocess.sh config"
 #
 #  Env Vars:
 #
@@ -37,6 +37,10 @@ Usage="Usage: makeIMPC.sh config"
 #      4) Call makeHTMP.py to create the htmp load file.
 #
 #  Notes:  
+#
+# sc   02/17/2017
+#       - TR12488 Mice Crispies project
+#
 #  08/12/2014   sc
 #       - TR11674
 #
@@ -83,37 +87,37 @@ then
 fi
 
 #
-# Create the IMPC HTMP input files
+# Create the HTMP input files
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-./makeIMPC.py 2>&1 >> ${LOG}
-MAKEIMPC_STAT=$?
-if [ ${MAKEIMPC_STAT} -eq 1 ]
+./preprocess.py 2>&1 >> ${LOG}
+PREPROCESS_STAT=$?
+if [ ${PREPROCESS_STAT} -eq 1 ]
 then
-    echo "Error: creating the IMPC HTMP input file (makeIMPC.py)" | tee -a ${LOG}
+    echo "Error: creating the HTMP input file (preprocess.py)" | tee -a ${LOG}
     exit 1
 fi
 
 #
-# Create the IMPC HTMP strains
+# Create the HTMP strains
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-./makeIMPCStrains.py 2>&1 >> ${LOG}
+./makeStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -eq 1 ]
 then
-    echo "Error: Creating the IMPC HTMP strains (makeIMPC.py)" | tee -a ${LOG}
+    echo "Error: Creating the HTMP strains (preprocess.py)" | tee -a ${LOG}
     exit 1
 fi
 
 # if there are multi colony ids, we want to create the new strains,
 # but not create the genotypes or annotations
-if [ ${MAKEIMPC_STAT} -eq 2 ]
+if [ ${PREPROCESS_STAT} -eq 2 ]
 then
-    echo "FATAL Error: Multi Colony IDs for new Strain(s) (makeIMPC.py). Strains created, with arbitrary Colony ID note. Genotype and annotations not created."  | tee -a ${LOG}
+    echo "FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.py). Strains created, with arbitrary Colony ID note. Genotype and annotations not created."  | tee -a ${LOG}
     exit 
 fi
 
-exit ${MAKEIMPC_STAT}
+exit ${PREPROCESS_STAT}

@@ -134,12 +134,12 @@ rm -rf ${OUTPUTDIR}/*.error
 rm -rf ${SOURCE_COPY_INPUT_FILE}
 cp ${SOURCE_INPUT_FILE} ${SOURCE_COPY_INPUT_FILE}
 STAT=$?
-checkStatus ${STAT} "copying IMPC input file"
+checkStatus ${STAT} "copying provider input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-msg='FATAL Error: Multi Colony IDs for new Strain(s) (makeIMPC.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
-./makeIMPC.sh ${CONFIG} 2>&1 >> ${LOG}
+msg='FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
+./preprocess.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -eq 2 ]
 then
@@ -148,7 +148,7 @@ fi
 
 if [ ${STAT} -ne 2 ]
 then 
-checkStatus ${STAT} "Running makeIMPC.sh ${CONFIG}"
+checkStatus ${STAT} "Running preprocess.sh ${CONFIG}"
 fi 
 
 #
@@ -182,14 +182,18 @@ STAT=$?
 checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 
 #
-# Run reports
+# Run reports if defined for this provider
 #
-reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
-echo "" >> ${LOG}
-date >> ${LOG}
-./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
-STAT=$?
-checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
+if [ "${REPORT_SCRIPT_SUFFIX}" != "" ]
+then
+
+    reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
+    echo "" >> ${LOG}
+    date >> ${LOG}
+    ./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
+    STAT=$?
+    checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
+fi
 
 #
 # Touch the "lastrun" file to note when the load was run.

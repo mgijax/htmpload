@@ -1,12 +1,12 @@
 #!/usr/local/bin/python
 #
-# Program: makeIMPCStrains.py
+# Program: makeStrains.py
 #
 # Original Author: sc
 #
 # Purpose:
 #
-#	To load new IMPC Strains into:
+#	To load new Strains into:
 #
 #	PRB_Strain
 #	PRB_Strain_Marker
@@ -15,7 +15,7 @@
 #	MGI_Note/MGI_NoteChunk
 #
 # Usage:
-#	makeIMPCStrains.py
+#	makeStrains.py
 #
 # Envvars:
 #
@@ -52,6 +52,9 @@
 #	That no one else is adding records to the database.
 #
 # History
+#
+# sc   02/17/2017
+#	- TR12488 Mice Crispies project
 #
 # sc	08/29/2014
 #	- TR11674 IMPC/HDP II project
@@ -527,7 +530,7 @@ def processFile():
 
 	for a in allAlleles:
 		alleleKey = loadlib.verifyObject(a, alleleTypeKey, None, lineNum, errorFile)
-		#print 'makeIMPCStrains.py allele: %s marker key: %s' % (a, alleleKey)
+		#print 'makeStrains.py allele: %s marker key: %s' % (a, alleleKey)
 	    	results = db.sql('select _Marker_key from ALL_Allele where _Allele_key = %s' % (alleleKey),  'auto')
 		markerKey = results[0]['_Marker_key']
 

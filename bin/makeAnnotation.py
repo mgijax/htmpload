@@ -344,7 +344,6 @@ def getAnnotations():
 	resourceName = tokens[13]
 
 	# skip any row that does not contain an MP annotation
-	# makeIMPC needs to check for blank attributes
 
 	if mpID == '':
 	    continue

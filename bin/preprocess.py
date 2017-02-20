@@ -1,6 +1,6 @@
 #!/usr/local/bin/python
 #
-#  makeIMPC.py
+#  preprocess.py
 ###########################################################################
 #
 #  Purpose:
@@ -9,7 +9,7 @@
 #      create a High-Throughput MP input file
 #
 #  Usage:
-#      makeIMPC.py
+#      preprocess.py
 #
 #  Env Vars:
 #	See the configuration file (impcmpload.config)
@@ -106,6 +106,9 @@
 #	  and to find production_centre and es_cell_name. the json IMITS file
 #	  is incorrect. using mirror_wget/www.mousephenotype.org instead.
 #	- added 'parseIMPCLacZFile' for parsing IMPC/LacZ input file
+#
+# sc   02/17/2017
+#       - TR12488 Mice Crispies project
 #
 #  12/08/2015	lec
 #	- TR12070 epic
@@ -545,7 +548,7 @@ def openFiles():
     try:
         fpLogCur = open(logCurFile, 'a+')
 	fpLogCur.write('\n\n######################################\n')
-	fpLogCur.write('########## makeIMPC Log ##############\n')
+	fpLogCur.write('########## Preprocess Log ##############\n')
 	fpLogCur.write('######################################\n\n')
 
     except:

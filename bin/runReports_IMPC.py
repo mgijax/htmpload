@@ -185,7 +185,7 @@ def createColonyIdReport():
 	id = string.strip(r['impcCID'])
 	if imitsDict.has_key(alleleKey):
 	    if id not in imitsDict[alleleKey]:
-		fpLogCur.write('%s\t%s\t\t%s\n' % (accID, id, imitsDict[alleleKey]))
+		fpLogCur.write('%s\t%s\t%s\n' % (accID, id, imitsDict[alleleKey]))
 
     return 0
 	

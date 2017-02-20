@@ -1,14 +1,14 @@
 #!/bin/sh
 #
-#  makeIMPCStrains.sh
+#  makeStrains.sh
 ###########################################################################
 #
 #  Purpose:
 #
 #      This script is a wrapper around the process that creates the 
-#	IMPC strains - Used for development only
+#	 strains - Used for development only
 #
-Usage="Usage: makeIMPCStrains.sh  config"
+Usage="Usage: makeStrains.sh  config"
 #
 #  Env Vars:
 #
@@ -37,6 +37,10 @@ Usage="Usage: makeIMPCStrains.sh  config"
 #      4) Call makeHTMPStrain.py to create the htmp load file.
 #
 #  Notes:  
+#
+# sc   02/17/2017
+#       - TR12488 Mice Crispies project
+#
 #  08/12/2014   sc
 #       - TR11674
 #
@@ -74,16 +78,16 @@ fi
 touch ${LOG}
 
 #
-# Create the IMPC HTMP input file
+# Create the  HTMP input file
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-echo "Create IMPC strains (makeIMPCStrain.py)" | tee -a ${LOG}
-./makeIMPCStrains.py 2>&1 >> ${LOG}
+echo "Create strains (makeStrain.py)" | tee -a ${LOG}
+./makeStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create IMPC HTMP strain (makeIMPCStrain.py)" | tee -a ${LOG}
+    echo "Error: Create HTMP strain (makeStrain.py)" | tee -a ${LOG}
     exit 1
 fi
 echo "" >> ${LOG}
