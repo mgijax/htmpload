@@ -126,7 +126,7 @@ import Set
 import db
 import time
 
-db.setTrace(True)
+#db.setTrace(True)
 
 # load type
 isMP = 0
@@ -270,7 +270,7 @@ def initialize():
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
     htmpSkipFile = os.getenv('HTMPSKIP_INPUT_FILE')
     loadType = os.getenv('LOADTYPE')
-
+    #print 'loadType: %s' % loadType
     rc = 0
 
     #
@@ -760,7 +760,7 @@ def parseIMPCLacZFile():
 
     print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpIMPC)
-
+    resourceName = 'IMPC'
     lineSet = set([])
     sGroupValList = []
     totalCt = 0
@@ -778,7 +778,6 @@ def parseIMPCLacZFile():
 		sGroupValList.append(sGroup)
 	    notExpCt += 1
 	    continue
-
 	phenotypingCenter = f['phenotyping_center']
 	alleleID = f['allele_accession_id']
 	alleleState = f['zygosity']
@@ -813,7 +812,8 @@ def parseIMPCLacZFile():
 	    parameter_association_value = []
 
         # line representing data from the IMPC input file
-        line = phenotypingCenter + '\t' + \
+        line =  resourceName + '\t' + \
+	     phenotypingCenter + '\t' + \
              '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
