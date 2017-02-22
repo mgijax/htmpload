@@ -1,0 +1,47 @@
+#format: sh
+###########################################################################
+#
+# common.config.default
+#
+###########################################################################
+
+###########################################################################
+#
+#  If the MGICONFIG environment variable does not have a local override,
+#  use the default "live" settings.
+#
+###########################################################################
+if [ "${MGICONFIG}" = "" ]
+then
+    MGICONFIG=/usr/local/mgi/live/mgiconfig
+    export MGICONFIG
+fi
+
+. ${MGICONFIG}/master.config.sh
+
+# Standard Strain Configuration 
+# Strain configurations are specified by the MGI Phenotype Group.
+# See http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strain_Info/Strain_Config_HTMP.html
+#
+# config records for each strain are ',' delimited
+# data for given strain are '|' delimited
+#
+#inputStrain|referenceStrainID|referenceStrain|template|referenceStrainType|referenceStrainAttributes
+#  note: referenceStrainAttributes are ':' delimited
+#
+STRAIN_INFO="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NCrl|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NJ|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NTac|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6Brd-Tyr;C57BL/6N|MGI:5446360|B6Brd;B6N-Tyr|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6N;C57BL/6NTac|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6Brd-Tyr;C57BL/6Dnk;C57BL/6N;C57BL/6NTac|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr|%s %s/%s|Not Specified|mutant stock:targeted mutation"
+
+export STRAIN_INFO
+
+# The created by attribute for all tables
+CREATEDBY=htmpload
+
+#  The name of the job stream for the load
+JOBSTREAM=htmpload
+
+export CREATEDBY JOBSTREAM
+
+INSTALLDIR=${HTMPLOAD}
+
+export INSTALLDIR
+

@@ -1,23 +1,9 @@
 #format: sh
 ###########################################################################
 #
-# Configuration.default
+# impcmpload.config..default
 #
 ###########################################################################
-
-###########################################################################
-#
-#  If the MGICONFIG environment variable does not have a local override,
-#  use the default "live" settings.
-#
-###########################################################################
-if [ "${MGICONFIG}" = "" ]
-then
-    MGICONFIG=/usr/local/mgi/live/mgiconfig
-    export MGICONFIG
-fi
-
-. ${MGICONFIG}/master.config.sh
 
 ###########################################################################
 #
@@ -49,27 +35,6 @@ STRAINMODE=load
 STRAINLOG=${LOGDIR}/strainload.log
 
 export STRAINMODE STRAINLOG
-
-# related constant strain info for the load, '| delimited
-# strain mapping from impc->MGI : see bin/makeIMPC.py/strainInfoMapping[]
-# strain prefix|prefix ID|strain root/name template|strain type/attributes
-# note: attributes ':' delimited
-#
-#pStrain, pID, rStrain, rTemplate, pType, pAttr
-#
-#B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation
-# 
-#C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
-# 
-#C57BL/6NCrl|MGI:2683688|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
-# 
-#C57BL/6NJ|MGI:3056279|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
-# 
-#C57BL/6NTac|MGI:2164831|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation
-#
-STRAIN_INFO="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation, C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NCrl|MGI:2683688|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NJ|MGI:3056279|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation, C57BL/6NTac|MGI:2164831|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation"
-
-export STRAIN_INFO
 
 ###########################################################################
 #
@@ -140,10 +105,9 @@ LOG_TEST=${LOGDIR}/htmpload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
-CREATEDBY=htmpload
 JNUMBER=J:211773
 
-export CREATEDBY JNUMBER
+export JNUMBER
 
 # Genotype load
 #
@@ -164,11 +128,6 @@ export GENOTYPELOAD_STANDALONE GENOTYPELOAD_MODE GENOTYPELOAD_OUTPUT
 #
 ###########################################################################
 
-#  The name of the job stream for the load
-JOBSTREAM=htmpload
-
-export JOBSTREAM
-
 #  The name of the load for the subject of an email notification
 MAIL_LOADNAME="IMPC MP Load"
 
@@ -176,8 +135,3 @@ MAIL_LOADNAME="IMPC MP Load"
 MAIL_LOG_CUR="mgi-hiphenoload@jax.org"
 
 export MAIL_LOADNAME MAIL_LOG_CUR
-
-INSTALLDIR=${HTMPLOAD}
-
-export INSTALLDIR
-
