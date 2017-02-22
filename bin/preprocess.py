@@ -213,11 +213,12 @@ phenoCtrList = []
 # Expected MGI ID to strain info mapping from configuration
 strainInfoMapping = os.environ['STRAIN_INFO']
 
-# Strain MGI ID to  strain raw prefix mapping from configuration
-strainRawPrefixDict = {}
+# Strain MGI ID to input strain  mapping from configuration
+inputStrainDict = {}
 
-# Strain MGI ID to strain prefix mapping from configuration
-strainPrefixDict = {}
+# Strain MGI ID to input strain mapping from configuration
+#referenceStrainDict = {}
+referenceStrainDict = {}
 
 # Strain MGI ID to strain template for creating strain nomen from configuration
 strainTemplateDict = {}
@@ -255,7 +256,7 @@ def initialize():
     global impcFile, impcFileInt, impcFileDup, imitsFile, htmpFile, strainFile
     global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
-    global strainPrefixDict, strainTemplateDict, strainTypeDict
+    global referenceStrainDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
     global isMP, isLacZ
 
@@ -416,12 +417,12 @@ def initialize():
     # load strain mappings from config
     tokens = map(string.strip, string.split(strainInfoMapping, ','))
     for t in tokens:
-	pStrain, pID, rStrain, rTemplate, pType, pAttr = string.split(t, '|')
-	strainRawPrefixDict[pID] = pStrain
-	strainPrefixDict[pID] = rStrain
-	strainTemplateDict[pID] = rTemplate
-	strainTypeDict[pID]  = pType
-	strainAttribDict[pID] = pAttr
+	iStrain, rID, rStrain, rTemplate, rType, rAttr = string.split(t, '|')
+	inputStrainDict[rID] = iStrain
+	referenceStrainDict[rID] = rStrain
+	strainTemplateDict[rID] = rTemplate
+	strainTypeDict[rID]  = rType
+	strainAttribDict[rID] = rAttr
 
     #
     # load colony code to strain ID mappings
@@ -894,9 +895,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	    #print 'returning "error"' 
             return 'error'
 
-    # Prefix Strain check #1/#2 US5 doc 4c3
-    if dupStrainKey == 0 and not (strainID in strainRawPrefixDict and \
-	strainRawPrefixDict[strainID] == strainName):
+    # Input Strain check #1/#2 US5 doc 4c3
+    if dupStrainKey == 0 and not (strainID in inputStrainDict and \
+       inputStrainDict[strainID] == strainName):
+
 	# This is just a check - the strain name will be determined outside this block
 	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % (strainID, strainName)
 	logIt(msg, line, 0, 'strainIdNameDiscrep')
@@ -907,10 +909,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
 
-    if strainID in strainPrefixDict:
-	strainRoot = strainPrefixDict[strainID]
+    if strainID in referenceStrainDict:
+	strainRoot = referenceStrainDict[strainID]
 	labCode = procCtrToLabCodeDict[imitsProdCtr]
-	# if strainPrefixDict has key strainID so does strainTemplateDict
+	# if referenceStrainDict has key strainID so does strainTemplateDict
 	strainTemplate = strainTemplateDict[strainID]
 	strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
         #print 'calculated strain name: %s' % strainName
