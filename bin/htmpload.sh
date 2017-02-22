@@ -41,8 +41,9 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 #  Notes:  None
 #
 ###########################################################################
-
-cd `dirname $0`
+BINDIR=`pwd`
+cd ${BINDIR}/..
+echo `pwd`
 
 if [ $# -lt 2 ]
 then
@@ -50,12 +51,24 @@ then
     exit 1
 fi
 
+CONFIG_COMMON=`pwd`/common.config
+
+cd ${BINDIR}
+
 CONFIG=$1
 ANNOTCONFIG=$2
 
 #
-# Make sure the configuration file exists and source it.
+# Make sure the configuration files exist and source
 #
+if [ -f ${CONFIG_COMMON} ]
+then
+    . ${CONFIG_COMMON}
+else
+    echo "Missing configuration file: ${CONFIG_COMMON}"
+    exit 1
+fi
+
 if [ -f ${CONFIG} ]
 then
     . ${CONFIG}
@@ -63,6 +76,8 @@ else
     echo "Missing configuration file: ${CONFIG}"
     exit 1
 fi
+
+# Just check the annotation load config
 if [ ! -f ${ANNOTCONFIG} ]
 then
     echo "Missing configuration file: ${ANNOTCONFIG}"
@@ -139,6 +154,7 @@ checkStatus ${STAT} "copying provider input file"
 # run pre-processor to create HTMP_INPUT_FILE
 #
 msg='FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
+echo `pwd`
 ./preprocess.sh ${CONFIG} 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -eq 2 ]
