@@ -51,12 +51,25 @@ then
     DEV="-d"
 fi
 
+COMMON_CONFIG=common.config
+
+if [ ! -r ${COMMON_CONFIG} ]
+then
+    echo "Missing configuration file: ${COMMON_CONFIG}"
+    installFailed
+fi
+
+#
+# Source the common configuration file.
+#
+. ${COMMON_CONFIG}
+
 #
 # run DLAInstall for each configuration file
 #
 echo "HTMPLOAD: ${HTMPLOAD}"
-echo ${HTMPLOAD}/[b-z]*config
-for c in ${HTMPLOAD}/[b-z]*config ${HTMPLOAD}/test/impcmpload.config.test
+echo ${HTMPLOAD}/[d-z]*config
+for c in ${HTMPLOAD}/[d-z]*config ${HTMPLOAD}/test/impcmpload.config.test
 do
 
 echo 'running DLAINSTALL:' ${c}
