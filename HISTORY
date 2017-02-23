@@ -1,4 +1,5 @@
-TAG: htmpload-tr12312-5
+TAG: htmpload-tr12312-6 
+TAG: htmpload-tr12312-5 (forgot to push)
 DATE: 2/23/17
 STAFF: sc
 CHANGES: US142 Redo 4c3 check, use referenceStrain as object identity in configured strain info. 
