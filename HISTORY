@@ -1,3 +1,9 @@
+TAG: htmpload-tr12312-4
+DATE: 2/23/17
+STAFF: sc
+CHANGES: US142 factor common stuff out of config into common.config - including STRAIN_INFO
+Fixed issues in STRAIN_INFO
+
 TAG: htmpload-tr12312-3
 DATE: 2/22/17
 STAFF: sc
