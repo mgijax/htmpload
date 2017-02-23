@@ -1,3 +1,10 @@
+TAG: htmpload-tr12312-5
+DATE: 2/23/17
+STAFF: sc
+CHANGES: US142 Redo 4c3 check, use referenceStrain as object identity in configured strain info. 
+Remove all references to strain ID either in the input or in the strain configuration. Remove ID from the 
+unique strain processing key
+
 TAG: htmpload-tr12312-4
 DATE: 2/23/17
 STAFF: sc

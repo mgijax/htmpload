@@ -213,20 +213,19 @@ phenoCtrList = []
 # Expected MGI ID to strain info mapping from configuration
 strainInfoMapping = os.environ['STRAIN_INFO']
 
-# Strain MGI ID to input strain  mapping from configuration
-inputStrainDict = {}
+# List of configured referenceStrains
+inputStrainList = []
 
-# Strain MGI ID to input strain mapping from configuration
-#referenceStrainDict = {}
+# Reference Strain to input strain mapping from configuration
 referenceStrainDict = {}
 
-# Strain MGI ID to strain template for creating strain nomen from configuration
+# Reference strain template for creating strain nomen from configuration
 strainTemplateDict = {}
 
-# Strain MGI ID to strain type from configuration
+# Reference strain type from configuration
 strainTypeDict = {}
 
-# Strain MGI ID to strain attributes from configuration
+# Reference strain attributes from configuration
 strainAttribDict = {}
 
 # uniq set of strain lines written to strainload input file
@@ -418,11 +417,11 @@ def initialize():
     tokens = map(string.strip, string.split(strainInfoMapping, ','))
     for t in tokens:
 	iStrain, rID, rStrain, rTemplate, rType, rAttr = string.split(t, '|')
-	inputStrainDict[rID] = iStrain
-	referenceStrainDict[rID] = rStrain
-	strainTemplateDict[rID] = rTemplate
-	strainTypeDict[rID]  = rType
-	strainAttribDict[rID] = rAttr
+	inputStrainList.append(iStrain)
+	referenceStrainDict[iStrain] = rStrain
+	strainTemplateDict[iStrain] = rTemplate
+	strainTypeDict[iStrain]  = rType
+	strainAttribDict[iStrain] = rAttr
 
     #
     # load colony code to strain ID mappings
@@ -701,8 +700,7 @@ def parseIMPCFile():
         alleleID = alleleID2 = f['allele_accession_id']
         alleleState = f['zygosity']
         alleleSymbol = f['allele_symbol']
-        strainName = f['strain_name']
-        strainID = f['strain_accession_id']
+        inputStrain = f['strain_name']
         markerID = f['marker_accession_id']
         gender = f['sex']
         colonyID = f['colony_id']
@@ -714,8 +712,7 @@ def parseIMPCFile():
              alleleID + '\t' + \
              alleleState + '\t' + \
              alleleSymbol + '\t' + \
-             strainName + '\t' + \
-             strainID + '\t' + \
+             inputStrain + '\t' + \
              markerID + '\t' + \
              gender + '\t' + \
              colonyID + '\n'
@@ -727,8 +724,7 @@ def parseIMPCFile():
 		alleleID == '' or \
             	alleleState == '' or \
 		alleleSymbol == '' or \
-		strainName == '' or \
-            	strainID == '' or \
+		inputStrain == '' or \
 		markerID == '' or  \
 		gender == '' or \
             	colonyID == '':
@@ -783,8 +779,7 @@ def parseIMPCLacZFile():
 	alleleID = f['allele_accession_id']
 	alleleState = f['zygosity']
         alleleSymbol = f['allele_symbol']
-        strainName = f['strain_name']
-        strainID = f['strain_accession_id']
+        inputStrain = f['strain_name']
         markerID = f['gene_accession_id']
         markerSymbol = f['gene_symbol']
         gender = f['sex']
@@ -819,8 +814,7 @@ def parseIMPCLacZFile():
              alleleID + '\t' + \
              alleleState + '\t' + \
              alleleSymbol + '\t' + \
-             strainName + '\t' + \
-             strainID + '\t' + \
+             inputStrain + '\t' + \
              markerID + '\t' + \
              gender + '\t' + \
              colonyID + '\n'
@@ -830,8 +824,7 @@ def parseIMPCLacZFile():
                 alleleID == '' or \
                 alleleState == '' or \
                 alleleSymbol == '' or \
-                strainName == '' or \
-                strainID == '' or \
+                inputStrain == '' or \
                 markerID == '' or  \
                 gender == '' or \
                 colonyID == '':
@@ -878,10 +871,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     #print 'dupStrainKey: %s' % dupStrainKey
     # unpack the key into attributes
 
-    alleleID, alleleSymbol, strainName, strainID, markerID, colonyID, mutantID, imitsProdCtr = \
+    alleleID, alleleSymbol, inputStrain, markerID, colonyID, mutantID, imitsProdCtr = \
     	string.split(uniqStrainProcessingKey, '|') 
-
-    rawStrainName = strainName
 
     # Production Center Lab Code Check US5 doc 4c2
     if not imitsProdCtr in procCtrToLabCodeDict:
@@ -896,12 +887,11 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
             return 'error'
 
     # Input Strain check #1/#2 US5 doc 4c3
-    if dupStrainKey == 0 and not (strainID in inputStrainDict and \
-       inputStrainDict[strainID] == strainName):
+    if dupStrainKey == 0 and inputStrain not in inputStrainList:
 
 	# This is just a check - the strain name will be determined outside this block
-	msg = 'Strain ID/Name discrepancy, "Not Specified" used : %s %s' % (strainID, strainName)
-	logIt(msg, line, 0, 'strainIdNameDiscrep')
+	msg = 'Input Strain not configured, "Not Specified" used : %s' % (inputStrain)
+	logIt(msg, line, 0, 'inputStrainNotConfigured')
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	#print '%s returning "Not Specified"' % msg
 	return 'Not Specified'
@@ -909,11 +899,11 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
 
-    if strainID in referenceStrainDict:
-	strainRoot = referenceStrainDict[strainID]
+    if inputStrain in referenceStrainDict:
+	strainRoot = referenceStrainDict[inputStrain]
 	labCode = procCtrToLabCodeDict[imitsProdCtr]
-	# if referenceStrainDict has key strainID so does strainTemplateDict
-	strainTemplate = strainTemplateDict[strainID]
+	# if referenceStrainDict has key inputStrain so does strainTemplateDict
+	strainTemplate = strainTemplateDict[inputStrain]
 	strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
         #print 'calculated strain name: %s' % strainName
     else:  # otherwise use 'Not Specified'
@@ -937,8 +927,8 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	
 	return 'error'
     
-    strainType = strainTypeDict[strainID]
-    attributes = strainAttribDict[strainID]
+    strainType = strainTypeDict[inputStrain]
+    attributes = strainAttribDict[inputStrain]
     attributes = attributes.replace(':', '|')
 
     strainLine = strainName + '\t' + \
@@ -1137,7 +1127,7 @@ def createHTMPFile():
 
 	# We know this attributes are not blank - see parseJson
 	resourceName, phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
-		strainName, strainID, markerID, gender, colonyID = line[:-1].split('\t')
+		inputStrain, markerID, gender, colonyID = line[:-1].split('\t')
 
 	returnVal = checkAlleleState(alleleState, line)
 	if returnVal == 'error':
@@ -1205,8 +1195,8 @@ def createHTMPFile():
 	#
 
 	# key to determine uniq entries for strain processing
-	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s|%s' % \
-	    (alleleID, alleleSymbol, strainName, strainID, markerID, \
+	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
+	    (alleleID, alleleSymbol, inputStrain, markerID, \
 		colonyID, mutantID, imitsProdCtr)
 
 	# resolve the colonyID to a strain in the database
@@ -1267,10 +1257,10 @@ def createHTMPFile():
 	msgList = uniqStrainProcessingDict[key]
 	msg = msgList[0]
 	for line in msgList[1:]:
-	    if 'Strain ID/Name discrepancy' in msg:
-		logIt(msg, line, 0, 'strainIdNameDiscrep')
+	    if 'Input Strain not configured' in msg:
+		logIt(msg, line, 0, 'inputStrainNotConfigured')
 	    else:
-		logIt(msg, line, 1, 'strainIdNameDiscrep')
+		logIt(msg, line, 1, 'inputStrainNotConfigured')
     #
     # HIPPO US146 - check for new strains with multiple colony ids
     #
