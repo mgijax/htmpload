@@ -45,8 +45,9 @@ Usage="Usage: preprocess.sh config"
 #       - TR11674
 #
 ###########################################################################
-
-cd `dirname $0`
+BINDIR=`pwd`
+cd ${BINDIR}/..
+echo `pwd`
 
 if [ $# -lt 1 ]
 then
@@ -54,7 +55,22 @@ then
     exit 1
 fi
 
+CONFIG_COMMON=`pwd`/common.config
+
+cd ${BINDIR}
+
 CONFIG=$1
+
+#
+# Make sure the configuration files exist and source
+#
+if [ -f ${CONFIG_COMMON} ]
+then
+    . ${CONFIG_COMMON}
+else
+    echo "Missing configuration file: ${CONFIG_COMMON}"
+    exit 1
+fi
 
 #
 # Make sure the configuration file exists and source it.
@@ -72,18 +88,21 @@ fi
 #
 LOG=${LOG_DIAG}
 
-#
-# copy imits2 input file into working directory
-#
-echo "copying iMits input file..." >> ${LOG}
-date >> ${LOG}
-rm -rf ${IMITS_COPY_INPUT_FILE}
-cp ${IMITS_INPUT_FILE} ${IMITS_COPY_INPUT_FILE}
-STAT=$?
-if [ ${STAT} -ne 0 ]
+if [ "${IMITS_INPUT_FILE}" != "" ]
 then
-    echo "Error: copying ${IMITS_INPUT_FILE} to ${IMITS_COPY_INPUT_FILE}" | tee -a ${LOG}
-    exit 1
+    #
+    # copy imits2 input file into working directory
+    #
+    echo "copying iMits input file..." >> ${LOG}
+    date >> ${LOG}
+    rm -rf ${IMITS_COPY_INPUT_FILE}
+    cp ${IMITS_INPUT_FILE} ${IMITS_COPY_INPUT_FILE}
+    STAT=$?
+    if [ ${STAT} -ne 0 ]
+    then
+	echo "Error: copying ${IMITS_INPUT_FILE} to ${IMITS_COPY_INPUT_FILE}" | tee -a ${LOG}
+	exit 1
+    fi
 fi
 
 #

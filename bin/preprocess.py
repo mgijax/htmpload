@@ -5,7 +5,7 @@
 #
 #  Purpose:
 #
-#      This script will parse IMPC and IMITS input files to
+#      This script will parse input files to
 #      create a High-Throughput MP input file
 #
 #  Usage:
@@ -16,8 +16,8 @@
 #
 #  Inputs:
 #
-#   IMPC/Pheontypes/MP input file (SOURCE_COPY_INPUT_FILE from impcmpload.config)
-#   This is a json format file
+#   IMPC - This is a json format file 
+#	SOURCE_COPY_INPUT_FILE from impcmpload.config
 #   1. Phenotyping Centre
 #   2. MGI Allele ID
 #   3. Zygosity
@@ -28,20 +28,21 @@
 #   8. Gender
 #   9. Colony ID
 #
-#   IMPC/LacZ input file (SOURCE_COPY_INPUT_FILE from impclaczload.config)
-#   This is a json format file
+#   IMPC/LacZ - This is a json format file
+#	SOURCE_COPY_INPUT_FILE from impclaczload.config
 #   1.  Phenotyping Center
 #   2.  MGI Allele ID
 #   3.  Allele State
 #   4.  Allele Symbol
 #   5.  Strain Name
-#   6.  MGI Strain ID
+#   6.  MGI Strain ID (not used)
 #   7.  MGI Marker ID
 #   8.  Marker Symbol
 #   9.  Gender
 #   10. Colony ID
 #
-#   IMITS input file (IMITS_COPY_INPUT_FILE)
+#   IMITS input file - tab delimited
+#	 IMITS_COPY_INPUT_FILE from impcmpload.config and impclaczload.config
 #   This is a imits/tsv (tab-delimited) file
 #   1. Marker Symbol
 #   2. MGI Marker ID
@@ -52,9 +53,29 @@
 #   7. Production Consortium
 #   8. Phenotyping Centre
 #   9. Phenotyping Consortium Centre
-#   10. Productin Centre
+#   10. Production Centre
 #   11. Allele Symbol
 #
+#   DMDD input file - tab delimited
+#       SOURCE_COPY_INPUT_FILE from impcmpload.config
+#   1. Production Center  (resource name)
+#   2. Phenotyping Center      
+#   3. Interpretation (Annotation) Center      
+#   4. ES Cell Name
+#   5. MP ID   
+#   6. MGI Allele ID   
+#   7. Allele State    
+#   8. Allele Symbol   
+#   9. MGI Marker ID   
+#   10. Evidence Code   (not used)
+#   11. Strain Name     
+#   12. Strain ID   (not used)
+#   13. Gender  (not used)
+#   14. Colony ID       
+#   15. DMDD ID Stage   (not used)
+#   16. Cell Line       
+#   17. Comments ('*;*' delimited) (not used)
+
 #  Outputs:
 #
 #   htmpload format (HTMP_INPUT_FILE):
@@ -71,7 +92,8 @@
 #   11. Gender 
 #   12. Colony ID
 #
-#   IMPC strainload format file (STRAIN_INPUT_FILE)
+#   strainload format file (STRAIN_INPUT_FILE)
+
 #    1. Strain Name
 #    2. MGI Allele ID 
 #    3. Strain Type
@@ -90,9 +112,10 @@
 #      This script will perform following steps:
 #       1) initialize - get values from the environment, load lookups
 #	2) open input/output files
-#	3) parse the IMITS File into a data structure
-#	4) parse the IMPC File into an intermediate file
-#	5) create HTMP Load format file from IMPC/IMITS data
+#	3) check for provider
+#	4) parse input files using appropriate parsing function to
+#	  create intermediate file
+#	5) interate over intermediate file to create HTMP Load format file 
 #	6) close input/output files
 #
 #  Notes: 
@@ -101,14 +124,14 @@
 #	http://mgiwiki/mediawiki/index.php/sw:IMPC_htmpload#Strains
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
 #
+# sc   02/17/2017
+#       - TR12488 Mice Crispies project
+#
 #  03/30/2016
 #	- TR12273/use new IMITS report input file to verify IMPC colony/marker
 #	  and to find production_centre and es_cell_name. the json IMITS file
 #	  is incorrect. using mirror_wget/www.mousephenotype.org instead.
 #	- added 'parseIMPCLacZFile' for parsing IMPC/LacZ input file
-#
-# sc   02/17/2017
-#       - TR12488 Mice Crispies project
 #
 #  12/08/2015	lec
 #	- TR12070 epic
@@ -129,7 +152,7 @@ import time
 #db.setTrace(True)
 
 # load type
-isMP = 0
+isIMPC = 0
 isLacZ = 0
 
 # strain constants
@@ -140,13 +163,10 @@ createdBy = 'htmpload'
 # htmp file constants
 evidenceCode = 'EXP'
 
-# the data interpretation center property value for IMPC
-interpretationCenter = 'IMPC'
-
 # Input 
-impcFile = None
-impcFileInt = None
-impcFileDup = None
+inputFile = None
+inputFileInt = None
+inputFileDup = None
 imitsFile = None
 
 # Outputs 
@@ -159,10 +179,10 @@ htmpErrorFile = None
 htmpSkipFile = None
 
 # file pointers
-fpIMPC = None
-fpIMPCintWrite = None
-fpIMPCintRead = None
-fpIMPCdup = None
+fpInput = None
+fpInputintWrite = None
+fpInputintRead = None
+fpInputdup = None
 fpIMITS = None
 fpHTMP = None
 fpStrain = None
@@ -252,17 +272,16 @@ class Allele:
 # Throws: Nothing
 #
 def initialize():
-    global impcFile, impcFileInt, impcFileDup, imitsFile, htmpFile, strainFile
-    global logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
+    global inputFile, inputFileInt, inputFileDup, imitsFile, htmpFile
+    global strainFile, logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global referenceStrainDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict
-    global isMP, isLacZ
+    global isIMPC, isLacZ, isDMDD, loadType
 
-    impcFile = os.getenv('SOURCE_COPY_INPUT_FILE')
-    impcFileInt = '%s_int' % impcFile
-    impcFileDup = '%s_dup' % impcFile
-    imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
+    inputFile = os.getenv('SOURCE_COPY_INPUT_FILE')
+    inputFileInt = '%s_int' % inputFile
+    inputFileDup = '%s_dup' % inputFile
     htmpFile = os.getenv('HTMP_INPUT_FILE')
     strainFile = os.getenv('STRAIN_INPUT_FILE')
     logDiagFile = os.getenv('LOG_DIAG')
@@ -276,22 +295,25 @@ def initialize():
     #
     # determine load type (LOADTYPE)
     # 
-    if loadType == 'mp':
-    	isMP = 1
+    if loadType == 'impc':
+    	isIMPC = 1
     elif loadType == 'lacz':
     	isLacZ = 1
+    elif loadType == 'dmdd':
+	isDMDD = 1
     else:
         print 'Environment variable not set: LOADTYPE'
         rc = 1
-
+    if isIMPC or isLacZ:
+	imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
     #
     # Make sure the environment variables are set.
     #
-    if not impcFile:
+    if not inputFile:
         print 'Environment variable not set: SOURCE_COPY_INPUT_FILE'
         rc = 1
 
-    if not imitsFile:
+    if (loadType == 'impc' or loadType == 'lacz') and not imitsFile:
         print 'Environment variable not set: IMITS_COPY_INPUT_FILE'
         rc = 1
 
@@ -473,45 +495,46 @@ def initialize():
 #
 
 def openFiles():
-    global fpIMPC, fpIMITS, fpHTMP, fpStrain
-    global fpIMPCintWrite, fpIMPCdup
+    global fpInput, fpIMITS, fpHTMP, fpStrain
+    global fpInputintWrite, fpInputdup
     global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
 
     #
-    # Open the IMPC file
+    # Open the input file
     #
     try:
-        fpIMPC = open(impcFile, 'r')
+        fpInput = open(inputFile, 'r')
     except:
-        print 'Cannot open file: ' + impcFile
+        print 'Cannot open file: ' + inputFile
         return 1
 
     #
-    # Open the intermediate IMPC file
+    # Open the intermediate file
     #
     try:
-        fpIMPCintWrite = open(impcFileInt, 'w')
+        fpInputintWrite = open(inputFileInt, 'w')
     except:
-        print 'Cannot open file: ' + impcFileInt
+        print 'Cannot open file: ' + inputFileInt
         return 1
 
     #
-    # Open the intermediate IMPC Dup file
+    # Open the intermediate Dup file
     #
     try:
-        fpIMPCdup = open(impcFileDup, 'w')
+        fpInputdup = open(inputFileDup, 'w')
     except:
-        print 'Cannot open file: ' + impcFileDup
+        print 'Cannot open file: ' + inputFileDup
         return 1
 
     #
     # Open the IMITS file
     #
-    try:
-        fpIMITS = open(imitsFile, 'r')
-    except:
-        print 'Cannot open file: ' + imitsFile
-        return 1
+    if loadType == 'impc' or loadType == 'lacz':
+	try:
+	    fpIMITS = open(imitsFile, 'r')
+	except:
+	    print 'Cannot open file: ' + imitsFile
+	    return 1
 
     #
     # Open the htmp output file 
@@ -584,8 +607,8 @@ def openFiles():
 #
 def closeFiles():
 
-    if fpIMPC:
-        fpIMPC.close()
+    if fpInput:
+        fpInput.close()
 
     if fpIMITS:
 	fpIMITS.close()
@@ -681,12 +704,14 @@ def parseIMITSFile():
 # Throws: Nothing
 #
 def parseIMPCFile():
-    global fpIMPCintWrite, fpIMPCdup
+    global fpInputintWrite, fpInputdup
     
     #print 'creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-    jFile = json.load(fpIMPC)
+    jFile = json.load(fpInput)
     #print 'done creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
+    # the data interpretation center property value for IMPC
+    interpretationCenter = 'IMPC'
     lineSet = set([])
 
     for f in jFile['response']['docs']:
@@ -706,8 +731,13 @@ def parseIMPCFile():
         colonyID = f['colony_id']
 
         # line representing data from the IMPC input file 
+	# no productionCenter
+	# no mutant ID
 	line = resourceName + '\t' + \
 	     phenotypingCenter + '\t' + \
+	     interpretationCenter + '\t' + \
+	     '\t' + \
+	     '\t' + \
              mpID + '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -733,16 +763,16 @@ def parseIMPCFile():
 
         # lineSet assures dups are filtered out
 	if line in lineSet:
-	    fpIMPCdup.write(line)
+	    fpInputdup.write(line)
 	    continue
 
         lineSet.add(line)
 
     for line in lineSet:
-	fpIMPCintWrite.write(line)
+	fpInputintWrite.write(line)
 
-    fpIMPCintWrite.close()
-    fpIMPCdup.close()
+    fpInputintWrite.close()
+    fpInputdup.close()
 
     return 0
 
@@ -753,11 +783,12 @@ def parseIMPCFile():
 # Throws: Nothing
 #
 def parseIMPCLacZFile():
-    global fpIMPCintWrite, fpIMCPdup
+    global fpInputintWrite, fpIMCPdup
 
     print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-    jFile = json.load(fpIMPC)
-    resourceName = 'IMPC'
+    jFile = json.load(fpInput)
+    resourceName = 'IMPC' 
+    interpretationCenter = 'IMPC' 
     lineSet = set([])
     sGroupValList = []
     totalCt = 0
@@ -807,9 +838,15 @@ def parseIMPCLacZFile():
 	except:
 	    parameter_association_value = []
 
-        # line representing data from the IMPC input file
+        # line representing data from the IMPC LacZ input file
+	# no productionCenter
+	# no mutant ID
+	# no MP ID
         line =  resourceName + '\t' + \
 	     phenotypingCenter + '\t' + \
+	     interpretationCenter + '\t' + \
+	     '\t' + \
+	     '\t' + \
              '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -834,11 +871,11 @@ def parseIMPCLacZFile():
 	lineSet.add(line)
 
     for line in lineSet:
-	fpIMPCintWrite.write(line)
+	fpInputintWrite.write(line)
 	rcdWrittenCt += 1
 
-    fpIMPCintWrite.close()
-    fpIMPCdup.close()
+    fpInputintWrite.close()
+    fpInputdup.close()
 
     print 'notExpCt: %s' % notExpCt
     print 'nopasId: %s' % nopasId
@@ -848,6 +885,77 @@ def parseIMPCLacZFile():
 
     return 0
 
+#
+# Purpose: parse DMDD into intermediate file
+#       lines with missing data reported to the skip file
+#       duplicate entries in json file collapsed
+# Returns: 1 if file cannot be opened, else 0
+# Assumes: input file descriptor has been created
+# Effects: writes intermediate file to file system
+# Throws: Nothing
+#
+# MICE CRISPIES project
+#
+def parseDMDDFile():
+    global fpInputintWrite, fpInputdup
+    resourceName = 'DMDD'
+
+    lineSet = set([])
+    header = fpInput.readline()
+    for line in fpInput.readlines():
+	tokens = line[:-1].split('\t')
+	productionCtr = tokens[0] # production center
+	phenotypingCenter = tokens[1]
+	interpretationCenter = tokens[2]
+	mutantID =  tokens[3]
+	mpID =  tokens[4]
+	alleleID =  tokens[5]
+	alleleState =  tokens[6]
+	alleleSymbol = tokens[7]
+	markerID = tokens[8]
+	inputStrain = tokens[10]
+	gender = tokens[12]
+	colonyID = tokens[13]
+
+        # line representing data from the DMDD input file
+        line =  resourceName + '\t' + \
+             phenotypingCenter + '\t' + \
+             interpretationCenter + '\t' + \
+	     productionCtr  + '\t' + \
+	     mutantID + '\t' + \
+             mpID + '\t' + \
+             alleleID + '\t' + \
+             alleleState + '\t' + \
+             alleleSymbol + '\t' + \
+             inputStrain + '\t' + \
+             markerID + '\t' + \
+             gender + '\t' + \
+             colonyID + '\n'
+        # skip if blank field in IMPC data and report to the skip file
+        if phenotypingCenter == '' or \
+		interpretationCenter == '' or \
+		productionCtr == '' or \
+		mutantID == '' or \
+		mpID  == '' or \
+                alleleID == '' or \
+                alleleState == '' or \
+                alleleSymbol == '' or \
+                inputStrain == '' or \
+                markerID == '' or  \
+                gender == '' or \
+                colonyID == '':
+            fpHTMPSkip.write(line)
+            continue
+
+        lineSet.add(line)
+    
+    for line in lineSet:
+        fpInputintWrite.write(line)
+
+    fpInputintWrite.close()
+    fpInputdup.close()
+
+    return 0
 #
 # Purpose: do strain checks on a set of attributes representing a unique
 #	strain in the input
@@ -871,13 +979,13 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     #print 'dupStrainKey: %s' % dupStrainKey
     # unpack the key into attributes
 
-    alleleID, alleleSymbol, inputStrain, markerID, colonyID, mutantID, imitsProdCtr = \
+    alleleID, alleleSymbol, inputStrain, markerID, colonyID, mutantID, prodCtr = \
     	string.split(uniqStrainProcessingKey, '|') 
 
     # Production Center Lab Code Check US5 doc 4c2
-    if not imitsProdCtr in procCtrToLabCodeDict:
+    if not prodCtr in procCtrToLabCodeDict:
 	if dupStrainKey == 0:
-	    msg = 'Production Center not in MGI (voc_term table): %s' % imitsProdCtr
+	    msg = 'Production Center not in MGI (voc_term table): %s' % prodCtr
 	    logIt(msg, line, 1, 'prodCtrNotInDb')
 	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	    #print '%s returning "error"' % msg
@@ -901,7 +1009,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
     if inputStrain in referenceStrainDict:
 	strainRoot = referenceStrainDict[inputStrain]
-	labCode = procCtrToLabCodeDict[imitsProdCtr]
+	labCode = procCtrToLabCodeDict[prodCtr]
 	# if referenceStrainDict has key inputStrain so does strainTemplateDict
 	strainTemplate = strainTemplateDict[inputStrain]
 	strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
@@ -920,7 +1028,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     		strainNameToColonyIdDict[strainName] != []:
 
 	dbColonyIdList =  strainNameToColonyIdDict[strainName]
-	msg = 'MGI/database colony ID(s) %s for strain %s does not match IMPC colony id %s' % \
+	msg = 'MGI/database colony ID(s) %s for strain %s does not match colony id %s' % \
 		(string.join(dbColonyIdList), strainName, colonyID)
 	
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
@@ -955,16 +1063,18 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     return strainName
 
 #
-# Purpose: resolves the IMPC alleleState term to MGI alleleState term
-# Returns: string 'error' if IMPC alleleState not recognized, else resolved alleleState
+# Purpose: resolves the input alleleState term to MGI alleleState term
+# Returns: string 'error' if input alleleState not recognized, else resolved alleleState
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs 
 # Throws: Nothing
 #
 def checkAlleleState(alleleState, line):
+    if alleleState in ['Heterozygous', 'Homozygous', 'Hemizygous']:
+	# these are correct, just return them
+	return alleleState
 
-    # report and skip if either alleleState or gender is unrecognized
-
+    # translate the allele state
     if alleleState.lower() == 'heterozygote':
 	alleleState = 'Heterozygous'
 
@@ -975,7 +1085,7 @@ def checkAlleleState(alleleState, line):
 	alleleState = 'Hemizygous'
 
     else:
-	# 8/22 all match
+	# report and skip if alleleState is unrecognized
 	msg = 'Unrecognized allele state %s' % alleleState
 	logIt(msg, line, 1, 'alleleState')
 	return  'error'
@@ -999,8 +1109,8 @@ def checkColonyID(colonyID, line):
     return 0
 
 #
-# Purpose: resolves the IMPC gender term to MGI gender term
-# Returns: string 'error' IMPC gender not recognized, else resolved gender
+# Purpose: resolves the input gender term to MGI gender term
+# Returns: string 'error' if input gender not recognized, else resolved gender
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -1016,9 +1126,12 @@ def checkGender(gender, line):
     elif gender.lower() == 'no_data':
 	# will be converted to NA laster in makeAnnotation.py
 	gender = ''
+
     elif gender.lower() == 'both':
-	# will be converted to NA laster in makeAnnotation.py
+	# will be converted to NA later in makeAnnotation.py
 	gender = 'Both'
+    elif gender.lower() == 'na':
+	gender = gender # no change
     else:
 	msg = 'Unrecognized gender %s' % gender
 	logIt(msg, line, 1, 'gender')
@@ -1027,8 +1140,8 @@ def checkGender(gender, line):
     return gender 
 
 #
-# Purpose: check the IMPC phenotyping center for existence in the database
-# Returns: string 'error' IMPC center not recognized, else center
+# Purpose: check the input phenotyping center for existence in the database
+# Returns: string 'error' input center not recognized, else center
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -1082,7 +1195,7 @@ def writeCuratorLog():
 	fpLogCur.write(string.join(errorDict[type]))
 
 #
-# Purpose: Read the IMPC and IMITS files and re-format it to create a 
+# Purpose: Read the intermediate file and re-format it to create a 
 #    High-Throughput MP input file
 # Returns: 0
 # Assumes: input/output files exist and have been opened
@@ -1105,12 +1218,12 @@ def createHTMPFile():
     noLoadAnnotList = []
 
     #
-    # Open the intermediate IMPC file
+    # Open the intermediate file
     #
     try:
-        fpIMPCintRead = open(impcFileInt, 'r')
+        fpInputintRead = open(inputFileInt, 'r')
     except:
-        print 'Cannot open file: ' + impcFileInt
+        print 'Cannot open file: ' + inputFileInt
         return 1
 
     # 
@@ -1118,16 +1231,19 @@ def createHTMPFile():
     #    data skipped
     #
     
-    for line in fpIMPCintRead.readlines():
+    for line in fpInputintRead.readlines():
 
         #print '\n\nNEW RECORD'
 	#print 'line: %s' % line
 
 	error = 0
 
-	# We know this attributes are not blank - see parseJson
-	resourceName, phenotypingCenter, mpID, alleleID, alleleState, alleleSymbol, \
-		inputStrain, markerID, gender, colonyID = line[:-1].split('\t')
+	# IMPC - mutantID and productionCtr blank
+	# Lacz - mutantID, productionCtr and mpID blank
+	# DMDD - all attributes present
+	resourceName, phenotypingCenter, interpretationCenter, productionCtr, \
+	    mutantID, mpID, alleleID, alleleState, alleleSymbol, inputStrain, \
+	    markerID, gender, colonyID = line[:-1].split('\t')
 
 	returnVal = checkAlleleState(alleleState, line)
 	if returnVal == 'error':
@@ -1146,17 +1262,20 @@ def createHTMPFile():
         # if alleleState, gender or phenotyping error, continue to next line
         if error:
             continue
+	#
+	# IMPC/LacZ only 
+	#
+	if isIMPC or isLacZ:
+	    # verify the IMPC/colony_id with the IMITS/colonyName
+	    if checkColonyID(colonyID, line):
+		continue
 
-	# verify the IMPC/colony_id with the IMITS/colonyName
-	if checkColonyID(colonyID, line):
-	    continue
+	    # verify the IMPC/markerID with the IMITS/marker ID
+	    # note that the IMITS file also provides the 'mutantID' (es cell line)
+	    productionCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
 
-	# verify the IMPC/markerID with the IMITS/marker ID
-	# note that the IMITS file also provides the 'mutantID' (es cell line)
-	imitsProdCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
-
-        if compareMarkers(markerID, imitsMrkID, line):
-	    continue
+	    if compareMarkers(markerID, imitsMrkID, line):
+		continue
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
@@ -1197,7 +1316,7 @@ def createHTMPFile():
 	# key to determine uniq entries for strain processing
 	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
 	    (alleleID, alleleSymbol, inputStrain, markerID, \
-		colonyID, mutantID, imitsProdCtr)
+		colonyID, mutantID, productionCtr)
 
 	# resolve the colonyID to a strain in the database
 	if colonyID in colonyToStrainNameDict:
@@ -1334,14 +1453,15 @@ print 'openFiles: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.t
 if openFiles() != 0:
     sys.exit(1)
 
-print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-if parseIMITSFile() != 0:
-    sys.exit(1)
+if isIMPC or isLacZ:
+    print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    if parseIMITSFile() != 0:
+	sys.exit(1)
 
 #
-# process either IMPC/MP or IMPC/LacZ input file
+# process either IMPC/MP, IMPC/LacZ or DMDD input file
 #
-if isMP:
+if isIMPC:
     print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCFile() != 0:
         sys.exit(1)
@@ -1349,6 +1469,13 @@ elif isLacZ:
     print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCLacZFile() != 0:
         sys.exit(1)
+elif isDMDD:
+    print 'parseDMDDFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    retCode = parseDMDDFile()
+    print 'parseDMDD return code: %s' % retCode
+    if retCode != 0:
+        sys.exit(1)
+
 
 print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 returnCode = createHTMPFile()
