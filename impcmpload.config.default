@@ -21,7 +21,7 @@ QCOUTPUTDIR=${RPTDIR}
 
 export FILEDIR ARCHIVEDIR INPUTDIR OUTPUTDIR LOGDIR RPTDIR QCOUTPUTDIR 
 
-LOADTYPE=mp
+LOADTYPE=impc
 export LOADTYPE
 
 ###########################################################################
