@@ -6,7 +6,8 @@
 #  Purpose:
 #
 #      This script is a wrapper around the process that parses an input file
-#	to create a common format HTMP load file
+#	to create a common format HTMP load file and create strains
+#	It is a convenience script for development.
 #
 Usage="Usage: preprocess.sh config"
 #
@@ -87,7 +88,8 @@ fi
 # Establish the log file.
 #
 LOG=${LOG_DIAG}
-
+echo "LOG: ${LOG}"
+touch ${LOG}
 if [ "${IMITS_INPUT_FILE}" != "" ]
 then
     #
@@ -110,6 +112,7 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
+echo 'calling preprocess.py'
 ./preprocess.py 2>&1 >> ${LOG}
 PREPROCESS_STAT=$?
 if [ ${PREPROCESS_STAT} -eq 1 ]
@@ -123,6 +126,7 @@ fi
 #
 echo "" >> ${LOG}
 date >> ${LOG}
+echo 'calling makeStrains.py'
 ./makeStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -eq 1 ]

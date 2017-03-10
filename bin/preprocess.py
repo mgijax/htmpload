@@ -213,6 +213,9 @@ colonyToStrainNameDict = {}
 # strain name mapped to colony id; colony id can be empty
 strainNameToColonyIdDict = {}
 
+# strain name mapped to genotype in the database
+strainNameToGenotypeDict = {}
+
 # allele MGI ID from the database mapped to attributes
 # {mgiID:Allele object, ...}
 allelesInDbDict = {}
@@ -276,7 +279,7 @@ def initialize():
     global strainFile, logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global referenceStrainDict, strainTemplateDict, strainTypeDict
-    global colonyToStrainNameDict, strainNameToColonyIdDict
+    global colonyToStrainNameDict, strainNameToColonyIdDict, strainNameToGentypeDict
     global isIMPC, isLacZ, isDMDD, loadType
 
     inputFile = os.getenv('SOURCE_COPY_INPUT_FILE')
@@ -481,7 +484,30 @@ def initialize():
 	    colonyToStrainNameDict[cID].append(str)
 	# HIPPO 6/2016 - handle multi colonyIDs/strain
 	strainNameToColonyIdDict[str] = cIDList
+    # load strain name to genotype mappings
+    results = db.sql('''select distinct s.strain, cl.cellLine, a.accid  as alleleID
+	from PRB_Strain s, GXD_Genotype g, GXD_AllelePair ap, ALL_CellLine cl, ACC_Accession a
+	where s._Strain_key != -1
+	and s.standard = 1
+	and s.private = 0
+	and g._Strain_key = s._Strain_key
+	and g._Genotype_key = ap._Genotype_key
+	and ap._MutantCellline_key_1 is not null
+	and ap._MutantCellline_key_1 = cl._CellLine_key
+	and ap._Allele_key_1 = a._Object_key
+	and a._MGIType_key = 11
+	and a._LogicalDB_key = 1
+	and a.preferred = 1
+	and a.prefixPart = 'MGI:' ''', 'auto')
 
+    for r in results:
+	# Check 4c1a
+	s = r['strain']
+	c = r['cellLine']
+	a = r['alleleID']
+        if s not in strainNameToGenotypeDict:
+	    strainNameToGenotypeDict[s] = []
+  	strainNameToGenotypeDict[s].append([a, c])
     db.useOneConnection(0)
 
     return rc
@@ -956,6 +982,35 @@ def parseDMDDFile():
     fpInputdup.close()
 
     return 0
+
+#
+# Purpose: determine if the input genotype(s) match the database genotypes for a given strain
+# Returns: 1 if a genotype doesn't match
+#	0 if all genotypes match OR no genotype for strain in database
+# Assumes: Nothing
+# Effects: Nothing
+# Throws: Nothing
+#
+
+def checkGenotype(strainName, inputAlleleID, inputMutantID, line, uniqStrainProcessingKey, caller):
+    if strainName in strainNameToGenotypeDict: # check genotype
+	genotypeList = strainNameToGenotypeDict[strainName]
+	for genotype in genotypeList: # [allele, mcl]
+	     dbAlleleID = genotype[0]
+	     dbMutantID = genotype[1]
+	     if dbAlleleID != inputAlleleID or dbMutantID != inputMutantID:
+		# when strain matches the database directly
+		if caller == 'uniqStrainProcessing':
+		    msg = 'Strain name match in database: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
+		    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+		else: 
+		    # when atrain is matched with a colony ID
+		    msg = 'Strain name match via colony ID: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
+		    #logIt(msg, line, 1, 'cIDmatchGenoMismatch')
+		    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+		return 1
+    return 0   # no genotype for strain OR all genotypes for strain match
+
 #
 # Purpose: do strain checks on a set of attributes representing a unique
 #	strain in the input
@@ -967,19 +1022,14 @@ def parseDMDDFile():
 def doUniqStrainChecks(uniqStrainProcessingKey, line):
     global uniqStrainProcessingDict, newStrainDict
     
-    #print 'doUniqStrainChecks key: %s' % uniqStrainProcessingKey
-    #print 'doUniqStrainChecks line: %s' % line
-
     dupStrainKey = 0
 
     if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
 	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
 	dupStrainKey = 1
 
-    #print 'dupStrainKey: %s' % dupStrainKey
     # unpack the key into attributes
-
-    alleleID, alleleSymbol, inputStrain, markerID, colonyID, mutantID, prodCtr = \
+    inputAlleleID, alleleSymbol, inputStrain, markerID, colonyID, inputMutantID, prodCtr = \
     	string.split(uniqStrainProcessingKey, '|') 
 
     # Production Center Lab Code Check US5 doc 4c2
@@ -988,10 +1038,9 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	    msg = 'Production Center not in MGI (voc_term table): %s' % prodCtr
 	    logIt(msg, line, 1, 'prodCtrNotInDb')
 	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	    #print '%s returning "error"' % msg
+	    
 	    return 'error'
 	else: # we've seen this key already, just return 'error'
-	    #print 'returning "error"' 
             return 'error'
 
     # Input Strain check #1/#2 US5 doc 4c3
@@ -1001,7 +1050,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	msg = 'Input Strain not configured, "Not Specified" used : %s' % (inputStrain)
 	logIt(msg, line, 0, 'inputStrainNotConfigured')
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	#print '%s returning "Not Specified"' % msg
+	
 	return 'Not Specified'
     
     # strain name construction US5 doc 4c4
@@ -1035,17 +1084,20 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	
 	return 'error'
     
+    if checkGenotype(strainName, inputAlleleID, inputMutantID, line,  uniqStrainProcessingKey, 'uniqStrainProcessing') == 1:
+	return 'error'
+
     strainType = strainTypeDict[inputStrain]
     attributes = strainAttribDict[inputStrain]
     attributes = attributes.replace(':', '|')
 
     strainLine = strainName + '\t' + \
-	alleleID + '\t' + \
+	inputAlleleID + '\t' + \
 	strainType + '\t' + \
 	species + '\t' + \
 	standard + '\t' + \
 	createdBy + '\t' + \
-	mutantID + '\t' + \
+	inputMutantID + '\t' + \
 	colonyID + '\t' + \
 	attributes + '\n'
 
@@ -1233,9 +1285,6 @@ def createHTMPFile():
     
     for line in fpInputintRead.readlines():
 
-        #print '\n\nNEW RECORD'
-	#print 'line: %s' % line
-
 	error = 0
 
 	# IMPC - mutantID and productionCtr blank
@@ -1329,6 +1378,9 @@ def createHTMPFile():
 	    # if we get here we have a single strain
   	    strainName = colonyToStrainNameDict[colonyID][0]
 
+	    # QC the genotype
+	    if checkGenotype(strainName, alleleID, mutantID, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
+		continue
 	else:
 	    #
 	    # if strain not determined by colony ID first do checks on the 
@@ -1342,8 +1394,6 @@ def createHTMPFile():
 	    
 	# if all the checks passed write it out to the HTMP load format file
 	if strainName == 'error':
-	    # just print out for now for verification
-            #print 'rejected Uniq strain check line%s' % line
 	    continue
 
 	htmpLine = phenotypingCenter + '\t' + \
@@ -1371,7 +1421,6 @@ def createHTMPFile():
 	    htmpLineDict[key] = []
 	htmpLineDict[key].append(htmpLine)
 
-    print 'reporting uniq strain processing errors'
     for key in uniqStrainProcessingDict.keys():
 	msgList = uniqStrainProcessingDict[key]
 	msg = msgList[0]
@@ -1383,7 +1432,6 @@ def createHTMPFile():
     #
     # HIPPO US146 - check for new strains with multiple colony ids
     #
-    print 'reporting new strains with multi colony ids'
     for s in newStrainDict:
 	# we have multi colony ids for this strain, pick one to load, report
 	# the rest
