@@ -453,7 +453,7 @@ def initialize():
     # strain types 'coisogenic' and 'Not Specified'
     # strain  may not contain a colony id/will be reported later
     #
-
+    # remove private strain constraint
     results = db.sql('''
         select s.strain, trim(nc.note) as colonyID
 	from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
@@ -462,7 +462,6 @@ def initialize():
 	and n._NoteType_key = 1012
 	and n._MGIType_key = 10
 	and n._Note_key = nc._Note_key 
-		and s.private = 0
 	''', 'auto')
 
     for r in results:
@@ -485,11 +484,11 @@ def initialize():
 	# HIPPO 6/2016 - handle multi colonyIDs/strain
 	strainNameToColonyIdDict[str] = cIDList
     # load strain name to genotype mappings
+    # remove private strain constraint
     results = db.sql('''select distinct s.strain, cl.cellLine, a.accid  as alleleID
 	from PRB_Strain s, GXD_Genotype g, GXD_AllelePair ap, ALL_CellLine cl, ACC_Accession a
 	where s._Strain_key != -1
 	and s.standard = 1
-	and s.private = 0
 	and g._Strain_key = s._Strain_key
 	and g._Genotype_key = ap._Genotype_key
 	and ap._MutantCellline_key_1 is not null

@@ -1,3 +1,10 @@
+TAG: htmpload-tr12312-9
+DATE: 03/22/2017
+STAFF: sc
+CHANGES: US156 - include private strains in strain processing
+1) preprocess.py - removed private strain constrain in two lookups
+2) impcmpload.config - updated JNum
+
 TAG: htmpload-tr12312-8
 DATE: 03/06/2017
 STAFF: sc

@@ -98,8 +98,7 @@ LOG_TEST=${LOGDIR}/htmpload.test.log
 
 export LOG_PROC LOG_DIAG LOG_CUR LOG_VAL LOG_TEST
 
-JNUMBER=J:211773
-
+JNUMBER=J:239583 
 export JNUMBER
 
 # Genotype load
