@@ -216,6 +216,9 @@ strainNameToColonyIdDict = {}
 # strain name mapped to genotype in the database
 strainNameToGenotypeDict = {}
 
+# private strain names so we can report when we find one
+privateStrainList = []
+
 # allele MGI ID from the database mapped to attributes
 # {mgiID:Allele object, ...}
 allelesInDbDict = {}
@@ -280,13 +283,13 @@ def initialize():
     global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
     global referenceStrainDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict, strainNameToGentypeDict
-    global isIMPC, isLacZ, isDMDD, loadType
+    global privateStrainList, isIMPC, isLacZ, isDMDD, loadType
 
     inputFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     inputFileInt = '%s_int' % inputFile
     inputFileDup = '%s_dup' % inputFile
     htmpFile = os.getenv('HTMP_INPUT_FILE')
-    strainFile = os.getenv('STRAIN_INPUT_FILE')
+    strainFile =  os.getenv('STRAIN_INPUT_FILE')
     logDiagFile = os.getenv('LOG_DIAG')
     logCurFile = os.getenv('LOG_CUR')
     htmpErrorFile = os.getenv('HTMPERROR_INPUT_FILE')
@@ -507,6 +510,13 @@ def initialize():
         if s not in strainNameToGenotypeDict:
 	    strainNameToGenotypeDict[s] = []
   	strainNameToGenotypeDict[s].append([a, c])
+
+    results = db.sql('''select strain
+	    from PRB_Strain
+	    where private = 1''', 'auto')
+    for r in results:
+	privateStrainList.append(r['strain'])
+
     db.useOneConnection(0)
 
     return rc
@@ -1011,6 +1021,25 @@ def checkGenotype(strainName, inputAlleleID, inputMutantID, line, uniqStrainProc
     return 0   # no genotype for strain OR all genotypes for strain match
 
 #
+# Purpose: determine if constructed strain is a private strain in the database
+# Returns: 1 if strain is private
+#       0 if strain is not private
+# Assumes: Nothing
+# Effects: Nothing
+# Throws: Nothing
+#
+def checkPrivateStrain(strainName, line, uniqStrainProcessingKey, caller):
+    if strainName in privateStrainList:
+	if caller  == 'uniqStrainProcessing':
+	    msg = 'Strain name match to private strain in database: %s ' % (strainName)
+	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	else:
+	    # when atrain is matched with a colony ID
+	    msg = 'Strain name match to private strain via colony ID: %s '  % (strainName)
+	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+	return 1
+    return 0
+#
 # Purpose: do strain checks on a set of attributes representing a unique
 #	strain in the input
 # Returns: 1 if error, else 0
@@ -1030,7 +1059,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # unpack the key into attributes
     inputAlleleID, alleleSymbol, inputStrain, markerID, colonyID, inputMutantID, prodCtr = \
     	string.split(uniqStrainProcessingKey, '|') 
-
+    
     # Production Center Lab Code Check US5 doc 4c2
     if not prodCtr in procCtrToLabCodeDict:
 	if dupStrainKey == 0:
@@ -1082,7 +1111,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
 	
 	return 'error'
-    
+    # check for private strain
+    if checkPrivateStrain(strainName, line, uniqStrainProcessingKey, 'uniqStrainProcessing') == 1:
+	return 'error'
+    # QC the genotype
     if checkGenotype(strainName, inputAlleleID, inputMutantID, line,  uniqStrainProcessingKey, 'uniqStrainProcessing') == 1:
 	return 'error'
 
@@ -1373,9 +1405,15 @@ def createHTMPFile():
 	    if len(colonyToStrainNameDict[colonyID]) > 1:
 		msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, string.join(colonyToStrainNameDict[colonyID], ', ') )
 		logIt(msg, line, 1, 'colIdMultiStrains')
+		for c in colonyToStrainNameDict[colonyID]:
+		    checkPrivateStrain(c, line, uniqStrainProcessingKey, 'colonyIdMatch')
 		continue
 	    # if we get here we have a single strain
   	    strainName = colonyToStrainNameDict[colonyID][0]
+
+	    # check for private strain
+	    if checkPrivateStrain(strainName, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
+		continue
 
 	    # QC the genotype
 	    if checkGenotype(strainName, alleleID, mutantID, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:

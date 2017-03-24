@@ -41,9 +41,8 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 #  Notes:  None
 #
 ###########################################################################
-BINDIR=`pwd`
-cd ${BINDIR}/..
-echo `pwd`
+cd `dirname $0`
+
 
 if [ $# -lt 2 ]
 then
@@ -51,10 +50,7 @@ then
     exit 1
 fi
 
-CONFIG_COMMON=`pwd`/common.config
-
-cd ${BINDIR}
-
+CONFIG_COMMON=../common.config
 CONFIG=$1
 ANNOTCONFIG=$2
 
