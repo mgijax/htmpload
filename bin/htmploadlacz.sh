@@ -49,7 +49,19 @@ then
     exit 1
 fi
 
+CONFIG_COMMON=../common.config
 CONFIG=$1
+
+#
+# Make sure the configuration file exists and source it.
+#
+if [ -f ${CONFIG_COMMON} ]
+then
+    . ${CONFIG_COMMON}
+else
+    echo "Missing configuration file: ${CONFIG_COMMON}"
+    exit 1
+fi
 
 #
 # Make sure the configuration file exists and source it.
