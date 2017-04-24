@@ -83,5 +83,12 @@ if [ ! -d ${INPUTDIR} ]
 then
     mkdir -p ${INPUTDIR}
 fi
+#
+# Create the postMP directory if it doesn't exist.
+#
+if [ ! -d ${POSTMPLOGDIR} ]
+then
+    mkdir -p ${POSTMPLOGDIR}
+fi
 
 done
