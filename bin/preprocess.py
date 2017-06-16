@@ -212,6 +212,7 @@ colonyToStrainNameDict = {}
 
 # strain name mapped to colony id; colony id can be empty
 strainNameToColonyIdDict = {}
+multiStrainNameList = []
 
 # strain name mapped to genotype in the database
 strainNameToGenotypeDict = {}
@@ -222,6 +223,7 @@ privateStrainList = []
 # allele MGI ID from the database mapped to attributes
 # {mgiID:Allele object, ...}
 allelesInDbDict = {}
+mclInDbDict = {} # uses same query as allelsInDbDict {mclId:[allele1, ...], ...}
 
 # unique key from input data mapped to error code, for strain processing
 uniqStrainProcessingDict = {}
@@ -280,8 +282,8 @@ class Allele:
 def initialize():
     global inputFile, inputFileInt, inputFileDup, imitsFile, htmpFile
     global strainFile, logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
-    global allelesInDbDict, procCtrToLabCodeDict, phenoCtrList, strainInfoDict
-    global referenceStrainDict, strainTemplateDict, strainTypeDict
+    global allelesInDbDict, mclInDbDict, procCtrToLabCodeDict, phenoCtrList
+    global strainInfoDict, referenceStrainDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict, strainNameToGentypeDict
     global privateStrainList, isIMPC, isLacZ, isDMDD, loadType
 
@@ -375,15 +377,20 @@ def initialize():
     #
     # select Alleles with Mutant Cell Lines
     #
+    #results = db.sql('''
+    #	select distinct a.*, a1.accid as mclID
+#	from all_withmcl a, ALL_Allele_CellLine ac, ACC_Accession a1
+#	where a._Allele_key = ac._Allele_key
+#	and ac._MutantCellLine_key = a1._Object_key
+#	and a1._MGIType_key = 28
+#	and a1.preferred = 1
+#	''', 'auto')
     results = db.sql('''
-    	select distinct a.*, a1.accid as mclID
-	from all_withmcl a, ALL_Allele_CellLine ac, ACC_Accession a1
+	select distinct a.*, c.cellLine as mclID
+	from all_withmcl a, ALL_Allele_CellLine ac, ALL_CellLine c
 	where a._Allele_key = ac._Allele_key
-	and ac._MutantCellLine_key = a1._Object_key
-	and a1._MGIType_key = 28
-	and a1.preferred = 1
-	''', 'auto')
-
+	and ac._MutantCellLine_key = c._CellLine_key''', 'auto')
+	
     for r in results:
 	a = r['alleleMgiID']
 	s = r['aSymbol']
@@ -393,6 +400,9 @@ def initialize():
 	    allelesInDbDict[a].c.append(c)
 	else:
 	    allelesInDbDict[a] = Allele(a, s, m, [c])
+        if c not in mclInDbDict:
+            mclInDbDict[c] = []
+        mclInDbDict[c].append(s)
 
     # end: alleles with mutant cell lines
    
@@ -484,8 +494,13 @@ def initialize():
 	    if not cID in colonyToStrainNameDict:
 		 colonyToStrainNameDict[cID] = [] 
 	    colonyToStrainNameDict[cID].append(str)
-	# HIPPO 6/2016 - handle multi colonyIDs/strain
-	strainNameToColonyIdDict[str] = cIDList
+        # 5/2017 multi strain check addition: 4c1b2
+        if str in strainNameToColonyIdDict:
+            multiStrainNameList.append(str)
+        else:
+            # HIPPO 6/2016 - handle multi colonyIDs/strain
+            strainNameToColonyIdDict[str] = cIDList
+
     # load strain name to genotype mappings
     # remove private strain constraint
     results = db.sql('''select distinct s.strain, cl.cellLine, a.accid  as alleleID
@@ -680,7 +695,7 @@ def closeFiles():
 #
 def logIt(msg, line, isError, typeError):
     global errorDict
-
+    print 'in logIt: %s %s %s %s' % (msg, line, isError, typeError)
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
     if not typeError in errorDict:
@@ -938,6 +953,7 @@ def parseDMDDFile():
     lineSet = set([])
     header = fpInput.readline()
     for line in fpInput.readlines():
+	print line
 	tokens = line[:-1].split('\t')
 	productionCtr = tokens[0] # production center
 	phenotypingCenter = tokens[1]
@@ -1095,6 +1111,12 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 	#strainName = 'Not Specified'
 	#print 'cannot calc strain name returning "Not Specified"'
 	return 'Not Specified'
+    # 4c1b2 Strain name match to multiple strains
+    if strainName in multiStrainNameList:
+        msg = 'Multiple strain objects in MGI for strain %s' % strainName
+        uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+
+        return 'error'
 
     # Constructed strain name match to strain in db US5 4c5
     # Not Specified strain will not have colonyID in db
@@ -1315,7 +1337,7 @@ def createHTMPFile():
     #
     
     for line in fpInputintRead.readlines():
-
+	#print line
 	error = 0
 
 	# IMPC - mutantID and productionCtr blank
@@ -1359,26 +1381,37 @@ def createHTMPFile():
 
 	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
-	if alleleID in allelesInDbDict:
+	if alleleID in allelesInDbDict: # 4b2a
 
 	    dbAllele = allelesInDbDict[alleleID]
 
 	    # report this but don't exclude it
 	    if alleleSymbol != dbAllele.s:
-		msg = 'not fatal: Allele Symbol: %s does not match MGI symbol: %s' % (alleleSymbol, dbAllele.s)
+		msg = 'Allele Symbol: %s does not match MGI symbol: %s' % (alleleSymbol, dbAllele.s)
 		logIt(msg, line, 1, 'alleleNotMatch')
-		#error = 1
+		error = 1
 
 	    if markerID != dbAllele.m:
 		msg = 'Marker ID: %s does not match MGI marker ID: %s' % (markerID, dbAllele.m)
 		logIt(msg, line, 1, 'markerNotMatch')
 		error = 1
 
-	    if mutantID not in dbAllele.c:
-		msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI/loading data with null-MCL' % (mutantID, alleleID)
-		logIt(msg, line, 1, 'mutIdNotAssoc')
-	        allelesInDbDict[alleleID].c.append('')
-		#error = 1
+	    # 1. If input row has MCL, but that MCL is not in MGI - 
+	    # report as non-fatal error, load data using null MCL for genotype
+            if mutantID != '' and mutantID not in dbAllele.c:
+                msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
+                logIt(msg, line, 1, 'mutIdNotAssoc')
+		mutantID = ''
+
+	    # If input row as MCL, but that MCL is associated with a 
+	    # different allele in MGI than specified in the input file, 
+	    # report and skip
+	    elif mutantID != '' and mutantID in mclInDbDict:
+		dbAlleleList = mclInDbDict[mutantID]
+		if alleleSymbol not in dbAlleleList:
+		    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, string.join(dbAlleleList, ', '))
+		    logIt(msg, line, 1, 'mclDiffAllele')
+		    error = 1
 
 	else: # US5 doc 4b2
 	    # 15 cases in impc.json e.g. NULL-114475FCF4

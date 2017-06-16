@@ -91,6 +91,10 @@
 #
 #  Notes:  None
 #
+#
+# 06/2017	sc
+#	TR12579 & TR12508 - use colony ID as object identity for strain
+#
 #  08-15-2014	sc
 #	- TR11674 - HDP-2/IMPC project
 #	- make generic - factor proprietary sanger code out into preprocessor
@@ -166,7 +170,7 @@ field: %s
 '''
 
 #
-# key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey)
+# key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey)  + str(mutantKey)
 # value = genotypeOrder
 #
 genotypeOrderDict = {}
@@ -245,6 +249,73 @@ def initialize():
         rc = 1
 
     db.useOneConnection(1)
+
+    #
+    # grab/save existing strains
+    # include: strains with IMPC colony ids
+    # include: "Not Specified" strain
+    #
+    # _Strain_key
+    # strain
+    # strain accession id
+    # colonyID
+    #
+
+    db.sql('''
+        select s._Strain_key, s.strain, a.accID as strainID, regexp_replace(regexp_replace(nc.note, '^\s+', ''), '\s+$', '') as colonyID
+        into temporary table strains
+        from PRB_Strain s, ACC_Accession a, MGI_Note n, MGI_NoteChunk nc
+        where s._Strain_key = a._Object_key
+        and a._MGIType_key = 10
+        and a._LogicalDB_key = 1
+        and a.preferred = 1
+        and s._Strain_key = n._Object_key
+        and n._NoteType_key = 1012
+        and n._Note_key = nc._Note_key
+        union
+        select s._Strain_key, s.strain, a.accID as strainID, null
+        from PRB_Strain s, ACC_Accession a
+        where s._Strain_key = a._Object_key
+        and a._MGIType_key = 10
+        and a._LogicalDB_key = 1
+        and a.preferred = 1
+        and s._Strain_key = -1
+        ''', 'auto')
+
+    db.sql('create index idx1 on strains(strain)', None)
+    db.sql('create index idx2 on strains(colonyID)', None)
+    #
+    # grab/save existing genotypes
+    #
+    #   genotype accession id
+    #   allele pair state
+    #   genotype/isConditional = 0
+    #   genotype strain key
+    #   genotype/created by = createdBy (in configuration, example: 'htmpload')
+    #   allele key 1/2 : uses keys
+    #   mutant cell line 1/2 : uses keys
+    #
+    # 6/17 - removed _ModifiedBy_key restriction i.e. curator can modify
+    #   but still want to create new genotype if curator created.
+
+    db.sql('''
+        select a.accID, ap.*, t.term, g._Strain_key
+        into temporary table genotypes
+        from GXD_Genotype g, GXD_AllelePair ap,
+             ACC_Accession a, VOC_Term t, MGI_User u1
+        where g._Genotype_key = a._Object_key
+        and a._MGIType_key = 12
+        and a._LogicalDB_key = 1
+        and a.preferred = 1
+        and g.isConditional = 0
+        and g._Genotype_key = ap._Genotype_key
+        and ap._PairState_key = t._Term_key
+        and t._Vocab_key = 39
+        and g._CreatedBy_key = u1._User_key
+        and u1.login = '%s'
+        ''' % (createdBy), None)
+
+    db.sql('create index idx3 on genotypes(_Marker_key)', None)
 
     return rc
 
@@ -386,32 +457,6 @@ def getGenotypes():
     # value = list of lines
     annotDict = {}
 
-    #
-    # grab/save existing genotypes
-    #
-    db.sql('''
-        select a.accID, ap.*, t.term, g._Strain_key
-	into temporary table genotypes
-        from GXD_Genotype g, GXD_AllelePair ap, 
-             ACC_Accession a, GXD_AllelePair app, VOC_Term t, 
-	     MGI_User u1, MGI_User u2
-        where g._Genotype_key = a._Object_key
-        and a._MGIType_key = 12
-        and a._LogicalDB_key = 1
-        and a.preferred = 1
-	and g.isConditional = 0
-        and g._Genotype_key = ap._Genotype_key
-        and g._Genotype_key = app._Genotype_key
-        and ap._PairState_key = t._Term_key
-        and t._Vocab_key = 39
-        and g._CreatedBy_key = u1._User_key
-	and u1.login = '%s'
-        and g._ModifiedBy_key = u2._User_key
-	and u2.login = '%s'
-	''' % (createdBy, createdBy), None)
-
-    db.sql('create index idx1 on genotypes(_Marker_key)', None)
-
     for line in fpHTMPInput.readlines():
 
 	if DEBUG:
@@ -442,8 +487,9 @@ def getGenotypes():
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
-	strainName= tokens[9]
+	strainName = tokens[9]
         gender = tokens[10]
+        colonyID = tokens[11]
 
 	# marker
 
@@ -480,8 +526,10 @@ def getGenotypes():
 	# mutant
 
 	if len(mutantID) > 0:
-	    mutantSQL = '='
-	    mutantKey = alleleloadlib.verifyMutnatCellLineByAllele(mutantID, alleleKey, lineNum, fpLogDiag)
+           mutantKey = alleleloadlib.verifyMutnatCellLine(mutantID, lineNum, fpLogDiag)
+           mutantKey2 = mutantKey
+           mutantSQL = mutantSQL2 = '='
+
         else:
 	    mutantSQL = 'is'
 	    mutantKey = 'null'
@@ -502,9 +550,21 @@ def getGenotypes():
 	if DEBUG:
 	    print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
       
-	strainID = sourceloadlib.verifyStrainID(strainName, 0, fpLogDiag)
-	strainKey = sourceloadlib.verifyStrain(strainName, 0, fpLogDiag)
+        strainID = ''
+        strainKey = 0
 
+	results = db.sql(''' select * from strains where strain = '%s' and colonyID = '%s' ''' % (strainName, colonyID), 'auto')
+
+	for r in results:
+           strainID = r['strainID']
+           strainKey = r['_Strain_key']
+
+        # strain should have been added by the previous makeStrains.sh wrapper
+        # but in case it was not...
+        if strainKey == 0:
+	    logit = errorDisplay % (strainID + '|' + colonyID, lineNum, '10', line)
+ 	    fpLogDiag.write(logit)
+	    fpLogCur.write(logit)
 	if DEBUG:
 	    print '    strainName: %s strainID: %s strainKey: %s\n' % (strainName, strainID, strainKey)
 
@@ -680,10 +740,10 @@ def getGenotypes():
 			and g._Allele_key_1 = %s
 			and g._Allele_key_2 is null
 			and g._MutantCellLine_key_1 %s %s
-			and g._MutantCellLine_key_2 is null
+			and g._MutantCellLine_key_2 %s %s
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
+		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL2, mutantKey2, alleleState, strainKey)
 
 	    if DEBUG:
 		print querySQL
