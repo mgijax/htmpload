@@ -501,15 +501,15 @@ def processFile():
 
 	# if the strain exist, but with no colony id note, create one
 	if strainExistKey > 0:
-	    #print 'strain in database checking colony note : %s' % line
+	    print 'strain in database checking colony note : %s' % line
 	    if (not checkColonyNote(strainExistKey) ):
 		#print 'colony note not in the database: %s' % colonyNote
 		createNote(strainExistKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
 	    else:
-		#print 'colony note in database: %s'  % colonyNote
+		print 'colony note in database: %s'  % colonyNote
 	    continue
 	else: 
-	    #print 'strain not in database : %s' % line
+	    print 'strain not in database : %s' % line
 
 	# if strain does not exist and  verification failed on strain type, 
 	# species or createdBy, skip the record
