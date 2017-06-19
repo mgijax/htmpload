@@ -986,7 +986,6 @@ def parseDMDDFile():
         if phenotypingCenter == '' or \
 		interpretationCenter == '' or \
 		productionCtr == '' or \
-		mutantID == '' or \
 		mpID  == '' or \
                 alleleID == '' or \
                 alleleState == '' or \
