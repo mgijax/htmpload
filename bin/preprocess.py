@@ -1395,22 +1395,22 @@ def createHTMPFile():
 		logIt(msg, line, 1, 'markerNotMatch')
 		error = 1
 
-	    # 1. If input row has MCL, but that MCL is not in MGI - 
-	    # report as non-fatal error, load data using null MCL for genotype
-            if mutantID != '' and mutantID not in dbAllele.c:
-                msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
-                logIt(msg, line, 1, 'mutIdNotAssoc')
-		mutantID = ''
-
-	    # If input row as MCL, but that MCL is associated with a 
-	    # different allele in MGI than specified in the input file, 
+	    # If input row has MCL, but that MCL is associated with a 
+	    # only a different allele in MGI than specified in the input file, 
 	    # report and skip
-	    elif mutantID != '' and mutantID in mclInDbDict:
+	    if mutantID != '' and mutantID not in dbAllele.c and mutantID in mclInDbDict:
 		dbAlleleList = mclInDbDict[mutantID]
 		if alleleSymbol not in dbAlleleList:
 		    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, string.join(dbAlleleList, ', '))
 		    logIt(msg, line, 1, 'mclDiffAllele')
 		    error = 1
+	    # If input row has MCL, but that MCL is not associated with 
+	    # the allele in MGI - report as non-fatal error, load data 
+	    # using null MCL for genotype
+            elif mutantID != '' and mutantID not in dbAllele.c:
+                msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
+                logIt(msg, line, 1, 'mutIdNotAssoc')
+                mutantID = ''
 
 	else: # US5 doc 4b2
 	    # 15 cases in impc.json e.g. NULL-114475FCF4
