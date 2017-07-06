@@ -42,6 +42,8 @@ Usage="Usage: htmpload.sh *load.config annotload.config"
 #
 ###########################################################################
 cd `dirname $0`
+LOG=`pwd`/htmpload.log
+rm -rf ${LOG}
 
 
 if [ $# -lt 2 ]
@@ -81,15 +83,6 @@ then
 fi
 
 #
-# Establish the log file.
-#
-LOG=${LOG_DIAG}
-rm -rf ${LOG}
-rm -rf ${LOG_CUR}
-touch ${LOG}
-touch ${LOG_CUR}
-
-#
 #  Source the DLA library functions.
 #
 
@@ -108,13 +101,9 @@ else
 fi
 
 #
-# createArchive
-#
-echo "archiving..." >> ${LOG}
-date >> ${LOG}
+# createArchive including OUTPUTDIR, startLog, getConfigEnv
+# sets "JOBKEY"
 preload ${OUTPUTDIR}
-echo "archiving complete" >> ${LOG}
-date >> ${LOG}
 
 #
 # There should be a "lastrun" file in the input directory that was created
@@ -138,8 +127,8 @@ fi
 # remove the genotypeload and annotload diagnostics and error files
 # copy source input file
 #
-echo "copying source input file..." >> ${LOG}
-date >> ${LOG}
+echo "copying source input file..." >> ${LOG_DIAG}
+date >> ${LOG_DIAG}
 rm -rf ${OUTPUTDIR}/*.diagnostics
 rm -rf ${OUTPUTDIR}/*.error
 rm -rf ${SOURCE_COPY_INPUT_FILE}
@@ -151,7 +140,7 @@ checkStatus ${STAT} "copying provider input file"
 #
 msg='FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
 echo `pwd`
-./preprocess.sh ${CONFIG} 2>&1 >> ${LOG}
+./preprocess.sh ${CONFIG} 2>&1 >> ${LOG_DIAG}
 STAT=$?
 if [ ${STAT} -eq 2 ]
 then
@@ -169,8 +158,8 @@ fi
 # sort by column 6 (allele state)
 # sort by column 4 (mp id)
 #
-echo "sorting pre-processed file ${HTMP_INPUT_FILE} ..." >> ${LOG}
-date >> ${LOG}
+echo "sorting pre-processed file ${HTMP_INPUT_FILE} ..." >> ${LOG_DIAG}
+date >> ${LOG_DIAG}
 sort -o ${HTMP_INPUT_FILE} -t"	" -k7,7 -k6,6 -k4,4 ${HTMP_INPUT_FILE}
 STAT=$?
 checkStatus ${STAT} "sorting pre-processed file"
@@ -178,18 +167,18 @@ checkStatus ${STAT} "sorting pre-processed file"
 #
 # Create Genotypes
 #
-echo "" >> ${LOG}
-date >> ${LOG}
-./makeGenotype.sh ${CONFIG} 2>&1 >> ${LOG}
+echo "" >> ${LOG_DIAG}
+date >> ${LOG_DIAG}
+./makeGenotype.sh ${CONFIG} 2>&1 >> ${LOG_DIAG}
 STAT=$?
 checkStatus ${STAT} "makeGenotype.sh ${CONFIG}"
 
 #
 # Create the Annotation, if ANNOTCONFIG file exists
 #
-echo "" >> ${LOG}
-date >> ${LOG}
-./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG}
+echo "" >> ${LOG_DIAG}
+date >> ${LOG_DIAG}
+./makeAnnotation.sh ${CONFIG} ${ANNOTCONFIG} 2>&1 >> ${LOG_DIAG}
 STAT=$?
 checkStatus ${STAT} "makeAnnotation.sh ${CONFIG}"
 
@@ -200,9 +189,9 @@ if [ "${REPORT_SCRIPT_SUFFIX}" != "" ]
 then
 
     reportScript=runReports_${REPORT_SCRIPT_SUFFIX}
-    echo "" >> ${LOG}
-    date >> ${LOG}
-    ./${reportScript} ${CONFIG} 2>&1 >> ${LOG}
+    echo "" >> ${LOG_DIAG}
+    date >> ${LOG_DIAG}
+    ./${reportScript} ${CONFIG} 2>&1 >> ${LOG_DIAG}
     STAT=$?
     checkStatus ${STAT} "runReports_${REPORT_SCRIPT_SUFFIX} ${CONFIG}"
 fi
