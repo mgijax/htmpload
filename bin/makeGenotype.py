@@ -549,24 +549,29 @@ def getGenotypes():
 
 	if DEBUG:
 	    print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
-      
+
+	# strain should have been added by the previous makeStrains.sh 
+	# wrapper but in case it was not...
+ 
         strainID = ''
         strainKey = 0
 
-	results = db.sql(''' select * from strains where strain = '%s' and colonyID = '%s' ''' % (strainName, colonyID), 'auto')
+	# NS strain does not have colony ID, so don't check
+	if strainName == 'Not Specified':
+	    results = db.sql(''' select * from strains where strain = '%s' ''' % strainName, 'auto')
+	else:
+	    results = db.sql(''' select * from strains where strain = '%s' and colonyID like'%%%s%%' ''' % (strainName, colonyID), 'auto')
 
 	for r in results:
-           strainID = r['strainID']
-           strainKey = r['_Strain_key']
+	   strainID = r['strainID']
+	   strainKey = r['_Strain_key']
 
-        # strain should have been added by the previous makeStrains.sh wrapper
-        # but in case it was not...
-        if strainKey == 0:
-	    logit = errorDisplay % (strainID + '|' + colonyID, lineNum, '10', line)
- 	    fpLogDiag.write(logit)
+	if strainKey == 0:
+	    logit = errorDisplay % (strainName + '|' + colonyID, lineNum, '10', line)
+	    fpLogDiag.write(logit)
 	    fpLogCur.write(logit)
 	if DEBUG:
-	    print '    strainName: %s strainID: %s strainKey: %s\n' % (strainName, strainID, strainKey)
+	    print '    strainName: %s strainID %s strainKey: %s\n' % (strainName, strainID, strainKey)
 
 	# if allele is Heterzygous, then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
@@ -743,8 +748,8 @@ def getGenotypes():
 			and g._MutantCellLine_key_2 %s %s
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL2, mutantKey2, alleleState, strainKey)
-
+		''' % (markerKey, alleleKey, mutantSQL, mutantKey, mutantSQL2, mutantKey2, alleleState, strainKey)
+	    
 	    if DEBUG:
 		print querySQL
 
