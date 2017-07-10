@@ -748,7 +748,7 @@ def getGenotypes():
 			and g._MutantCellLine_key_2 is null
 			and g.term = '%s'
 			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, mutantSQL, mutantKey, mutantSQL2, mutantKey2, alleleState, strainKey)
+		''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
 	    
 	    if DEBUG:
 		print querySQL
