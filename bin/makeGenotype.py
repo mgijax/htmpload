@@ -163,7 +163,7 @@ loaddate = loadlib.loaddate
 errorDisplay = '''
 
 ***********
-error: %s
+errMsg: %s
 line: %s
 field: %s
 %s

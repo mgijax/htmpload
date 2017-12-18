@@ -194,7 +194,7 @@ fpHTMPSkip = None
 errorDisplay = '''
 
 ***********
-error: %s
+errMsg: %s
 %s
 '''
 
