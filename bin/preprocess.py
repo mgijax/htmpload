@@ -695,13 +695,11 @@ def closeFiles():
 #
 def logIt(msg, line, isError, typeError):
     global errorDict
-    print 'in logIt: %s %s %s %s' % (msg, line, isError, typeError)
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
     if not typeError in errorDict:
 	errorDict[typeError] = []
     errorDict[typeError].append(logit)
-    #fpLogCur.write(logit)
     if isError:
 	fpHTMPError.write(line)
 
@@ -953,7 +951,7 @@ def parseDMDDFile():
     lineSet = set([])
     header = fpInput.readline()
     for line in fpInput.readlines():
-	print line
+	#print line
 	tokens = line[:-1].split('\t')
 	productionCtr = tokens[0] # production center
 	phenotypingCenter = tokens[1]
