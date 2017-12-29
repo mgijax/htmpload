@@ -1,7 +1,14 @@
+TAG: htmpload-6-0-11-6
 TAG: htmpload-6-0-11-5
 DATE: 12/29/2017
 STAFF: sc
-CHANGES:  dmddmpload.config.default - rename some output files from *impc* to *dmdd*
+CHANGES:  
+dmddmpload.config.default - rename output files from *impc* to *dmdd*
+1. error
+2. skip
+3. genotype
+4. dup
+index.html update path to above files
 
 TAG: htmpload-6-0-11-4
 TAG: htmpload-6-0-11-3
