@@ -65,19 +65,19 @@ STRAIN_INPUT_FILE=${INPUTDIR}/mgi_htmp_dmdd_strain.txt
 
 # input file that contains data that was skipped
 #
-HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_impcload_skipped.txt
+HTMPSKIP_INPUT_FILE=${INPUTDIR}/mgi_dmddload_skipped.txt
 
 # input file that contains data that had data errors
 #
-HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_impcload_error.txt
+HTMPERROR_INPUT_FILE=${INPUTDIR}/mgi_dmddload_error.txt
 
 # input file that contains data that was merged (duplicates)
 #
-HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_impcload_dup.txt
+HTMPDUP_INPUT_FILE=${INPUTDIR}/mgi_dmddload_dup.txt
 
 # input file that contains a unique genotype # (1 thru ...)
 #
-HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_impcload.txt
+HTMPUNIQ_INPUT_FILE=${INPUTDIR}/mgi_dmddload.txt
 
 # Genotype & Annotation input file
 #
