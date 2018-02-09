@@ -183,7 +183,8 @@ def init():
     db.useOneConnection(1)
     db.set_sqlUser(user)
     db.set_sqlPasswordFromFile(passwordFileName)
- 
+    db.set_sqlLogFunction(db.sqlLogAll) 
+
     diagFileName = inputFileName + '.diagnostics'
     errorFileName = inputFileName + '.error'
 
