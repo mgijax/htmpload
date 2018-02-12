@@ -388,7 +388,8 @@ def setPrimaryKeys():
     results = db.sql('select max(_Strain_key) + 1 as maxKey from PRB_Strain', 'auto')
     strainKey = results[0]['maxKey']
 
-    results = db.sql('select max(_StrainMarker_key) + 1 as maxKey from PRB_Strain_Marker', 'auto')
+    #results = db.sql('select max(_StrainMarker_key) + 1 as maxKey from PRB_Strain_Marker', 'auto')
+    results = db.sql(''' select nextval('prb_strain_marker_seq') as maxKey ''', 'auto')
     strainmarkerKey = results[0]['maxKey']
 
     results = db.sql('select max(_Accession_key) + 1 as maxKey from ACC_Accession', 'auto')
@@ -443,7 +444,7 @@ def bcpFiles():
 	os.system(bcpCmd)
 
     # update prb_strain_marker_seq auto-sequence
-    db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) + 1 from PRB_Strain_Marker)) ''', None)
+    db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) from PRB_Strain_Marker)) ''', None)
     db.commit()
 
     return
