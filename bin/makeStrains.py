@@ -442,6 +442,10 @@ def bcpFiles():
 	diagFile.write('%s\n' % bcpCmd)
 	os.system(bcpCmd)
 
+    # update prb_strain_marker_seq auto-sequence
+    db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) + 1 from PRB_Strain_Marker)) ''', None)
+    db.commit()
+
     return
 
 # Purpose:  create note
@@ -591,11 +595,6 @@ def processFile():
 
     if not DEBUG:
         db.sql('select * from ACC_setMax (%d)' % (lineNum), None)
-
-        # update prb_strain_marker_seq auto-sequence
-        db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) + 1 from PRB_Strain_Marker)) ''', None)
-
-        db.commit()
 
 
 #
