@@ -138,14 +138,16 @@ checkStatus ${STAT} "copying provider input file"
 
 # run pre-processor to create HTMP_INPUT_FILE
 #
-msg='FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
-echo `pwd`
-./preprocess.sh ${CONFIG} 2>&1 >> ${LOG_DIAG}
-STAT=$?
-if [ ${STAT} -eq 2 ]
-then
-checkStatus ${STAT} ${msg}
-fi
+# 12/4/18 - sc commented this out. It is not a fatal error and is already
+# being logged to the curation log
+#msg='FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.sh). Strain(s) created, with arbitrary Colony ID note. Genotype and annotations not created.'
+#echo `pwd`
+#./preprocess.sh ${CONFIG} 2>&1 >> ${LOG_DIAG}
+#STAT=$?
+#if [ ${STAT} -eq 2 ]
+#then
+#checkStatus ${STAT} ${msg}
+#fi
 
 if [ ${STAT} -ne 2 ]
 then 
