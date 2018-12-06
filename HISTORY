@@ -1,7 +1,8 @@
+TAG: htmpload-6-0-13-2
 TAG: htmpload-6-0-13-1
 DATE: 12/04/2018
 STAFF: sc
-CHANGES: comment out reporting of 'FATAL' to diagnostic log
+CHANGES: remove reporting of 'FATAL' to diagnostic log
    for QC that is NOT fatal (check log script picks it up and
 thinks the load failed.
 

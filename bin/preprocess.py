@@ -1306,9 +1306,6 @@ def writeCuratorLog():
 #
 def createHTMPFile():
     
-    # return code from this function
-    returnCode = 0
-
     # Values to be calculated
     strainName = ''
     mutantID = ''
@@ -1529,9 +1526,8 @@ def createHTMPFile():
 	    fpStrain.write('%s%s' % (strainToLoad, '\n'))
 
 	    # get the  lines with the remaining colony ids for the strain,
-	    # report and exit 2
+	    # report
 	    strainLines = string.join(multiSet, '\n')
-	    returnCode = 2
 	    logIt(msg, strainLines, 1, 'newStrainMultiColId')
 	else:
 	    # we have only one colony id, write the strain to the strain file
@@ -1554,7 +1550,7 @@ def createHTMPFile():
     print 'writing to curator log'
     writeCuratorLog()
 
-    return returnCode
+    return 0
 
 #
 #  MAIN
