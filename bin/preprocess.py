@@ -1403,7 +1403,7 @@ def createHTMPFile():
 	    # the allele in MGI - report as non-fatal error, load data 
 	    # using null MCL for genotype
             elif mutantID != '' and mutantID not in dbAllele.c:
-                msg = 'not fatal: Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
+                msg = ' Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
                 logIt(msg, line, 1, 'mutIdNotAssoc')
                 mutantID = ''
 
