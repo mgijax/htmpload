@@ -135,12 +135,4 @@ then
     exit 1
 fi
 
-# if there are multi colony ids, we want to create the new strains,
-# but not create the genotypes or annotations
-if [ ${PREPROCESS_STAT} -eq 2 ]
-then
-    echo "FATAL Error: Multi Colony IDs for new Strain(s) (preprocess.py). Strains created, with arbitrary Colony ID note. Genotype and annotations not created."  | tee -a ${LOG}
-    exit 
-fi
-
 exit ${PREPROCESS_STAT}
