@@ -445,6 +445,7 @@ def bcpFiles():
 
     # update prb_strain_marker_seq auto-sequence
     db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) from PRB_Strain_Marker)) ''', None)
+    db.commit()
     # update voc_annot_seq auto-sequence
     db.sql(''' select setval('voc_annot_seq', (select max(_Annot_key) from VOC_Annot)) ''', None)
     db.commit()
