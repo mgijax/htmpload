@@ -398,7 +398,7 @@ def setPrimaryKeys():
     results = db.sql('''select maxNumericPart + 1 as maxKey from ACC_AccessionMax where prefixPart = '%s' ''' % (mgiPrefix), 'auto')
     mgiKey = results[0]['maxKey']
 
-    results = db.sql('select max(_Annot_key) + 1 as maxKey from VOC_Annot', 'auto')
+    results = db.sql(''' select nextval('voc_annot_seq') as maxKey ''', 'auto')
     annotKey = results[0]['maxKey']
 
     results = db.sql('select max(_Note_key) + 1 as maxKey from MGI_Note', 'auto')
@@ -445,6 +445,8 @@ def bcpFiles():
 
     # update prb_strain_marker_seq auto-sequence
     db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) from PRB_Strain_Marker)) ''', None)
+    # update voc_annot_seq auto-sequence
+    db.sql(''' select setval('voc_annot_seq', (select max(_Annot_key) from VOC_Annot)) ''', None)
     db.commit()
 
     return
