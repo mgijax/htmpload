@@ -56,26 +56,6 @@
 #   10. Production Centre
 #   11. Allele Symbol
 #
-#   DMDD input file - tab delimited
-#       SOURCE_COPY_INPUT_FILE from impcmpload.config
-#   1. Production Center  (resource name)
-#   2. Phenotyping Center      
-#   3. Interpretation (Annotation) Center      
-#   4. ES Cell Name
-#   5. MP ID   
-#   6. MGI Allele ID   
-#   7. Allele State    
-#   8. Allele Symbol   
-#   9. MGI Marker ID   
-#   10. Evidence Code   (not used)
-#   11. Strain Name     
-#   12. Strain ID   (not used)
-#   13. Gender  (not used)
-#   14. Colony ID       
-#   15. DMDD ID Stage   (not used)
-#   16. Cell Line       
-#   17. Comments ('*;*' delimited) (not used)
-
 #  Outputs:
 #
 #   htmpload format (HTMP_INPUT_FILE):
@@ -285,7 +265,7 @@ def initialize():
     global allelesInDbDict, mclInDbDict, procCtrToLabCodeDict, phenoCtrList
     global strainInfoDict, referenceStrainDict, strainTemplateDict, strainTypeDict
     global colonyToStrainNameDict, strainNameToColonyIdDict, strainNameToGentypeDict
-    global privateStrainList, isIMPC, isLacZ, isDMDD, loadType
+    global privateStrainList, isIMPC, isLacZ, loadType
 
     inputFile = os.getenv('SOURCE_COPY_INPUT_FILE')
     inputFileInt = '%s_int' % inputFile
@@ -307,8 +287,6 @@ def initialize():
     	isIMPC = 1
     elif loadType == 'lacz':
     	isLacZ = 1
-    elif loadType == 'dmdd':
-	isDMDD = 1
     else:
         print 'Environment variable not set: LOADTYPE'
         rc = 1
@@ -934,78 +912,6 @@ def parseIMPCLacZFile():
     return 0
 
 #
-# Purpose: parse DMDD into intermediate file
-#       lines with missing data reported to the skip file
-#       duplicate entries in json file collapsed
-# Returns: 1 if file cannot be opened, else 0
-# Assumes: input file descriptor has been created
-# Effects: writes intermediate file to file system
-# Throws: Nothing
-#
-# MICE CRISPIES project
-#
-def parseDMDDFile():
-    global fpInputintWrite, fpInputdup
-    resourceName = 'DMDD'
-
-    lineSet = set([])
-    header = fpInput.readline()
-    for line in fpInput.readlines():
-	#print line
-	tokens = line[:-1].split('\t')
-	productionCtr = tokens[0] # production center
-	phenotypingCenter = tokens[1]
-	interpretationCenter = tokens[2]
-	mutantID =  tokens[3]
-	mpID =  tokens[4]
-	alleleID =  tokens[5]
-	alleleState =  tokens[6]
-	alleleSymbol = tokens[7]
-	markerID = tokens[8]
-	inputStrain = tokens[10]
-	gender = tokens[12]
-	colonyID = tokens[13]
-
-        # line representing data from the DMDD input file
-        line =  resourceName + '\t' + \
-             phenotypingCenter + '\t' + \
-             interpretationCenter + '\t' + \
-	     productionCtr  + '\t' + \
-	     mutantID + '\t' + \
-             mpID + '\t' + \
-             alleleID + '\t' + \
-             alleleState + '\t' + \
-             alleleSymbol + '\t' + \
-             inputStrain + '\t' + \
-             markerID + '\t' + \
-             gender + '\t' + \
-             colonyID + '\n'
-        # skip if blank field in IMPC data and report to the skip file
-        if phenotypingCenter == '' or \
-		interpretationCenter == '' or \
-		productionCtr == '' or \
-		mpID  == '' or \
-                alleleID == '' or \
-                alleleState == '' or \
-                alleleSymbol == '' or \
-                inputStrain == '' or \
-                markerID == '' or  \
-                gender == '' or \
-                colonyID == '':
-            fpHTMPSkip.write(line)
-            continue
-
-        lineSet.add(line)
-    
-    for line in lineSet:
-        fpInputintWrite.write(line)
-
-    fpInputintWrite.close()
-    fpInputdup.close()
-
-    return 0
-
-#
 # Purpose: determine if the input genotype(s) match the database genotypes for a given strain
 # Returns: 1 if a genotype doesn't match
 #	0 if all genotypes match OR no genotype for strain in database
@@ -1336,7 +1242,6 @@ def createHTMPFile():
 
 	# IMPC - mutantID and productionCtr blank
 	# Lacz - mutantID, productionCtr and mpID blank
-	# DMDD - all attributes present
 	resourceName, phenotypingCenter, interpretationCenter, productionCtr, \
 	    mutantID, mpID, alleleID, alleleState, alleleSymbol, inputStrain, \
 	    markerID, gender, colonyID = line[:-1].split('\t')
@@ -1570,7 +1475,7 @@ if isIMPC or isLacZ:
 	sys.exit(1)
 
 #
-# process either IMPC/MP, IMPC/LacZ or DMDD input file
+# process either IMPC/MP, IMPC/LacZ input file
 #
 if isIMPC:
     print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
@@ -1580,13 +1485,6 @@ elif isLacZ:
     print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMPCLacZFile() != 0:
         sys.exit(1)
-elif isDMDD:
-    print 'parseDMDDFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
-    retCode = parseDMDDFile()
-    print 'parseDMDD return code: %s' % retCode
-    if retCode != 0:
-        sys.exit(1)
-
 
 print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 returnCode = createHTMPFile()

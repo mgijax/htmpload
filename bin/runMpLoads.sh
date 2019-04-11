@@ -56,12 +56,7 @@ echo "$0" >> ${LOG}
 env | sort >> ${LOG}
 
 ANNOTCONFIG=${HTMPLOAD}/annotload.config
-DMDDCONFIG=${HTMPLOAD}/dmddmpload.config
 IMPCCONFIG=${HTMPLOAD}/impcmpload.config
-
-date | tee -a ${LOG}
-echo 'Run DMDD MP Load' | tee -a ${LOG}
-${HTMPLOAD}/bin/htmpload.sh ${DMDDCONFIG} ${ANNOTCONFIG}
 
 date | tee -a ${LOG}
 echo 'Run IMPC MP Load' | tee -a ${LOG}

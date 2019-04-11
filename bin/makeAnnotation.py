@@ -360,7 +360,7 @@ def getAnnotations():
 	    gender = 'F'
 	elif gender == 'Male':
 	    gender = 'M'
-	elif gender in ('Both', '', 'NA'): # NA added for DMDD
+	elif gender in ('Both', '', 'NA'): # NA added for DMDD (DMDD is obsolete/TR13081)
 	    gender = 'NA'
 	else:
             logit = errorDisplay % (gender, lineNum, '11', line)
