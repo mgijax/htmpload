@@ -1,8 +1,10 @@
+TAG: htmpload-6-0-14-4
 TAG: htmpload-6-0-14-3
 DATE: 04/22/2019
 STAFF: sc
 CHANGES: TR13091 - check for existing Used-FC ref assocs
-  
+runMpLoads.sh -  report output of postMP.py to log
+
 TAG: htmpload-6-0-14-2
 DATE: 04/11/2019
 STAFF: lec 
