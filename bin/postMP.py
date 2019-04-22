@@ -46,10 +46,13 @@ import db
 import time
 
 #db.setTrace(True)
+db.useOneConnection(1)
 annotTypeKey = 1002 	# MP/Genotype
 user = os.getenv('CREATEDBY')
 jNums = "'212870', '240675'"
 
+# for naming temp tables and indexes
+ct = 1
 results = db.sql('''select _User_key
 	from MGI_User
 	where login = '%s' ''' % user, 'auto')
@@ -67,7 +70,8 @@ db.sql('''select _Object_key
 	AND v._Annot_key = e._Annot_key
 	AND e._Refs_key in (%s)''' % (jNums ), None)
 
-db.sql('''create index idx1 on toDelete(_Object_key)''', None)
+db.sql('''create index idx%s on toDelete(_Object_key)''' % ct, None)
+ct += 1 # increment for index name
 
 db.sql('''delete from VOC_AnnotHeader a
     using toDelete d
@@ -92,6 +96,7 @@ for r in results:
 #
 for jNumKey in string.split(jNums, ','):
     jNumKey =  string.split(jNumKey,"'")[1]
+	
     # Update transmission status 
     results = db.sql('''SELECT DISTINCT aa._Allele_key
 	FROM GXD_AlleleGenotype g, VOC_Annot a, VOC_Evidence e, ALL_Allele aa
@@ -102,7 +107,7 @@ for jNumKey in string.split(jNums, ','):
 	AND aa._Transmission_key in (3982952, 3982953)
 	AND a._Annot_key = e._Annot_key
 	AND e._Refs_key = %s''' % (annotTypeKey, jNumKey), 'auto')
-
+    print 'creating reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
     for r in results:
 	alleleKey = r['_Allele_key']
 	db.sql(''' UPDATE ALL_Allele
@@ -110,8 +115,18 @@ for jNumKey in string.split(jNums, ','):
 		_ModifiedBy_key = %s
 		modification_date = now()
 	    WHERE _Allele_key = %s''' % (modifiedByKey, alleleKey), None)
+	print '''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Transmission')''' % (alleleKey, jNumKey)
   	db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Transmission')''' % (alleleKey, jNumKey), None)
 	db.commit()
+
+    db.sql('''select distinct _Object_key as alleleKey
+    into temporary table used%s
+    from MGI_Reference_Assoc
+    where _MGIType_key = 11 -- Allele
+    and _RefAssocType_key = 1017 -- Used-FC
+    and _Refs_key = %s''' % (ct, jNumKey), None)
+
+    db.sql('''create index idx%s on used%s(alleleKey)''' % (ct, ct), None)
 
     results = db.sql('''SELECT DISTINCT aa._Allele_key
 	FROM GXD_AlleleGenotype g, VOC_Annot a, VOC_Evidence e, ALL_Allele aa
@@ -120,13 +135,19 @@ for jNumKey in string.split(jNums, ','):
 	AND g._Allele_key = aa._Allele_key
 	AND aa.isWildType = 0
 	AND a._Annot_key = e._Annot_key
-	AND e._Refs_key = %s''' % (annotTypeKey, jNumKey), 'auto')
-
+	AND e._Refs_key = %s
+	AND NOT EXISTS( 
+	    SELECT 1 FROM used%s u 
+	    WHERE aa._Allele_key  = u.alleleKey)''' % (annotTypeKey, jNumKey, ct), 'auto')
+    print 'creating reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
     for r in results:
 	alleleKey = r['_Allele_key']
+	print '''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Used-FC')''' % (alleleKey, jNumKey)
 	db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Used-FC')''' % (alleleKey, jNumKey), None)
 	db.commit()
+    ct += 1 # increment for temp table/index name
 #
-# 
+#
+db.useOneConnection(0) 
 sys.exit(0)
 
