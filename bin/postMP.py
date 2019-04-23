@@ -107,7 +107,7 @@ for jNumKey in string.split(jNums, ','):
 	AND aa._Transmission_key in (3982952, 3982953)
 	AND a._Annot_key = e._Annot_key
 	AND e._Refs_key = %s''' % (annotTypeKey, jNumKey), 'auto')
-    print 'creating reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
+    print 'Calling MGI_insertReferenceAssoc for Transmission reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
     for r in results:
 	alleleKey = r['_Allele_key']
 	db.sql(''' UPDATE ALL_Allele
@@ -135,11 +135,9 @@ for jNumKey in string.split(jNums, ','):
 	AND g._Allele_key = aa._Allele_key
 	AND aa.isWildType = 0
 	AND a._Annot_key = e._Annot_key
-	AND e._Refs_key = %s
-	AND NOT EXISTS( 
-	    SELECT 1 FROM used%s u 
-	    WHERE aa._Allele_key  = u.alleleKey)''' % (annotTypeKey, jNumKey, ct), 'auto')
-    print 'creating reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
+	AND e._Refs_key = %s''' % (annotTypeKey, jNumKey), 'auto')
+
+    print 'Calling MGI_insertReferenceAssoc for Used-FC reference associations for %s alleles for refsKey %s' % (len(results), jNumKey)
     for r in results:
 	alleleKey = r['_Allele_key']
 	print '''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Used-FC')''' % (alleleKey, jNumKey)

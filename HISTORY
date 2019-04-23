@@ -1,3 +1,13 @@
+TAG: htmpload-6-0-14-5
+DATE: 04/22/2019
+STAFF: sc
+CHANGES: TR13091 - reverted postMP.py to 6-0-14-2
+    except for the addition of some reportin of SP
+    calls to the postMP log. The SP is already 
+    doing the dupe check. Needed to move the nextval
+    call to AFTER the dupe check so the key would
+    not be incremented unless an assoc was made
+
 TAG: htmpload-6-0-14-4
 TAG: htmpload-6-0-14-3
 DATE: 04/22/2019
