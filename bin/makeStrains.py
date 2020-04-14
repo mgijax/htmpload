@@ -148,7 +148,7 @@ cdate = mgi_utils.date('%m/%d/%Y')	# current date
 
 def exit(
     status,          # numeric exit status (integer)
-    message = None   # exit message (string)
+    message = None   # exit message (str.
     ):
 
     if message is not None:
@@ -267,7 +267,7 @@ def verifyMode():
 # Throws:  nothing
 
 def verifySpecies(
-    species, 	# Species (string)
+    species, 	# Species (str.
     lineNum	# line number (integer)
     ):
 
@@ -279,7 +279,7 @@ def verifySpecies(
         for r in results:
             speciesDict[r['term']] = r['_Term_key']
 
-    if speciesDict.has_key(species):
+    if species in speciesDict:
             speciesKey = speciesDict[species]
     else:
             errorFile.write('Invalid Species (%d) %s\n' % (lineNum, species))
@@ -296,7 +296,7 @@ def verifySpecies(
 # Throws:  nothing
 
 def verifyStrainType(
-    strainType, 	# Strain Type (string)
+    strainType, 	# Strain Type (str.
     lineNum		# line number (integer)
     ):
 
@@ -308,7 +308,7 @@ def verifyStrainType(
         for r in results:
             strainTypesDict[r['term']] = r['_Term_key']
 
-    if strainTypesDict.has_key(strainType):
+    if strainType in strainTypesDict:
             strainTypeKey = strainTypesDict[strainType]
     else:
             errorFile.write('Invalid Strain Type (%d) %s\n' % (lineNum, strainType))
@@ -324,7 +324,7 @@ def verifyStrainType(
 
 def checkColonyNote(strainKey):
     global colonyIdDict
-    print 'checking colony note for strain key: %s' % strainKey
+    print('checking colony note for strain key: %s' % strainKey)
 
     if len(colonyIdDict)== 0:
         #print 'loading colonyIdDict'
@@ -337,7 +337,7 @@ def checkColonyNote(strainKey):
         for r in results:
             colonyIdDict[r['strainKey']] = r['_Note_key']
 
-    if colonyIdDict.has_key(strainKey):
+    if strainKey in colonyIdDict:
         #print 'strain key %s has colony id: %s' % (strainKey, colonyIdDict[strainKey])
         return 1
 
@@ -352,7 +352,7 @@ def checkColonyNote(strainKey):
 # Throws:  nothing
 
 def verifyStrain(
-    strain, 	# Strain (string)
+    strain, 	# Strain (str.
     lineNum	# line number (integer)
     ):
 
@@ -365,7 +365,7 @@ def verifyStrain(
     for r in results:
         strainDict[r['strain']] = r['_Strain_key']
 
-    if strainDict.has_key(strain):
+    if strain in strainDict:
             strainExistKey = strainDict[strain]
             errorFile.write('Strain Already Exists (%d) %s\n' % (lineNum, strain))
     else:
@@ -509,15 +509,15 @@ def processFile():
 
         # if the strain exist, but with no colony id note, create one
         if strainExistKey > 0:
-            print 'strain in database checking colony note : %s' % line
+            print('strain in database checking colony note : %s' % line)
             if (not checkColonyNote(strainExistKey) ):
                 #print 'colony note not in the database: %s' % colonyNote
                 createNote(strainExistKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
             else:
-                print 'colony note in database: %s'  % colonyNote
+                print('colony note in database: %s'  % colonyNote)
             continue
         else: 
-            print 'strain not in database : %s' % line
+            print('strain not in database : %s' % line)
 
         # if strain does not exist and  verification failed on strain type, 
         # species or createdBy, skip the record
@@ -604,19 +604,19 @@ def processFile():
 # Main
 #
 
-print 'initialize : %s' % (mgi_utils.date())
+print('initialize : %s' % (mgi_utils.date()))
 init()
 
-print 'verifyMode : %s' % (mgi_utils.date())
+print('verifyMode : %s' % (mgi_utils.date()))
 verifyMode()
 
-print 'set primary keys : %s' % (mgi_utils.date())
+print('set primary keys : %s' % (mgi_utils.date()))
 setPrimaryKeys()
 
-print 'prcoess files : %s' % (mgi_utils.date())
+print('prcoess files : %s' % (mgi_utils.date()))
 processFile()
 
-print 'bcp files : %s' % (mgi_utils.date())
+print('bcp files : %s' % (mgi_utils.date()))
 bcpFiles()
 
 exit(0)

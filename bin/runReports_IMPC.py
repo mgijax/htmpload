@@ -75,14 +75,14 @@ def initialize():
     rc = 0
     #
     if not logDiagFile:
-        print 'Environment variable not set: LOG_DIAG'
+        print('Environment variable not set: LOG_DIAG')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not logCurFile:
-        print 'Environment variable not set: LOG_CUR'
+        print('Environment variable not set: LOG_CUR')
         rc = 1
 
     db.useOneConnection(1)
@@ -106,7 +106,7 @@ def openFiles():
     try:
         fpLogDiag = open(logDiagFile, 'a+')
     except:
-        print 'Cannot open file: ' + logDiagFile
+        print('Cannot open file: ' + logDiagFile)
         return 1
 
     #
@@ -117,7 +117,7 @@ def openFiles():
         fpLogCur.write('\n***********\nIMPC/IMITS Colony ID Discrepancies\n\n')
         fpLogCur.write('Allele\tIMPC\tIMITs\n')
     except:
-        print 'Cannot open file: ' + logCurFile
+        print('Cannot open file: ' + logCurFile)
         return 1
 
     return 0
@@ -160,7 +160,7 @@ def createColonyIdReport():
         and n1._Object_key = a._Allele_key''', 'auto')
 
     for r in results:
-        imitsDict[r['_Allele_key']] = string.strip(r['imitsCID'])
+        imitsDict[r['_Allele_key']] = str.strip(r['imitsCID'])
 
     results = db.sql('''select distinct nc1.note as impcCID, aa.accID, a._Allele_key
         from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
@@ -181,8 +181,8 @@ def createColonyIdReport():
     for r in results:
         alleleKey = r['_Allele_key']
         accID = r['accID']
-        id = string.strip(r['impcCID'])
-        if imitsDict.has_key(alleleKey):
+        id = str.strip(r['impcCID'])
+        if alleleKey in imitsDict:
             if id not in imitsDict[alleleKey]:
                 fpLogCur.write('%s\t%s\t%s\n' % (accID, id, imitsDict[alleleKey]))
 
@@ -191,19 +191,19 @@ def createColonyIdReport():
 #
 #  MAIN
 #
-print 'initialize'
+print('initialize')
 if initialize() != 0:
     sys.exit(1)
 
-print 'open files'
+print('open files')
 if openFiles() != 0:
     sys.exit(1)
 
-print 'create colony id report'
+print('create colony id report')
 if createColonyIdReport() != 0:
     closeFiles()
     sys.exit(1)
 
-print 'close files'
+print('close files')
 closeFiles()
 sys.exit(0)

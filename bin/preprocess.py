@@ -241,9 +241,9 @@ strainLineList = []
 # convenience object for allele information 
 #
 class Allele:
-    def __init__(self, alleleID,    # string - allele  MGI ID
-            alleleSymbol,           # string - allele symbol
-            markerID, 		    # string - marker MGI ID
+    def __init__(self, alleleID,    # str.- allele  MGI ID
+            alleleSymbol,           # str.- allele symbol
+            markerID, 		    # str.- marker MGI ID
             mutantIDs):		    # list - mcl IDs
         self.a = alleleID
         self.s = alleleSymbol
@@ -287,7 +287,7 @@ def initialize():
     elif loadType == 'lacz':
         isLacZ = 1
     else:
-        print 'Environment variable not set: LOADTYPE'
+        print('Environment variable not set: LOADTYPE')
         rc = 1
     if isIMPC or isLacZ:
         imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
@@ -295,23 +295,23 @@ def initialize():
     # Make sure the environment variables are set.
     #
     if not inputFile:
-        print 'Environment variable not set: SOURCE_COPY_INPUT_FILE'
+        print('Environment variable not set: SOURCE_COPY_INPUT_FILE')
         rc = 1
 
     if (loadType == 'impc' or loadType == 'lacz') and not imitsFile:
-        print 'Environment variable not set: IMITS_COPY_INPUT_FILE'
+        print('Environment variable not set: IMITS_COPY_INPUT_FILE')
         rc = 1
 
     if not htmpFile:
-        print 'Environment variable not set: HTMP_INPUT_FILE'
+        print('Environment variable not set: HTMP_INPUT_FILE')
         rc = 1
 
     if not htmpErrorFile:
-        print 'Environment variable not set: HTMPERROR_INPUT_FILE'
+        print('Environment variable not set: HTMPERROR_INPUT_FILE')
         rc = 1
 
     if not htmpSkipFile:
-        print 'Environment variable not set: HTMPSKIP_INPUT_FILE'
+        print('Environment variable not set: HTMPSKIP_INPUT_FILE')
         rc = 1
 
     #
@@ -429,9 +429,9 @@ def initialize():
         phenoCtrList.append(r['term'])
 
     # load strain mappings from config
-    tokens = map(string.strip, string.split(strainInfoMapping, ','))
+    tokens = list(map(str.strip, str.split(strainInfoMapping, ',')))
     for t in tokens:
-        iStrain, rID, rStrain, rTemplate, rType, rAttr = string.split(t, '|')
+        iStrain, rID, rStrain, rTemplate, rType, rAttr = str.split(t, '|')
         inputStrainList.append(iStrain)
         referenceStrainDict[iStrain] = rStrain
         strainTemplateDict[iStrain] = rTemplate
@@ -456,15 +456,15 @@ def initialize():
 
     for r in results:
         # HIPPO US146
-        # colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
-        cIDs =  string.strip(r['colonyID'])
+        # colony ids can be a pipe delimited str.e.g. 'BL3751|BL3751_TCP'
+        cIDs =  str.strip(r['colonyID'])
         str = r['strain']
         #print 'cIDs: %s' % cIDs
         #print 'str: %s' % str
         cIDList = []
         if cIDs != None:
-            #cIDList = string.split(cIDs, '|')
-            cIDList = map(string.strip, string.split(cIDs, '|'))
+            #cIDList = str.split(cIDs, '|')
+            cIDList = list(map(str.strip, str.split(cIDs, '|')))
             #print 'cIDList:%s' % cIDList
         # HIPPO 6/2016 handle multi strains/colony ID
         for cID in cIDList:
@@ -532,7 +532,7 @@ def openFiles():
     try:
         fpInput = open(inputFile, 'r')
     except:
-        print 'Cannot open file: ' + inputFile
+        print('Cannot open file: ' + inputFile)
         return 1
 
     #
@@ -541,7 +541,7 @@ def openFiles():
     try:
         fpInputintWrite = open(inputFileInt, 'w')
     except:
-        print 'Cannot open file: ' + inputFileInt
+        print('Cannot open file: ' + inputFileInt)
         return 1
 
     #
@@ -550,7 +550,7 @@ def openFiles():
     try:
         fpInputdup = open(inputFileDup, 'w')
     except:
-        print 'Cannot open file: ' + inputFileDup
+        print('Cannot open file: ' + inputFileDup)
         return 1
 
     #
@@ -560,7 +560,7 @@ def openFiles():
         try:
             fpIMITS = open(imitsFile, 'r')
         except:
-            print 'Cannot open file: ' + imitsFile
+            print('Cannot open file: ' + imitsFile)
             return 1
 
     #
@@ -570,7 +570,7 @@ def openFiles():
         #print 'htmpfile: %s' % htmpFile
         fpHTMP = open(htmpFile, 'w')
     except:
-        print 'Cannot open file: ' + htmpFile
+        print('Cannot open file: ' + htmpFile)
         return 1
 
     #
@@ -580,7 +580,7 @@ def openFiles():
         #print 'strainfile: %s' % strainFile
         fpStrain = open(strainFile, 'w')
     except:
-        print 'Cannot open file: ' + strainFile
+        print('Cannot open file: ' + strainFile)
         return 1
 
     #
@@ -589,7 +589,7 @@ def openFiles():
     try:
         fpLogDiag = open(logDiagFile, 'a+')
     except:
-        print 'Cannot open file: ' + logDiagFile
+        print('Cannot open file: ' + logDiagFile)
         return 1
 
     #
@@ -602,7 +602,7 @@ def openFiles():
         fpLogCur.write('######################################\n\n')
 
     except:
-        print 'Cannot open file: ' + logCurFile
+        print('Cannot open file: ' + logCurFile)
         return 1
 
     #
@@ -611,7 +611,7 @@ def openFiles():
     try:
         fpHTMPError = open(htmpErrorFile, 'w')
     except:
-        print 'Cannot open file: ' + htmpErrorFile
+        print('Cannot open file: ' + htmpErrorFile)
         return 1
 
     #
@@ -620,7 +620,7 @@ def openFiles():
     try:
         fpHTMPSkip = open(htmpSkipFile, 'w')
     except:
-        print 'Cannot open file: ' + htmpSkipFile
+        print('Cannot open file: ' + htmpSkipFile)
         return 1
 
     return 0
@@ -692,7 +692,7 @@ def logIt(msg, line, isError, typeError):
 def parseIMITSFile():
     global colonyToMCLDict
 
-    print 'Parsing IMITS, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    print('Parsing IMITS, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 
     for line in fpIMITS.readlines():
 
@@ -810,7 +810,7 @@ def parseIMPCFile():
 def parseIMPCLacZFile():
     global fpInputintWrite, fpIMCPdup
 
-    print 'Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    print('Parsing IMPC/LacZ input file: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
     jFile = json.load(fpInput)
     resourceName = 'IMPC' 
     interpretationCenter = 'IMPC' 
@@ -902,11 +902,11 @@ def parseIMPCLacZFile():
     fpInputintWrite.close()
     fpInputdup.close()
 
-    print 'notExpCt: %s' % notExpCt
-    print 'nopasId: %s' % nopasId
-    print 'non experimental values: %s' % sGroupValList
-    print 'total records written: %s' % rcdWrittenCt
-    print 'totalCt: %s' % totalCt
+    print('notExpCt: %s' % notExpCt)
+    print('nopasId: %s' % nopasId)
+    print('non experimental values: %s' % sGroupValList)
+    print('total records written: %s' % rcdWrittenCt)
+    print('totalCt: %s' % totalCt)
 
     return 0
 
@@ -970,13 +970,13 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     
     dupStrainKey = 0
 
-    if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
+    if uniqStrainProcessingKey in list(uniqStrainProcessingDict.keys()):
         uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
         dupStrainKey = 1
 
     # unpack the key into attributes
     inputAlleleID, alleleSymbol, inputStrain, markerID, colonyID, inputMutantID, prodCtr = \
-        string.split(uniqStrainProcessingKey, '|') 
+        str.split(uniqStrainProcessingKey, '|') 
     
     # Production Center Lab Code Check US5 doc 4c2
     if not prodCtr in procCtrToLabCodeDict:
@@ -1030,7 +1030,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
         dbColonyIdList =  strainNameToColonyIdDict[strainName]
         msg = 'MGI/database colony ID(s) %s for strain %s does not match colony id %s' % \
-                (string.join(dbColonyIdList), strainName, colonyID)
+                (str.join(dbColonyIdList), strainName, colonyID)
         
         uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
         
@@ -1065,13 +1065,13 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # in the input file for a new strain.'
     if not strainName in newStrainDict:
         newStrainDict[strainName] = set([])
-    newStrainDict[strainName].add(string.strip(strainLine))
+    newStrainDict[strainName].add(str.strip(strainLine))
     
     return strainName
 
 #
 # Purpose: resolves the input alleleState term to MGI alleleState term
-# Returns: string 'error' if input alleleState not recognized, else resolved alleleState
+# Returns: str.'error' if input alleleState not recognized, else resolved alleleState
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs 
 # Throws: Nothing
@@ -1117,7 +1117,7 @@ def checkColonyID(colonyID, line):
 
 #
 # Purpose: resolves the input gender term to MGI gender term
-# Returns: string 'error' if input gender not recognized, else resolved gender
+# Returns: str.'error' if input gender not recognized, else resolved gender
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -1148,7 +1148,7 @@ def checkGender(gender, line):
 
 #
 # Purpose: check the input phenotyping center for existence in the database
-# Returns: string 'error' input center not recognized, else center
+# Returns: str.'error' input center not recognized, else center
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -1192,14 +1192,14 @@ def writeCuratorLog():
     # HIPPO - US146 write fatal errors first
     if 'newStrainMultiColId' in errorDict:
         fatal = errorDict['newStrainMultiColId']
-        fpLogCur.write(string.join(fatal))
+        fpLogCur.write(str.join(fatal))
 
         # remove the fatal error from the dict so not repeated
         del errorDict['newStrainMultiColId']
 
     # report remaining error types to curator log
-    for type in errorDict.keys():
-        fpLogCur.write(string.join(errorDict[type]))
+    for type in list(errorDict.keys()):
+        fpLogCur.write(str.join(errorDict[type]))
 
 #
 # Purpose: Read the intermediate file and re-format it to create a 
@@ -1227,7 +1227,7 @@ def createHTMPFile():
     try:
         fpInputintRead = open(inputFileInt, 'r')
     except:
-        print 'Cannot open file: ' + inputFileInt
+        print('Cannot open file: ' + inputFileInt)
         return 1
 
     # 
@@ -1272,7 +1272,7 @@ def createHTMPFile():
 
             # verify the IMPC/markerID with the IMITS/marker ID
             # note that the IMITS file also provides the 'mutantID' (es cell line)
-            productionCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+            productionCtr, mutantID, imitsMrkID = str.split(colonyToMCLDict[colonyID], '|')
 
             if compareMarkers(markerID, imitsMrkID, line):
                 continue
@@ -1300,7 +1300,7 @@ def createHTMPFile():
             if mutantID != '' and mutantID not in dbAllele.c and mutantID in mclInDbDict:
                 dbAlleleList = mclInDbDict[mutantID]
                 if alleleSymbol not in dbAlleleList:
-                    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, string.join(dbAlleleList, ', '))
+                    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, ', '.join(dbAlleleList))
                     logIt(msg, line, 1, 'mclDiffAllele')
                     error = 1
             # If input row has MCL, but that MCL is not associated with 
@@ -1334,7 +1334,7 @@ def createHTMPFile():
             # HIPPO US146 case #4
             # multiple strains for a colony ID
             if len(colonyToStrainNameDict[colonyID]) > 1:
-                msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, string.join(colonyToStrainNameDict[colonyID], ', ') )
+                msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, ', '.join(colonyToStrainNameDict[colonyID]) )
                 logIt(msg, line, 1, 'colIdMultiStrains')
                 for c in colonyToStrainNameDict[colonyID]:
                     checkPrivateStrain(c, line, uniqStrainProcessingKey, 'colonyIdMatch')
@@ -1389,7 +1389,7 @@ def createHTMPFile():
             htmpLineDict[key] = []
         htmpLineDict[key].append(htmpLine)
 
-    for key in uniqStrainProcessingDict.keys():
+    for key in list(uniqStrainProcessingDict.keys()):
         msgList = uniqStrainProcessingDict[key]
         msg = msgList[0]
         for line in msgList[1:]:
@@ -1413,7 +1413,7 @@ def createHTMPFile():
             # Add strain/cID(s) to the list whose genotypes/annotations we 
             # will not load
             for line in list(multiSet):
-                cID = string.split(line, '\t')[7]
+                cID = str.split(line, '\t')[7]
                 # this corresponds to the key in htmpLineDict
                 key = '%s|%s' % (s, cID)
                 #print 'adding %s to noLoadAnnotList\n' % key
@@ -1424,14 +1424,14 @@ def createHTMPFile():
             strainToLoad = multiSet.pop()
 
             # plug the colony ID which WAS loaded into the error message
-            msg = msg % string.split(strainToLoad)[8]
+            msg = msg % str.split(strainToLoad)[8]
 
             # write out the strain to load
             fpStrain.write('%s%s' % (strainToLoad, '\n'))
 
             # get the  lines with the remaining colony ids for the strain,
             # report
-            strainLines = string.join(multiSet, '\n')
+            strainLines = '\n'.join(multiSet)
             logIt(msg, strainLines, 1, 'newStrainMultiColId')
         else:
             # we have only one colony id, write the strain to the strain file
@@ -1451,7 +1451,7 @@ def createHTMPFile():
             fpHTMP.write(line)
 
     # write errors to curation log
-    print 'writing to curator log'
+    print('writing to curator log')
     writeCuratorLog()
 
     return 0
@@ -1460,16 +1460,16 @@ def createHTMPFile():
 #  MAIN
 #
 
-print 'initialize: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+print('initialize: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 if initialize() != 0:
     sys.exit(1)
 
-print 'openFiles: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+print('openFiles: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 if openFiles() != 0:
     sys.exit(1)
 
 if isIMPC or isLacZ:
-    print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    print('parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
     if parseIMITSFile() != 0:
         sys.exit(1)
 
@@ -1477,20 +1477,20 @@ if isIMPC or isLacZ:
 # process either IMPC/MP, IMPC/LacZ input file
 #
 if isIMPC:
-    print 'parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    print('parseIMPCFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
     if parseIMPCFile() != 0:
         sys.exit(1)
 elif isLacZ:
-    print 'parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+    print('parseIMPCLacZFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
     if parseIMPCLacZFile() != 0:
         sys.exit(1)
 
-print 'createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+print('createHTMPFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 returnCode = createHTMPFile()
 if returnCode != 0:
     closeFiles()
     sys.exit(returnCode)
 
 closeFiles()
-print 'done: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
+print('done: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 sys.exit(0)

@@ -175,21 +175,21 @@ def initialize():
     # Make sure the environment variables are set.
     #
     if not htmpFile:
-        print 'Environment variable not set: HTMPUNIQ_INPUT_FILE'
+        print('Environment variable not set: HTMPUNIQ_INPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not genotypeFile:
-        print 'Environment variable not set: GENOTYPE_OUTPUT_FILE'
+        print('Environment variable not set: GENOTYPE_OUTPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not annotFile:
-        print 'Environment variable not set: ANNOT_INPUT_FILE'
+        print('Environment variable not set: ANNOT_INPUT_FILE')
         rc = 1
 
     #
@@ -220,7 +220,7 @@ def openFiles():
     try:
         fpLogDiag = open(logDiagFile, 'a+')
     except:
-        print 'Cannot open file: ' + logDiagFile
+        print('Cannot open file: ' + logDiagFile)
         return 1
 
     #
@@ -229,7 +229,7 @@ def openFiles():
     try:
         fpLogCur = open(logCurFile, 'a+')
     except:
-        print 'Cannot open file: ' + logCurFile
+        print('Cannot open file: ' + logCurFile)
         return 1
 
     #
@@ -238,7 +238,7 @@ def openFiles():
     try:
         fpHTMP = open(htmpFile, 'r')
     except:
-        print 'Cannot open file: ' + htmpFile
+        print('Cannot open file: ' + htmpFile)
         return 1
 
     #
@@ -247,7 +247,7 @@ def openFiles():
     try:
         fpGenotype = open(genotypeFile, 'r')
     except:
-        print 'Cannot open file: ' + genotypeFile
+        print('Cannot open file: ' + genotypeFile)
         return 1
 
     #
@@ -256,7 +256,7 @@ def openFiles():
     try:
         fpAnnot = open(annotFile, 'w')
     except:
-        print 'Cannot open annotation file: ' + annotFile
+        print('Cannot open annotation file: ' + annotFile)
         return 1
 
     return 0
@@ -348,7 +348,7 @@ def getAnnotations():
             continue
 
         # if genotype file does not exist
-        if not genotypeOrderDict.has_key(genotypeOrder):
+        if genotypeOrder not in genotypeOrderDict:
             info = 'this genotype order does not exist in %s' % (genotypeFile)
             logit = errorDisplay % (genotypeOrder, lineNum, '0', info)
             fpLogDiag.write(logit)

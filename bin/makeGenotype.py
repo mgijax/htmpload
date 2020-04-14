@@ -202,49 +202,49 @@ def initialize():
     # Make sure the environment variables are set.
     #
     if not logDiagFile:
-        print 'Environment variable not set: LOG_DIAG'
+        print('Environment variable not set: LOG_DIAG')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not logCurFile:
-        print 'Environment variable not set: LOG_CUR'
+        print('Environment variable not set: LOG_CUR')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not htmpInputFile:
-        print 'Environment variable not set: INPUTDIR/HTMP_INPUT_FILE'
+        print('Environment variable not set: INPUTDIR/HTMP_INPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not htmpDupFile:
-        print 'Environment variable not set: HTMPDUP_INPUT_FILE'
+        print('Environment variable not set: HTMPDUP_INPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not htmpErrorFile:
-        print 'Environment variable not set: HTMPERROR_INPUT_FILE'
+        print('Environment variable not set: HTMPERROR_INPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not HTMPFile:
-        print 'Environment variable not set: HTMP_INPUT_FILE'
+        print('Environment variable not set: HTMP_INPUT_FILE')
         rc = 1
 
     #
     # Make sure the environment variables are set.
     #
     if not genotypeFile:
-        print 'Environment variable not set: GENOTYPE_INPUT_FILE'
+        print('Environment variable not set: GENOTYPE_INPUT_FILE')
         rc = 1
 
     db.useOneConnection(1)
@@ -337,7 +337,7 @@ def openFiles():
     try:
         fpLogDiag = open(logDiagFile, 'a+')
     except:
-        print 'Cannot open file: ' + logDiagFile
+        print('Cannot open file: ' + logDiagFile)
         return 1
 
     #
@@ -350,7 +350,7 @@ def openFiles():
         fpLogCur.write('######################################\n\n')
 
     except:
-        print 'Cannot open file: ' + logCurFile
+        print('Cannot open file: ' + logCurFile)
         return 1
 
     #
@@ -359,7 +359,7 @@ def openFiles():
     try:
         fpHTMPInput = open(htmpInputFile, 'r')
     except:
-        print 'Cannot open file: ' + htmpInputFile
+        print('Cannot open file: ' + htmpInputFile)
         return 1
 
     #
@@ -368,7 +368,7 @@ def openFiles():
     try:
         fpHTMPDup = open(htmpDupFile, 'w')
     except:
-        print 'Cannot open file: ' + htmpDupFile
+        print('Cannot open file: ' + htmpDupFile)
         return 1
 
     #
@@ -377,7 +377,7 @@ def openFiles():
     try:
         fpHTMPError = open(htmpErrorFile, 'a+')
     except:
-        print 'Cannot open file: ' + htmpErrorFile
+        print('Cannot open file: ' + htmpErrorFile)
         return 1
 
     #
@@ -386,7 +386,7 @@ def openFiles():
     try:
         fpHTMP = open(HTMPFile, 'w')
     except:
-        print 'Cannot open file: ' + HTMPFile
+        print('Cannot open file: ' + HTMPFile)
         return 1
 
     #
@@ -395,7 +395,7 @@ def openFiles():
     try:
         fpGenotype = open(genotypeFile, 'w')
     except:
-        print 'Cannot open genotype file: ' + genotypeFile
+        print('Cannot open genotype file: ' + genotypeFile)
         return 1
 
     return 0
@@ -459,7 +459,7 @@ def getGenotypes():
     for line in fpHTMPInput.readlines():
 
         if DEBUG:
-            print '\nNEW LINE: ', line
+            print('\nNEW LINE: ', line)
 
         error = 0
         lineNum = lineNum + 1
@@ -504,7 +504,7 @@ def getGenotypes():
             error = 1
 
         if DEBUG:
-            print '    markerID: %s markerKey: %s' % (markerID, markerKey)
+            print('    markerID: %s markerKey: %s' % (markerID, markerKey))
 
         # allele
 
@@ -520,7 +520,7 @@ def getGenotypes():
             error = 1
 
         if DEBUG:
-            print '    alleleID: %s alleleKey: %s' % (alleleID, alleleKey)
+            print('    alleleID: %s alleleKey: %s' % (alleleID, alleleKey))
 
         # mutant
 
@@ -547,7 +547,7 @@ def getGenotypes():
             #error = 1
 
         if DEBUG:
-            print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
+            print('    mutantID: %s mutantKey: %s' % (mutantID, mutantKey))
 
         # strain should have been added by the previous makeStrains.sh 
         # wrapper but in case it was not...
@@ -570,13 +570,13 @@ def getGenotypes():
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
         if DEBUG:
-            print '    strainName: %s strainID %s strainKey: %s\n' % (strainName, strainID, strainKey)
+            print('    strainName: %s strainID %s strainKey: %s\n' % (strainName, strainID, strainKey))
 
         # if allele is Heterzygous, then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
 
             if DEBUG:
-                print '    if allele is Heterzygous, then marker must have a wild-type allele, get it'
+                print('    if allele is Heterzygous, then marker must have a wild-type allele, get it')
             #
             # for heterzygous, allele 2 = the wild type allele 
             #    (marker symbol + '<+>')
@@ -595,7 +595,7 @@ def getGenotypes():
                 ''' % (markerKey)
 
             if DEBUG:
-                print querySQL
+                print(querySQL)
 
             results = db.sql(querySQL, 'auto')
             for r in results:
@@ -604,7 +604,7 @@ def getGenotypes():
                 mutantID2 = ''
 
             if DEBUG:
-                print '    found wild type and alleleID2: %s mutantID2: %s' % (alleleID2, mutantID2)
+                print('    found wild type and alleleID2: %s mutantID2: %s' % (alleleID2, mutantID2))
 
             if alleleID == alleleID2:
                 logit = errorDisplay % (markerID, lineNum, '8', line)
@@ -623,12 +623,12 @@ def getGenotypes():
         #
 
         if DEBUG:
-            print '\n    Check AlleleState:'
+            print('\n    Check AlleleState:')
 
         if alleleState == 'Homozygous':
 
             if DEBUG:
-                print '    Homozygous : querying to find genotype'
+                print('    Homozygous : querying to find genotype')
 
             querySQL = '''
                 select g.accID
@@ -643,20 +643,20 @@ def getGenotypes():
                 ''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL, mutantKey, alleleState, strainKey)
 
             if DEBUG:
-                print querySQL
+                print(querySQL)
 
             results = db.sql(querySQL, 'auto')
 
             if len(results) > 1:
                 if DEBUG:
-                    print '    More than one genotype - last one wins'
-                    print '    %s' % results
+                    print('    More than one genotype - last one wins')
+                    print('    %s' % results)
 
             for r in results:
                 genotypeID = r['accID']
 
             if DEBUG:
-                print '    genotypeID: %s' % genotypeID
+                print('    genotypeID: %s' % genotypeID)
 
         elif alleleState == 'Heterozygous':
 
@@ -667,7 +667,7 @@ def getGenotypes():
             #
 
             if DEBUG:
-                print '    Heterozygous : querying to find genotype'
+                print('    Heterozygous : querying to find genotype')
 
             querySQL = '''
                 select g.accID
@@ -682,25 +682,25 @@ def getGenotypes():
                 ''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
 
             if DEBUG:
-                print querySQL
+                print(querySQL)
 
             results = db.sql(querySQL, 'auto')
 
             if len(results) > 1:
                 if DEBUG:
-                    print '    More than one genotype - last one wins'
-                    print '    %s' % results
+                    print('    More than one genotype - last one wins')
+                    print('    %s' % results)
 
             for r in results:
                 genotypeID = r['accID']
 
             if DEBUG:
-                print '    genotypeID: %s' % genotypeID
+                print('    genotypeID: %s' % genotypeID)
 
         elif alleleState in ('Hemizygous', 'Indeterminate'):
 
             if DEBUG:
-                print '    querying to find genotype : ', alleleState
+                print('    querying to find genotype : ', alleleState)
 
             alleleID2 = ''
             mutantID2 = ''
@@ -719,18 +719,18 @@ def getGenotypes():
                     if r['chromosome'] == 'X':
                         alleleState = 'Hemizygous X-linked'
                         if DEBUG:
-                            print '    ', alleleState
+                            print('    ', alleleState)
 
                     elif r['chromosome'] == 'Y':
                         alleleState = 'Hemizygous Y-linked'
                         if DEBUG:
-                            print '    ', alleleState
+                            print('    ', alleleState)
 
                     else:
                         logit = errorDisplay % (alleleState, lineNum, '6', line)
                         logit = logit + 'pair state %s does not match chromosome %s' % (alleleState, r['chromosome'])
                         if DEBUG:
-                            print '    ', logit
+                            print('    ', logit)
 
                         fpLogDiag.write(logit)
                         fpLogCur.write(logit)
@@ -750,27 +750,27 @@ def getGenotypes():
                 ''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
             
             if DEBUG:
-                print querySQL
+                print(querySQL)
 
             results = db.sql(querySQL, 'auto')
 
             if len(results) > 1:
                 if DEBUG:
-                    print '    More than one genotype - last one wins'
-                    print '    %s' % results
+                    print('    More than one genotype - last one wins')
+                    print('    %s' % results)
 
             for r in results:
                 genotypeID = r['accID']
 
             if DEBUG:
-                print '    genotypeID: %s' % genotypeID
+                print('    genotypeID: %s' % genotypeID)
 
         else:
             logit = errorDisplay % (alleleState, lineNum, '6', line)
 
             if DEBUG:
-                print '    logging error:'
-                print '    ' + errorDisplay % (alleleState, lineNum, '6', line)
+                print('    logging error:')
+                print('    ' + errorDisplay % (alleleState, lineNum, '6', line))
 
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
@@ -791,7 +791,7 @@ def getGenotypes():
         useOrder = str(genotypeOrder)
 
         if DEBUG:
-            print '    check genotype uniqueness'
+            print('    check genotype uniqueness')
 
         #
         # set uniqueness
@@ -800,20 +800,20 @@ def getGenotypes():
         key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey) + str(mutantKey)
 
         if DEBUG:
-            print '    unique key is: %s' % key
+            print('    unique key is: %s' % key)
 
-        if genotypeOrderDict.has_key(key):
+        if key in genotypeOrderDict:
             dupGeno = 1
             useOrder = str(genotypeOrderDict[key])
             if DEBUG:
-                print '    duplicate genotype and order is: %s' % useOrder
+                print('    duplicate genotype and order is: %s' % useOrder)
 
         # uniq genotype/mpID key
         currentMP = useOrder + '|' + mpID
 
         #### new code HDP-2 US161 support TR11792 ####
         # add line to dictionary by currentMP key for later processing
-        if not annotDict.has_key(currentMP):
+        if currentMP not in annotDict:
             annotDict[currentMP] = []
         annotDict[currentMP].append(line)
 
@@ -825,7 +825,7 @@ def getGenotypes():
         # save genotype order
         #
         if DEBUG:
-            print '    saving genotype order genotypeOrderDict[%s] = %s' % (key, genotypeOrder)
+            print('    saving genotype order genotypeOrderDict[%s] = %s' % (key, genotypeOrder))
         genotypeOrderDict[key] = genotypeOrder
 
         #
@@ -833,7 +833,7 @@ def getGenotypes():
         #
 
         if DEBUG:
-            print '    writing genotype to  genotype file'
+            print('    writing genotype to  genotype file')
 
         fpGenotype.write(genotypeLine % (\
                 genotypeOrder, genotypeID, strainID, strainName, \
@@ -846,7 +846,7 @@ def getGenotypes():
     #### new code HDP-2 US161 support TR11792 ####
     # iterate through annotDict
 
-    for key in annotDict.keys():
+    for key in list(annotDict.keys()):
         order, mpID = key.split('|')
         lineList = annotDict[key]
         genderSet = set([])
@@ -877,26 +877,26 @@ def getGenotypes():
 #
 
 if DEBUG:
-    print 'initialize'
+    print('initialize')
 
 if initialize() != 0:
     sys.exit(1)
 
 if DEBUG:
-    print 'open files'
+    print('open files')
 
 if openFiles() != 0:
     sys.exit(1)
 
 if DEBUG:
-    print 'get genotypes'
+    print('get genotypes')
 
 if getGenotypes() != 0:
     closeFiles()
     sys.exit(1)
 
 if DEBUG:
-    print 'close files'
+    print('close files')
 
 closeFiles()
 sys.exit(0)
