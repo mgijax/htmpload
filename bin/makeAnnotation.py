@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 #  makeAnnotation.py
 ###########################################################################
@@ -307,10 +306,10 @@ def readGenotypes():
 
         tokens = line[:-1].split('\t')
 
-	genotypeOrder = tokens[0]
-	genotypeID = tokens[1]
-	genotypeOrderDict[genotypeOrder] = []
-	genotypeOrderDict[genotypeOrder].append(genotypeID)
+        genotypeOrder = tokens[0]
+        genotypeID = tokens[1]
+        genotypeOrderDict[genotypeOrder] = []
+        genotypeOrderDict[genotypeOrder].append(genotypeID)
 
     #print genotypeOrderDict
     return 0
@@ -330,39 +329,39 @@ def getAnnotations():
 
     for line in fpHTMP.readlines():
 
-	error = 0
-	lineNum = lineNum + 1
+        error = 0
+        lineNum = lineNum + 1
 
         tokens = line[:-1].split('\t')
 
-	genotypeOrder = tokens[0]
-	phenotypingCenter = tokens[1]
-	annotationCenter = tokens[2]
-	mpID = tokens[4]
-	evidence = tokens[9]
-	gender = tokens[11]
-	resourceName = tokens[13]
+        genotypeOrder = tokens[0]
+        phenotypingCenter = tokens[1]
+        annotationCenter = tokens[2]
+        mpID = tokens[4]
+        evidence = tokens[9]
+        gender = tokens[11]
+        resourceName = tokens[13]
 
-	# skip any row that does not contain an MP annotation
+        # skip any row that does not contain an MP annotation
 
-	if mpID == '':
-	    continue
+        if mpID == '':
+            continue
 
-	# if genotype file does not exist
-	if not genotypeOrderDict.has_key(genotypeOrder):
-	    info = 'this genotype order does not exist in %s' % (genotypeFile)
+        # if genotype file does not exist
+        if not genotypeOrderDict.has_key(genotypeOrder):
+            info = 'this genotype order does not exist in %s' % (genotypeFile)
             logit = errorDisplay % (genotypeOrder, lineNum, '0', info)
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
             error = 1
 
-	if gender == 'Female':
-	    gender = 'F'
-	elif gender == 'Male':
-	    gender = 'M'
-	elif gender in ('Both', '', 'NA'): # NA added for DMDD (DMDD is obsolete/TR13081)
-	    gender = 'NA'
-	else:
+        if gender == 'Female':
+            gender = 'F'
+        elif gender == 'Male':
+            gender = 'M'
+        elif gender in ('Both', '', 'NA'): # NA added for DMDD (DMDD is obsolete/TR13081)
+            gender = 'NA'
+        else:
             logit = errorDisplay % (gender, lineNum, '11', line)
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
@@ -372,19 +371,19 @@ def getAnnotations():
         if error:
             continue
 
-	#
-	# let annotload-er do the rest of the data validation
-	#
+        #
+        # let annotload-er do the rest of the data validation
+        #
 
-	genotypeID = genotypeOrderDict[genotypeOrder][0]
-	properties = propertiesLine % (gender, annotationCenter, phenotypingCenter, resourceName)
+        genotypeID = genotypeOrderDict[genotypeOrder][0]
+        properties = propertiesLine % (gender, annotationCenter, phenotypingCenter, resourceName)
 
-	#
-	# add to annotation mgi-format file
-	#
-	fpAnnot.write(annotLine % (\
-		mpID, genotypeID, jnumber, evidence, inferredFrom, qualifier, \
-		createdBy, loaddate, notes, properties))
+        #
+        # add to annotation mgi-format file
+        #
+        fpAnnot.write(annotLine % (\
+                mpID, genotypeID, jnumber, evidence, inferredFrom, qualifier, \
+                createdBy, loaddate, notes, properties))
 
     return 0
 
@@ -407,4 +406,3 @@ if getAnnotations() != 0:
 
 closeFiles()
 sys.exit(0)
-

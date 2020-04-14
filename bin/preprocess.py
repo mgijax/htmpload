@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 #  preprocess.py
 ###########################################################################
@@ -243,13 +242,13 @@ strainLineList = []
 #
 class Allele:
     def __init__(self, alleleID,    # string - allele  MGI ID
-	    alleleSymbol,           # string - allele symbol
-	    markerID, 		    # string - marker MGI ID
-	    mutantIDs):		    # list - mcl IDs
-	self.a = alleleID
-	self.s = alleleSymbol
+            alleleSymbol,           # string - allele symbol
+            markerID, 		    # string - marker MGI ID
+            mutantIDs):		    # list - mcl IDs
+        self.a = alleleID
+        self.s = alleleSymbol
         self.m = markerID
-	self.c = mutantIDs
+        self.c = mutantIDs
 
 #
 # Purpose: Initialization  of variable with values from the environment
@@ -284,14 +283,14 @@ def initialize():
     # determine load type (LOADTYPE)
     # 
     if loadType == 'impc':
-    	isIMPC = 1
+        isIMPC = 1
     elif loadType == 'lacz':
-    	isLacZ = 1
+        isLacZ = 1
     else:
         print 'Environment variable not set: LOADTYPE'
         rc = 1
     if isIMPC or isLacZ:
-	imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
+        imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
     #
     # Make sure the environment variables are set.
     #
@@ -332,23 +331,23 @@ def initialize():
     #   Endonuclease-mediated (11927650)
     #
 
-	#where ll._Allele_Status_key in (847111, 847114, 3983021)
+        #where ll._Allele_Status_key in (847111, 847114, 3983021)
     db.sql('''select distinct a1.accid as alleleMgiID, a2.accid as markerMgiID, 
-	    ll.symbol as aSymbol, ll._Allele_key
-	into temporary table all_withmcl
-	from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
-	where ll._Allele_Status_key in (847111, 847114, 3983021)
-	and ll._Allele_Type_key in (847116, 11927650)
-	and ll._Allele_key = a1._Object_key
-	and a1._MGIType_key = 11
-	and a1.preferred = 1
-	and a1.prefixPart = 'MGI:'
-	and ll._Marker_key = a2._Object_key
-	and a2._MGIType_key = 2
-	and a2.preferred = 1
-	and a2.prefixPart = 'MGI:' 
-	and exists (select 1 from ALL_Allele_CellLine ac where ll._Allele_key = ac._Allele_key)
-	''', None)
+            ll.symbol as aSymbol, ll._Allele_key
+        into temporary table all_withmcl
+        from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
+        where ll._Allele_Status_key in (847111, 847114, 3983021)
+        and ll._Allele_Type_key in (847116, 11927650)
+        and ll._Allele_key = a1._Object_key
+        and a1._MGIType_key = 11
+        and a1.preferred = 1
+        and a1.prefixPart = 'MGI:'
+        and ll._Marker_key = a2._Object_key
+        and a2._MGIType_key = 2
+        and a2.preferred = 1
+        and a2.prefixPart = 'MGI:' 
+        and exists (select 1 from ALL_Allele_CellLine ac where ll._Allele_key = ac._Allele_key)
+        ''', None)
 
     db.sql('create index idx_targeted on all_withmcl(_Allele_key)', None)
 
@@ -364,20 +363,20 @@ def initialize():
 #	and a1.preferred = 1
 #	''', 'auto')
     results = db.sql('''
-	select distinct a.*, c.cellLine as mclID
-	from all_withmcl a, ALL_Allele_CellLine ac, ALL_CellLine c
-	where a._Allele_key = ac._Allele_key
-	and ac._MutantCellLine_key = c._CellLine_key''', 'auto')
-	
+        select distinct a.*, c.cellLine as mclID
+        from all_withmcl a, ALL_Allele_CellLine ac, ALL_CellLine c
+        where a._Allele_key = ac._Allele_key
+        and ac._MutantCellLine_key = c._CellLine_key''', 'auto')
+        
     for r in results:
-	a = r['alleleMgiID']
-	s = r['aSymbol']
-	m = r['markerMgiID']
-	c = r['mclID']
-	if a in allelesInDbDict:
-	    allelesInDbDict[a].c.append(c)
-	else:
-	    allelesInDbDict[a] = Allele(a, s, m, [c])
+        a = r['alleleMgiID']
+        s = r['aSymbol']
+        m = r['markerMgiID']
+        c = r['mclID']
+        if a in allelesInDbDict:
+            allelesInDbDict[a].c.append(c)
+        else:
+            allelesInDbDict[a] = Allele(a, s, m, [c])
         if c not in mclInDbDict:
             mclInDbDict[c] = []
         mclInDbDict[c].append(s)
@@ -388,56 +387,56 @@ def initialize():
     #
 
     db.sql('''select distinct a1.accid as alleleMgiID, a2.accid as markerMgiID, 
-	    ll.symbol as aSymbol, ll._Allele_key
-	into temporary table all_nomcl
-	from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
-	where ll._Allele_Status_key in (847111, 847114, 3983021)
-	and ll._Allele_Type_key in (847116, 11927650)
-	and ll._Allele_key = a1._Object_key
-	and a1._MGIType_key = 11
-	and a1.preferred = 1
-	and a1.prefixPart = 'MGI:'
-	and ll._Marker_key = a2._Object_key
-	and a2._MGIType_key = 2
-	and a2.preferred = 1
-	and a2.prefixPart = 'MGI:' 
-	and not exists (select 1 from ALL_Allele_CellLine ac where ll._Allele_key = ac._Allele_key)
-	''', None)
+            ll.symbol as aSymbol, ll._Allele_key
+        into temporary table all_nomcl
+        from ACC_Accession a1, ACC_Accession a2, ALL_Allele ll
+        where ll._Allele_Status_key in (847111, 847114, 3983021)
+        and ll._Allele_Type_key in (847116, 11927650)
+        and ll._Allele_key = a1._Object_key
+        and a1._MGIType_key = 11
+        and a1.preferred = 1
+        and a1.prefixPart = 'MGI:'
+        and ll._Marker_key = a2._Object_key
+        and a2._MGIType_key = 2
+        and a2.preferred = 1
+        and a2.prefixPart = 'MGI:' 
+        and not exists (select 1 from ALL_Allele_CellLine ac where ll._Allele_key = ac._Allele_key)
+        ''', None)
 
     db.sql('create index idx_endo on all_nomcl(_Allele_key)', None)
 
     results = db.sql('select distinct * from all_nomcl', 'auto')
     for r in results:
-	a = r['alleleMgiID']
-	s = r['aSymbol']
-	m = r['markerMgiID']
-	c = ''
-	if a in allelesInDbDict:
-	    allelesInDbDict[a].c.append(c)
-	else:
-	    allelesInDbDict[a] = Allele(a, s, m, [c])
+        a = r['alleleMgiID']
+        s = r['aSymbol']
+        m = r['markerMgiID']
+        c = ''
+        if a in allelesInDbDict:
+            allelesInDbDict[a].c.append(c)
+        else:
+            allelesInDbDict[a] = Allele(a, s, m, [c])
 
     # end: alleles without mutant cell lines
 
     # load production center/labcode mapping 
     results = db.sql('select term, abbreviation from VOC_Term where _Vocab_key = 98', 'auto')
     for r in results:
-	procCtrToLabCodeDict[r['term']] = r['abbreviation']
+        procCtrToLabCodeDict[r['term']] = r['abbreviation']
 
     # load list of phenotyping centers in the database
     results = db.sql('select term from VOC_Term where _Vocab_key = 99', 'auto')
     for r in results:
-	phenoCtrList.append(r['term'])
+        phenoCtrList.append(r['term'])
 
     # load strain mappings from config
     tokens = map(string.strip, string.split(strainInfoMapping, ','))
     for t in tokens:
-	iStrain, rID, rStrain, rTemplate, rType, rAttr = string.split(t, '|')
-	inputStrainList.append(iStrain)
-	referenceStrainDict[iStrain] = rStrain
-	strainTemplateDict[iStrain] = rTemplate
-	strainTypeDict[iStrain]  = rType
-	strainAttribDict[iStrain] = rAttr
+        iStrain, rID, rStrain, rTemplate, rType, rAttr = string.split(t, '|')
+        inputStrainList.append(iStrain)
+        referenceStrainDict[iStrain] = rStrain
+        strainTemplateDict[iStrain] = rTemplate
+        strainTypeDict[iStrain]  = rType
+        strainAttribDict[iStrain] = rAttr
 
     #
     # load colony code to strain ID mappings
@@ -447,31 +446,31 @@ def initialize():
     # remove private strain constraint
     results = db.sql('''
         select s.strain, trim(nc.note) as colonyID
-	from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
-	where s._StrainType_key in (3410530, 3410535, 6508969) 
+        from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
+        where s._StrainType_key in (3410530, 3410535, 6508969) 
         and s._Strain_key = n._Object_key
-	and n._NoteType_key = 1012
-	and n._MGIType_key = 10
-	and n._Note_key = nc._Note_key 
-	''', 'auto')
+        and n._NoteType_key = 1012
+        and n._MGIType_key = 10
+        and n._Note_key = nc._Note_key 
+        ''', 'auto')
 
     for r in results:
-	# HIPPO US146
-	# colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
+        # HIPPO US146
+        # colony ids can be a pipe delimited string e.g. 'BL3751|BL3751_TCP'
         cIDs =  string.strip(r['colonyID'])
         str = r['strain']
-	#print 'cIDs: %s' % cIDs
-	#print 'str: %s' % str
-	cIDList = []
-	if cIDs != None:
-	    #cIDList = string.split(cIDs, '|')
-	    cIDList = map(string.strip, string.split(cIDs, '|'))
-	    #print 'cIDList:%s' % cIDList
-	# HIPPO 6/2016 handle multi strains/colony ID
-	for cID in cIDList:
-	    if not cID in colonyToStrainNameDict:
-		 colonyToStrainNameDict[cID] = [] 
-	    colonyToStrainNameDict[cID].append(str)
+        #print 'cIDs: %s' % cIDs
+        #print 'str: %s' % str
+        cIDList = []
+        if cIDs != None:
+            #cIDList = string.split(cIDs, '|')
+            cIDList = map(string.strip, string.split(cIDs, '|'))
+            #print 'cIDList:%s' % cIDList
+        # HIPPO 6/2016 handle multi strains/colony ID
+        for cID in cIDList:
+            if not cID in colonyToStrainNameDict:
+                 colonyToStrainNameDict[cID] = [] 
+            colonyToStrainNameDict[cID].append(str)
         # 5/2017 multi strain check addition: 4c1b2
         if str in strainNameToColonyIdDict:
             multiStrainNameList.append(str)
@@ -482,33 +481,33 @@ def initialize():
     # load strain name to genotype mappings
     # remove private strain constraint
     results = db.sql('''select distinct s.strain, cl.cellLine, a.accid  as alleleID
-	from PRB_Strain s, GXD_Genotype g, GXD_AllelePair ap, ALL_CellLine cl, ACC_Accession a
-	where s._Strain_key != -1
-	and s.standard = 1
-	and g._Strain_key = s._Strain_key
-	and g._Genotype_key = ap._Genotype_key
-	and ap._MutantCellline_key_1 is not null
-	and ap._MutantCellline_key_1 = cl._CellLine_key
-	and ap._Allele_key_1 = a._Object_key
-	and a._MGIType_key = 11
-	and a._LogicalDB_key = 1
-	and a.preferred = 1
-	and a.prefixPart = 'MGI:' ''', 'auto')
+        from PRB_Strain s, GXD_Genotype g, GXD_AllelePair ap, ALL_CellLine cl, ACC_Accession a
+        where s._Strain_key != -1
+        and s.standard = 1
+        and g._Strain_key = s._Strain_key
+        and g._Genotype_key = ap._Genotype_key
+        and ap._MutantCellline_key_1 is not null
+        and ap._MutantCellline_key_1 = cl._CellLine_key
+        and ap._Allele_key_1 = a._Object_key
+        and a._MGIType_key = 11
+        and a._LogicalDB_key = 1
+        and a.preferred = 1
+        and a.prefixPart = 'MGI:' ''', 'auto')
 
     for r in results:
-	# Check 4c1a
-	s = r['strain']
-	c = r['cellLine']
-	a = r['alleleID']
+        # Check 4c1a
+        s = r['strain']
+        c = r['cellLine']
+        a = r['alleleID']
         if s not in strainNameToGenotypeDict:
-	    strainNameToGenotypeDict[s] = []
-  	strainNameToGenotypeDict[s].append([a, c])
+            strainNameToGenotypeDict[s] = []
+        strainNameToGenotypeDict[s].append([a, c])
 
     results = db.sql('''select strain
-	    from PRB_Strain
-	    where private = 1''', 'auto')
+            from PRB_Strain
+            where private = 1''', 'auto')
     for r in results:
-	privateStrainList.append(r['strain'])
+        privateStrainList.append(r['strain'])
 
     db.useOneConnection(0)
 
@@ -558,17 +557,17 @@ def openFiles():
     # Open the IMITS file
     #
     if loadType == 'impc' or loadType == 'lacz':
-	try:
-	    fpIMITS = open(imitsFile, 'r')
-	except:
-	    print 'Cannot open file: ' + imitsFile
-	    return 1
+        try:
+            fpIMITS = open(imitsFile, 'r')
+        except:
+            print 'Cannot open file: ' + imitsFile
+            return 1
 
     #
     # Open the htmp output file 
     #
     try:
-	#print 'htmpfile: %s' % htmpFile
+        #print 'htmpfile: %s' % htmpFile
         fpHTMP = open(htmpFile, 'w')
     except:
         print 'Cannot open file: ' + htmpFile
@@ -598,9 +597,9 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n\n######################################\n')
-	fpLogCur.write('########## Preprocess Log ##############\n')
-	fpLogCur.write('######################################\n\n')
+        fpLogCur.write('\n\n######################################\n')
+        fpLogCur.write('########## Preprocess Log ##############\n')
+        fpLogCur.write('######################################\n\n')
 
     except:
         print 'Cannot open file: ' + logCurFile
@@ -639,7 +638,7 @@ def closeFiles():
         fpInput.close()
 
     if fpIMITS:
-	fpIMITS.close()
+        fpIMITS.close()
 
     if fpHTMP:
         fpHTMP.close()
@@ -676,10 +675,10 @@ def logIt(msg, line, isError, typeError):
     logit = errorDisplay % (msg, line)
     fpLogDiag.write(logit)
     if not typeError in errorDict:
-	errorDict[typeError] = []
+        errorDict[typeError] = []
     errorDict[typeError].append(logit)
     if isError:
-	fpHTMPError.write(line)
+        fpHTMPError.write(line)
 
     return 0
 
@@ -699,14 +698,14 @@ def parseIMITSFile():
 
         tokens = line[:-1].split('\t')
 
-	if tokens[0] == 'Marker Symbol':
-	    continue
+        if tokens[0] == 'Marker Symbol':
+            continue
 
-	markerID = tokens[1]
-	colonyID = tokens[2]
-	mutantID = tokens[3]
-	colonyBackgroun = tokens[4] # not used
-	productionCtr = tokens[5]
+        markerID = tokens[1]
+        colonyID = tokens[2]
+        mutantID = tokens[3]
+        colonyBackgroun = tokens[4] # not used
+        productionCtr = tokens[5]
 
         # map the colony id to productionCtr, mutantID and markerID
         value = '%s|%s|%s' % (productionCtr, mutantID, markerID)
@@ -742,12 +741,12 @@ def parseIMPCFile():
 
     for f in jFile['response']['docs']:
 
-	try:
-        	mpID = f['mp_term_id']
+        try:
+                mpID = f['mp_term_id']
         except:
-		mpID = ''
+                mpID = ''
         resourceName = f['resource_name']
-	phenotypingCenter = f['phenotyping_center']
+        phenotypingCenter = f['phenotyping_center']
         alleleID = alleleID2 = f['allele_accession_id']
         alleleState = f['zygosity']
         alleleSymbol = f['allele_symbol']
@@ -757,13 +756,13 @@ def parseIMPCFile():
         colonyID = f['colony_id']
 
         # line representing data from the IMPC input file 
-	# no productionCenter
-	# no mutant ID
-	line = resourceName + '\t' + \
-	     phenotypingCenter + '\t' + \
-	     interpretationCenter + '\t' + \
-	     '\t' + \
-	     '\t' + \
+        # no productionCenter
+        # no mutant ID
+        line = resourceName + '\t' + \
+             phenotypingCenter + '\t' + \
+             interpretationCenter + '\t' + \
+             '\t' + \
+             '\t' + \
              mpID + '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -775,27 +774,27 @@ def parseIMPCFile():
 
         # skip if blank field in IMPC data and report to the skip file
         if resourceName == '' or \
-	 	phenotypingCenter == '' or \
-	        mpID == '' or \
-		alleleID == '' or \
-            	alleleState == '' or \
-		alleleSymbol == '' or \
-		inputStrain == '' or \
-		markerID == '' or  \
-		gender == '' or \
-            	colonyID == '':
+                phenotypingCenter == '' or \
+                mpID == '' or \
+                alleleID == '' or \
+                alleleState == '' or \
+                alleleSymbol == '' or \
+                inputStrain == '' or \
+                markerID == '' or  \
+                gender == '' or \
+                colonyID == '':
             fpHTMPSkip.write(line)
             continue
 
         # lineSet assures dups are filtered out
-	if line in lineSet:
-	    fpInputdup.write(line)
-	    continue
+        if line in lineSet:
+            fpInputdup.write(line)
+            continue
 
         lineSet.add(line)
 
     for line in lineSet:
-	fpInputintWrite.write(line)
+        fpInputintWrite.write(line)
 
     fpInputintWrite.close()
     fpInputdup.close()
@@ -824,17 +823,17 @@ def parseIMPCLacZFile():
 
     for f in jFile['response']['docs']:
 
-	totalCt += 1
-	sGroup = f['biological_sample_group']
+        totalCt += 1
+        sGroup = f['biological_sample_group']
 
-	if sGroup.lower() != 'experimental':
-	    if sGroup not in sGroupValList:
-		sGroupValList.append(sGroup)
-	    notExpCt += 1
-	    continue
-	phenotypingCenter = f['phenotyping_center']
-	alleleID = f['allele_accession_id']
-	alleleState = f['zygosity']
+        if sGroup.lower() != 'experimental':
+            if sGroup not in sGroupValList:
+                sGroupValList.append(sGroup)
+            notExpCt += 1
+            continue
+        phenotypingCenter = f['phenotyping_center']
+        alleleID = f['allele_accession_id']
+        alleleState = f['zygosity']
         alleleSymbol = f['allele_symbol']
         inputStrain = f['strain_name']
         markerID = f['gene_accession_id']
@@ -842,37 +841,37 @@ def parseIMPCLacZFile():
         gender = f['sex']
         colonyID = f['colony_id']
 
-	download_url = f['download_url'] 
-	jpeg_url = f['jpeg_url']  
-	full_resolution_file_path = f['full_resolution_file_path']  
-	parameter_name  = f['parameter_name']  
-	parameter_stable_id  = f['parameter_stable_id']  
+        download_url = f['download_url'] 
+        jpeg_url = f['jpeg_url']  
+        full_resolution_file_path = f['full_resolution_file_path']  
+        parameter_name  = f['parameter_name']  
+        parameter_stable_id  = f['parameter_stable_id']  
 
-	try:
-	   parameter_association_stable_id = f['parameter_association_stable_id'] 
-	except:
-	    # skip if no parameter_association_stable_id
-	    nopasId += 1
-	    continue
-	try: 
-	    parameter_association_name = f['parameter_association_name'] 
-	except:
-	    parameter_association_name = []
+        try:
+           parameter_association_stable_id = f['parameter_association_stable_id'] 
+        except:
+            # skip if no parameter_association_stable_id
+            nopasId += 1
+            continue
+        try: 
+            parameter_association_name = f['parameter_association_name'] 
+        except:
+            parameter_association_name = []
 
-	try:
-	    parameter_association_value = f['parameter_association_value'] 
-	except:
-	    parameter_association_value = []
+        try:
+            parameter_association_value = f['parameter_association_value'] 
+        except:
+            parameter_association_value = []
 
         # line representing data from the IMPC LacZ input file
-	# no productionCenter
-	# no mutant ID
-	# no MP ID
+        # no productionCenter
+        # no mutant ID
+        # no MP ID
         line =  resourceName + '\t' + \
-	     phenotypingCenter + '\t' + \
-	     interpretationCenter + '\t' + \
-	     '\t' + \
-	     '\t' + \
+             phenotypingCenter + '\t' + \
+             interpretationCenter + '\t' + \
+             '\t' + \
+             '\t' + \
              '\t' + \
              alleleID + '\t' + \
              alleleState + '\t' + \
@@ -894,11 +893,11 @@ def parseIMPCLacZFile():
             fpHTMPSkip.write(line)
             continue
 
-	lineSet.add(line)
+        lineSet.add(line)
 
     for line in lineSet:
-	fpInputintWrite.write(line)
-	rcdWrittenCt += 1
+        fpInputintWrite.write(line)
+        rcdWrittenCt += 1
 
     fpInputintWrite.close()
     fpInputdup.close()
@@ -922,21 +921,21 @@ def parseIMPCLacZFile():
 
 def checkGenotype(strainName, inputAlleleID, inputMutantID, line, uniqStrainProcessingKey, caller):
     if strainName in strainNameToGenotypeDict: # check genotype
-	genotypeList = strainNameToGenotypeDict[strainName]
-	for genotype in genotypeList: # [allele, mcl]
-	     dbAlleleID = genotype[0]
-	     dbMutantID = genotype[1]
-	     if dbAlleleID != inputAlleleID or dbMutantID != inputMutantID:
-		# when strain matches the database directly
-		if caller == 'uniqStrainProcessing':
-		    msg = 'Strain name match in database: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
-		    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-		else: 
-		    # when atrain is matched with a colony ID
-		    msg = 'Strain name match via colony ID: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
-		    #logIt(msg, line, 1, 'cIDmatchGenoMismatch')
-		    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-		return 1
+        genotypeList = strainNameToGenotypeDict[strainName]
+        for genotype in genotypeList: # [allele, mcl]
+             dbAlleleID = genotype[0]
+             dbMutantID = genotype[1]
+             if dbAlleleID != inputAlleleID or dbMutantID != inputMutantID:
+                # when strain matches the database directly
+                if caller == 'uniqStrainProcessing':
+                    msg = 'Strain name match in database: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
+                    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+                else: 
+                    # when atrain is matched with a colony ID
+                    msg = 'Strain name match via colony ID: %s Genotype mismatch: MGI/database AlleleID: %s Input AlleleID: %s, MGI/database MutantID: %s Input MutantID: %s'  % (strainName, dbAlleleID, inputAlleleID, dbMutantID, inputMutantID)
+                    #logIt(msg, line, 1, 'cIDmatchGenoMismatch')
+                    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+                return 1
     return 0   # no genotype for strain OR all genotypes for strain match
 
 #
@@ -949,14 +948,14 @@ def checkGenotype(strainName, inputAlleleID, inputMutantID, line, uniqStrainProc
 #
 def checkPrivateStrain(strainName, line, uniqStrainProcessingKey, caller):
     if strainName in privateStrainList:
-	if caller  == 'uniqStrainProcessing':
-	    msg = 'Strain name match to private strain in database: %s ' % (strainName)
-	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	else:
-	    # when atrain is matched with a colony ID
-	    msg = 'Strain name match to private strain via colony ID: %s '  % (strainName)
-	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	return 1
+        if caller  == 'uniqStrainProcessing':
+            msg = 'Strain name match to private strain in database: %s ' % (strainName)
+            uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+        else:
+            # when atrain is matched with a colony ID
+            msg = 'Strain name match to private strain via colony ID: %s '  % (strainName)
+            uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+        return 1
     return 0
 #
 # Purpose: do strain checks on a set of attributes representing a unique
@@ -972,48 +971,48 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     dupStrainKey = 0
 
     if uniqStrainProcessingKey in uniqStrainProcessingDict.keys():
-	uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
-	dupStrainKey = 1
+        uniqStrainProcessingDict[uniqStrainProcessingKey].append(line)
+        dupStrainKey = 1
 
     # unpack the key into attributes
     inputAlleleID, alleleSymbol, inputStrain, markerID, colonyID, inputMutantID, prodCtr = \
-    	string.split(uniqStrainProcessingKey, '|') 
+        string.split(uniqStrainProcessingKey, '|') 
     
     # Production Center Lab Code Check US5 doc 4c2
     if not prodCtr in procCtrToLabCodeDict:
-	if dupStrainKey == 0:
-	    msg = 'Production Center not in MGI (voc_term table): %s' % prodCtr
-	    logIt(msg, line, 1, 'prodCtrNotInDb')
-	    uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	    
-	    return 'error'
-	else: # we've seen this key already, just return 'error'
+        if dupStrainKey == 0:
+            msg = 'Production Center not in MGI (voc_term table): %s' % prodCtr
+            logIt(msg, line, 1, 'prodCtrNotInDb')
+            uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+            
+            return 'error'
+        else: # we've seen this key already, just return 'error'
             return 'error'
 
     # Input Strain check #1/#2 US5 doc 4c3
     if dupStrainKey == 0 and inputStrain not in inputStrainList:
 
-	# This is just a check - the strain name will be determined outside this block
-	msg = 'Input Strain not configured, "Not Specified" used : %s' % (inputStrain)
-	logIt(msg, line, 0, 'inputStrainNotConfigured')
-	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	
-	return 'Not Specified'
+        # This is just a check - the strain name will be determined outside this block
+        msg = 'Input Strain not configured, "Not Specified" used : %s' % (inputStrain)
+        logIt(msg, line, 0, 'inputStrainNotConfigured')
+        uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+        
+        return 'Not Specified'
     
     # strain name construction US5 doc 4c4
     # if we find a strain root use the template to create strain name
 
     if inputStrain in referenceStrainDict:
-	strainRoot = referenceStrainDict[inputStrain]
-	labCode = procCtrToLabCodeDict[prodCtr]
-	# if referenceStrainDict has key inputStrain so does strainTemplateDict
-	strainTemplate = strainTemplateDict[inputStrain]
-	strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
+        strainRoot = referenceStrainDict[inputStrain]
+        labCode = procCtrToLabCodeDict[prodCtr]
+        # if referenceStrainDict has key inputStrain so does strainTemplateDict
+        strainTemplate = strainTemplateDict[inputStrain]
+        strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
         #print 'calculated strain name: %s' % strainName
     else:  # otherwise use 'Not Specified'
-	#strainName = 'Not Specified'
-	#print 'cannot calc strain name returning "Not Specified"'
-	return 'Not Specified'
+        #strainName = 'Not Specified'
+        #print 'cannot calc strain name returning "Not Specified"'
+        return 'Not Specified'
     # 4c1b2 Strain name match to multiple strains
     if strainName in multiStrainNameList:
         msg = 'Multiple strain objects in MGI for strain %s' % strainName
@@ -1027,45 +1026,45 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # because we didn't find it in check US5 4c1
 
     if strainName in strainNameToColonyIdDict and \
-    		strainNameToColonyIdDict[strainName] != []:
+                strainNameToColonyIdDict[strainName] != []:
 
-	dbColonyIdList =  strainNameToColonyIdDict[strainName]
-	msg = 'MGI/database colony ID(s) %s for strain %s does not match colony id %s' % \
-		(string.join(dbColonyIdList), strainName, colonyID)
-	
-	uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
-	
-	return 'error'
+        dbColonyIdList =  strainNameToColonyIdDict[strainName]
+        msg = 'MGI/database colony ID(s) %s for strain %s does not match colony id %s' % \
+                (string.join(dbColonyIdList), strainName, colonyID)
+        
+        uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
+        
+        return 'error'
     # check for private strain
     if checkPrivateStrain(strainName, line, uniqStrainProcessingKey, 'uniqStrainProcessing') == 1:
-	return 'error'
+        return 'error'
     # QC the genotype
     if checkGenotype(strainName, inputAlleleID, inputMutantID, line,  uniqStrainProcessingKey, 'uniqStrainProcessing') == 1:
-	return 'error'
+        return 'error'
 
     strainType = strainTypeDict[inputStrain]
     attributes = strainAttribDict[inputStrain]
     attributes = attributes.replace(':', '|')
 
     strainLine = strainName + '\t' + \
-	inputAlleleID + '\t' + \
-	strainType + '\t' + \
-	species + '\t' + \
-	standard + '\t' + \
-	createdBy + '\t' + \
-	inputMutantID + '\t' + \
-	colonyID + '\t' + \
-	attributes + '\n'
+        inputAlleleID + '\t' + \
+        strainType + '\t' + \
+        species + '\t' + \
+        standard + '\t' + \
+        createdBy + '\t' + \
+        inputMutantID + '\t' + \
+        colonyID + '\t' + \
+        attributes + '\n'
 
     if strainLine not in strainLineList:
-	strainLineList.append(strainLine)
+        strainLineList.append(strainLine)
 
     # save all the new strains with their strain lines for later checking
     # and writing to bcp file
     # HIPPO project US146 'Report cases where there are multiple colonyIDs 
     # in the input file for a new strain.'
     if not strainName in newStrainDict:
-	newStrainDict[strainName] = set([])
+        newStrainDict[strainName] = set([])
     newStrainDict[strainName].add(string.strip(strainLine))
     
     return strainName
@@ -1079,24 +1078,24 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 #
 def checkAlleleState(alleleState, line):
     if alleleState in ['Heterozygous', 'Homozygous', 'Hemizygous']:
-	# these are correct, just return them
-	return alleleState
+        # these are correct, just return them
+        return alleleState
 
     # translate the allele state
     if alleleState.lower() == 'heterozygote':
-	alleleState = 'Heterozygous'
+        alleleState = 'Heterozygous'
 
     elif alleleState.lower() == 'homozygote':
-	alleleState = 'Homozygous'
+        alleleState = 'Homozygous'
 
     elif alleleState.lower() == 'hemizygote':
-	alleleState = 'Hemizygous'
+        alleleState = 'Hemizygous'
 
     else:
-	# report and skip if alleleState is unrecognized
-	msg = 'Unrecognized allele state %s' % alleleState
-	logIt(msg, line, 1, 'alleleState')
-	return  'error'
+        # report and skip if alleleState is unrecognized
+        msg = 'Unrecognized allele state %s' % alleleState
+        logIt(msg, line, 1, 'alleleState')
+        return  'error'
 
     return alleleState
 
@@ -1110,9 +1109,9 @@ def checkAlleleState(alleleState, line):
 def checkColonyID(colonyID, line):
 
     if not colonyID in colonyToMCLDict:
-	msg='No IMITS colony id for %s' % colonyID
-	logIt(msg, line, 1, 'colonyID')
-	return 1
+        msg='No IMITS colony id for %s' % colonyID
+        logIt(msg, line, 1, 'colonyID')
+        return 1
 
     return 0
 
@@ -1126,24 +1125,24 @@ def checkColonyID(colonyID, line):
 def checkGender(gender, line):
 
     if gender.lower() == 'male':
-	gender = 'Male'
+        gender = 'Male'
 
     elif gender.lower() == 'female':
-	gender = 'Female'
+        gender = 'Female'
 
     elif gender.lower() == 'no_data':
-	# will be converted to NA laster in makeAnnotation.py
-	gender = ''
+        # will be converted to NA laster in makeAnnotation.py
+        gender = ''
 
     elif gender.lower() == 'both':
-	# will be converted to NA later in makeAnnotation.py
-	gender = 'Both'
+        # will be converted to NA later in makeAnnotation.py
+        gender = 'Both'
     elif gender.lower() == 'na':
-	gender = gender # no change
+        gender = gender # no change
     else:
-	msg = 'Unrecognized gender %s' % gender
-	logIt(msg, line, 1, 'gender')
-	return 'error'
+        msg = 'Unrecognized gender %s' % gender
+        logIt(msg, line, 1, 'gender')
+        return 'error'
 
     return gender 
 
@@ -1173,13 +1172,13 @@ def checkPhenoCtr(phenoCtr, line):
 def compareMarkers(markerID, imitsMrkID, line):
 
     if markerID != imitsMrkID:
-	# US5 doc 4a2
+        # US5 doc 4a2
         # 8/22 all match
         # test file:
         #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
-	msg='No Marker ID match. IMPC: %s IMITS: %s' % (markerID, imitsMrkID)
-	logIt(msg, line, 1, 'noMrkIdMatch')
-	return 1
+        msg='No Marker ID match. IMPC: %s IMITS: %s' % (markerID, imitsMrkID)
+        logIt(msg, line, 1, 'noMrkIdMatch')
+        return 1
 
     return 0
 #
@@ -1192,15 +1191,15 @@ def compareMarkers(markerID, imitsMrkID, line):
 def writeCuratorLog():
     # HIPPO - US146 write fatal errors first
     if 'newStrainMultiColId' in errorDict:
-	fatal = errorDict['newStrainMultiColId']
-	fpLogCur.write(string.join(fatal))
+        fatal = errorDict['newStrainMultiColId']
+        fpLogCur.write(string.join(fatal))
 
-	# remove the fatal error from the dict so not repeated
-	del errorDict['newStrainMultiColId']
+        # remove the fatal error from the dict so not repeated
+        del errorDict['newStrainMultiColId']
 
     # report remaining error types to curator log
     for type in errorDict.keys():
-	fpLogCur.write(string.join(errorDict[type]))
+        fpLogCur.write(string.join(errorDict[type]))
 
 #
 # Purpose: Read the intermediate file and re-format it to create a 
@@ -1237,182 +1236,182 @@ def createHTMPFile():
     #
     
     for line in fpInputintRead.readlines():
-	#print line
-	error = 0
+        #print line
+        error = 0
 
-	# IMPC - mutantID and productionCtr blank
-	# Lacz - mutantID, productionCtr and mpID blank
-	resourceName, phenotypingCenter, interpretationCenter, productionCtr, \
-	    mutantID, mpID, alleleID, alleleState, alleleSymbol, inputStrain, \
-	    markerID, gender, colonyID = line[:-1].split('\t')
+        # IMPC - mutantID and productionCtr blank
+        # Lacz - mutantID, productionCtr and mpID blank
+        resourceName, phenotypingCenter, interpretationCenter, productionCtr, \
+            mutantID, mpID, alleleID, alleleState, alleleSymbol, inputStrain, \
+            markerID, gender, colonyID = line[:-1].split('\t')
 
-	returnVal = checkAlleleState(alleleState, line)
-	if returnVal == 'error':
-	    error = 1
-	else: alleleState = returnVal
-
-	returnVal= checkGender(gender, line)
-	if returnVal == 'error':
+        returnVal = checkAlleleState(alleleState, line)
+        if returnVal == 'error':
             error = 1
-	else: gender = returnVal
-	
-	returnVal= checkPhenoCtr(phenotypingCenter, line)
+        else: alleleState = returnVal
+
+        returnVal= checkGender(gender, line)
+        if returnVal == 'error':
+            error = 1
+        else: gender = returnVal
+        
+        returnVal= checkPhenoCtr(phenotypingCenter, line)
         if returnVal == 'error':
             error = 1
 
         # if alleleState, gender or phenotyping error, continue to next line
         if error:
             continue
-	#
-	# IMPC/LacZ only 
-	#
-	if isIMPC or isLacZ:
-	    # verify the IMPC/colony_id with the IMITS/colonyName
-	    if checkColonyID(colonyID, line):
-		continue
+        #
+        # IMPC/LacZ only 
+        #
+        if isIMPC or isLacZ:
+            # verify the IMPC/colony_id with the IMITS/colonyName
+            if checkColonyID(colonyID, line):
+                continue
 
-	    # verify the IMPC/markerID with the IMITS/marker ID
-	    # note that the IMITS file also provides the 'mutantID' (es cell line)
-	    productionCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
+            # verify the IMPC/markerID with the IMITS/marker ID
+            # note that the IMITS file also provides the 'mutantID' (es cell line)
+            productionCtr, mutantID, imitsMrkID = string.split(colonyToMCLDict[colonyID], '|')
 
-	    if compareMarkers(markerID, imitsMrkID, line):
-		continue
+            if compareMarkers(markerID, imitsMrkID, line):
+                continue
 
-	# Allele/MCL Object Identity/Consistency Check US5 doc 4b
+        # Allele/MCL Object Identity/Consistency Check US5 doc 4b
 
-	if alleleID in allelesInDbDict: # 4b2a
+        if alleleID in allelesInDbDict: # 4b2a
 
-	    dbAllele = allelesInDbDict[alleleID]
+            dbAllele = allelesInDbDict[alleleID]
 
-	    # report this but don't exclude it
-	    if alleleSymbol != dbAllele.s:
-		msg = 'Allele Symbol: %s does not match MGI symbol: %s' % (alleleSymbol, dbAllele.s)
-		logIt(msg, line, 1, 'alleleNotMatch')
-		error = 1
+            # report this but don't exclude it
+            if alleleSymbol != dbAllele.s:
+                msg = 'Allele Symbol: %s does not match MGI symbol: %s' % (alleleSymbol, dbAllele.s)
+                logIt(msg, line, 1, 'alleleNotMatch')
+                error = 1
 
-	    if markerID != dbAllele.m:
-		msg = 'Marker ID: %s does not match MGI marker ID: %s' % (markerID, dbAllele.m)
-		logIt(msg, line, 1, 'markerNotMatch')
-		error = 1
+            if markerID != dbAllele.m:
+                msg = 'Marker ID: %s does not match MGI marker ID: %s' % (markerID, dbAllele.m)
+                logIt(msg, line, 1, 'markerNotMatch')
+                error = 1
 
-	    # If input row has MCL, but that MCL is associated with a 
-	    # only a different allele in MGI than specified in the input file, 
-	    # report and skip
-	    if mutantID != '' and mutantID not in dbAllele.c and mutantID in mclInDbDict:
-		dbAlleleList = mclInDbDict[mutantID]
-		if alleleSymbol not in dbAlleleList:
-		    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, string.join(dbAlleleList, ', '))
-		    logIt(msg, line, 1, 'mclDiffAllele')
-		    error = 1
-	    # If input row has MCL, but that MCL is not associated with 
-	    # the allele in MGI - report as non-fatal error, load data 
-	    # using null MCL for genotype
+            # If input row has MCL, but that MCL is associated with a 
+            # only a different allele in MGI than specified in the input file, 
+            # report and skip
+            if mutantID != '' and mutantID not in dbAllele.c and mutantID in mclInDbDict:
+                dbAlleleList = mclInDbDict[mutantID]
+                if alleleSymbol not in dbAlleleList:
+                    msg = 'Mutant ID: %s is associated with different allele(s) in the database. Incoming allele: %s, DB Allele(s) %s' % (mutantID, alleleSymbol, string.join(dbAlleleList, ', '))
+                    logIt(msg, line, 1, 'mclDiffAllele')
+                    error = 1
+            # If input row has MCL, but that MCL is not associated with 
+            # the allele in MGI - report as non-fatal error, load data 
+            # using null MCL for genotype
             elif mutantID != '' and mutantID not in dbAllele.c:
                 msg = ' Mutant ID: %s is not associated with %s in MGI loading data with null-MCL' % (mutantID, alleleID)
                 logIt(msg, line, 1, 'mutIdNotAssoc')
                 mutantID = ''
 
-	else: # US5 doc 4b2
-	    # 15 cases in impc.json e.g. NULL-114475FCF4
-	    msg = 'Allele not in MGI: %s' % alleleID
-	    logIt(msg, line, 1, 'alleleNotInDb')
-	    error = 1
+        else: # US5 doc 4b2
+            # 15 cases in impc.json e.g. NULL-114475FCF4
+            msg = 'Allele not in MGI: %s' % alleleID
+            logIt(msg, line, 1, 'alleleNotInDb')
+            error = 1
 
-	if error == 1:
-	    continue
+        if error == 1:
+            continue
 
-	#
-	# Now do checks on the uniq strains in the input file
-	#
+        #
+        # Now do checks on the uniq strains in the input file
+        #
 
-	# key to determine uniq entries for strain processing
-	uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
-	    (alleleID, alleleSymbol, inputStrain, markerID, \
-		colonyID, mutantID, productionCtr)
+        # key to determine uniq entries for strain processing
+        uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
+            (alleleID, alleleSymbol, inputStrain, markerID, \
+                colonyID, mutantID, productionCtr)
 
-	# resolve the colonyID to a strain in the database
-	if colonyID in colonyToStrainNameDict:
-	    # HIPPO US146 case #4
-	    # multiple strains for a colony ID
-	    if len(colonyToStrainNameDict[colonyID]) > 1:
-		msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, string.join(colonyToStrainNameDict[colonyID], ', ') )
-		logIt(msg, line, 1, 'colIdMultiStrains')
-		for c in colonyToStrainNameDict[colonyID]:
-		    checkPrivateStrain(c, line, uniqStrainProcessingKey, 'colonyIdMatch')
-		continue
-	    # if we get here we have a single strain
-  	    strainName = colonyToStrainNameDict[colonyID][0]
+        # resolve the colonyID to a strain in the database
+        if colonyID in colonyToStrainNameDict:
+            # HIPPO US146 case #4
+            # multiple strains for a colony ID
+            if len(colonyToStrainNameDict[colonyID]) > 1:
+                msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, string.join(colonyToStrainNameDict[colonyID], ', ') )
+                logIt(msg, line, 1, 'colIdMultiStrains')
+                for c in colonyToStrainNameDict[colonyID]:
+                    checkPrivateStrain(c, line, uniqStrainProcessingKey, 'colonyIdMatch')
+                continue
+            # if we get here we have a single strain
+            strainName = colonyToStrainNameDict[colonyID][0]
 
-	    # check for private strain
-	    if checkPrivateStrain(strainName, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
-		continue
+            # check for private strain
+            if checkPrivateStrain(strainName, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
+                continue
 
-	    # QC the genotype
-	    if checkGenotype(strainName, alleleID, mutantID, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
-		continue
-	else:
-	    #
-	    # if strain not determined by colony ID first do checks on the 
-	    #	uniq strains in the input file
-	    #
-	    # if key in the list, we've already processed this uniq record
-	    # Note: key does not include MP ID, multi MP IDs/per uniq allele
-	    # Nor does it include gender, multi gender per uniq allele
+            # QC the genotype
+            if checkGenotype(strainName, alleleID, mutantID, line, uniqStrainProcessingKey, 'colonyIdMatch') == 1:
+                continue
+        else:
+            #
+            # if strain not determined by colony ID first do checks on the 
+            #	uniq strains in the input file
+            #
+            # if key in the list, we've already processed this uniq record
+            # Note: key does not include MP ID, multi MP IDs/per uniq allele
+            # Nor does it include gender, multi gender per uniq allele
 
-	    strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
-	    
-	# if all the checks passed write it out to the HTMP load format file
-	if strainName == 'error':
-	    continue
+            strainName = doUniqStrainChecks(uniqStrainProcessingKey, line)
+            
+        # if all the checks passed write it out to the HTMP load format file
+        if strainName == 'error':
+            continue
 
-	htmpLine = phenotypingCenter + '\t' + \
-	     interpretationCenter + '\t' + \
-	     mutantID + '\t' + \
-	     mpID + '\t' + \
-	     alleleID + '\t' + \
-	     alleleState + '\t' + \
-	     alleleSymbol + '\t' + \
-	     markerID + '\t' + \
-	     evidenceCode + '\t' + \
-	     strainName + '\t' + \
-	     gender + '\t' + \
-	     colonyID + '\t' + \
-	     resourceName + '\n'
+        htmpLine = phenotypingCenter + '\t' + \
+             interpretationCenter + '\t' + \
+             mutantID + '\t' + \
+             mpID + '\t' + \
+             alleleID + '\t' + \
+             alleleState + '\t' + \
+             alleleSymbol + '\t' + \
+             markerID + '\t' + \
+             evidenceCode + '\t' + \
+             strainName + '\t' + \
+             gender + '\t' + \
+             colonyID + '\t' + \
+             resourceName + '\n'
 
-	#fpHTMP.write(htmpLine)
+        #fpHTMP.write(htmpLine)
 
-	# save the lines to a data structure with 'strain|colonyID' key
-	# later we look for multiple colony IDs per strain and annotations
-	# to load for just ONE colony ID. We DO NOT want to load annotations
-	# for the rejected colony ID(s), we just want to report them
-	key = '%s|%s' % (strainName, colonyID)
-	if key not in htmpLineDict:
-	    htmpLineDict[key] = []
-	htmpLineDict[key].append(htmpLine)
+        # save the lines to a data structure with 'strain|colonyID' key
+        # later we look for multiple colony IDs per strain and annotations
+        # to load for just ONE colony ID. We DO NOT want to load annotations
+        # for the rejected colony ID(s), we just want to report them
+        key = '%s|%s' % (strainName, colonyID)
+        if key not in htmpLineDict:
+            htmpLineDict[key] = []
+        htmpLineDict[key].append(htmpLine)
 
     for key in uniqStrainProcessingDict.keys():
-	msgList = uniqStrainProcessingDict[key]
-	msg = msgList[0]
-	for line in msgList[1:]:
-	    if 'Input Strain not configured' in msg:
-		logIt(msg, line, 0, 'inputStrainNotConfigured')
-	    else:
-		logIt(msg, line, 1, 'inputStrainNotConfigured')
+        msgList = uniqStrainProcessingDict[key]
+        msg = msgList[0]
+        for line in msgList[1:]:
+            if 'Input Strain not configured' in msg:
+                logIt(msg, line, 0, 'inputStrainNotConfigured')
+            else:
+                logIt(msg, line, 1, 'inputStrainNotConfigured')
     #
     # HIPPO US146 - check for new strains with multiple colony ids
     #
     for s in newStrainDict:
-	# we have multi colony ids for this strain, pick one to load, report
-	# the rest
-	if len(newStrainDict[s]) > 1:
-	    msg = 'New strain with multiple Colony IDs. Strain created, with Colony ID note:%s. Genotype and annotations not created. The following colonyID note(s) not created:'
+        # we have multi colony ids for this strain, pick one to load, report
+        # the rest
+        if len(newStrainDict[s]) > 1:
+            msg = 'New strain with multiple Colony IDs. Strain created, with Colony ID note:%s. Genotype and annotations not created. The following colonyID note(s) not created:'
 
             # get input lines for this new strain
             multiSet = newStrainDict[s]
             #print multiSet
 
-	    # Add strain/cID(s) to the list whose genotypes/annotations we 
-	    # will not load
+            # Add strain/cID(s) to the list whose genotypes/annotations we 
+            # will not load
             for line in list(multiSet):
                 cID = string.split(line, '\t')[7]
                 # this corresponds to the key in htmpLineDict
@@ -1420,36 +1419,36 @@ def createHTMPFile():
                 #print 'adding %s to noLoadAnnotList\n' % key
                 noLoadAnnotList.append(key)
 
-	    # get a arbitrary line from the list, the strain will be loaded with
-	    # this colony ID
-	    strainToLoad = multiSet.pop()
+            # get a arbitrary line from the list, the strain will be loaded with
+            # this colony ID
+            strainToLoad = multiSet.pop()
 
-	    # plug the colony ID which WAS loaded into the error message
-	    msg = msg % string.split(strainToLoad)[8]
+            # plug the colony ID which WAS loaded into the error message
+            msg = msg % string.split(strainToLoad)[8]
 
-	    # write out the strain to load
-	    fpStrain.write('%s%s' % (strainToLoad, '\n'))
+            # write out the strain to load
+            fpStrain.write('%s%s' % (strainToLoad, '\n'))
 
-	    # get the  lines with the remaining colony ids for the strain,
-	    # report
-	    strainLines = string.join(multiSet, '\n')
-	    logIt(msg, strainLines, 1, 'newStrainMultiColId')
-	else:
-	    # we have only one colony id, write the strain to the strain file
-	    # its a set so convert to list to index
-	    fpStrain.write('%s%s' % (list(newStrainDict[s])[0], '\n'))
+            # get the  lines with the remaining colony ids for the strain,
+            # report
+            strainLines = string.join(multiSet, '\n')
+            logIt(msg, strainLines, 1, 'newStrainMultiColId')
+        else:
+            # we have only one colony id, write the strain to the strain file
+            # its a set so convert to list to index
+            fpStrain.write('%s%s' % (list(newStrainDict[s])[0], '\n'))
 
     # write lines to the htmp file checking the noloadAnnotList first
     #print 'noLoadAnnotList: %s' % noLoadAnnotList
     for key in htmpLineDict:
-	#print 'htmpLineDict key: "%s"' % key
-	#print 'htmpLineDict lines: "%s"' % htmpLineDict[key]
-	if key in noLoadAnnotList:
-	    #print 'key "%s" in noLoadAnnotList' % key
-	    continue
-	#print 'adding line to HTMP file'
-	for line in htmpLineDict[key]:
-	    fpHTMP.write(line)
+        #print 'htmpLineDict key: "%s"' % key
+        #print 'htmpLineDict lines: "%s"' % htmpLineDict[key]
+        if key in noLoadAnnotList:
+            #print 'key "%s" in noLoadAnnotList' % key
+            continue
+        #print 'adding line to HTMP file'
+        for line in htmpLineDict[key]:
+            fpHTMP.write(line)
 
     # write errors to curation log
     print 'writing to curator log'
@@ -1472,7 +1471,7 @@ if openFiles() != 0:
 if isIMPC or isLacZ:
     print 'parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     if parseIMITSFile() != 0:
-	sys.exit(1)
+        sys.exit(1)
 
 #
 # process either IMPC/MP, IMPC/LacZ input file
@@ -1495,4 +1494,3 @@ if returnCode != 0:
 closeFiles()
 print 'done: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 sys.exit(0)
-

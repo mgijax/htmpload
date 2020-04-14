@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 #  runReports_IMPC.py
 ###########################################################################
@@ -115,8 +114,8 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n***********\nIMPC/IMITS Colony ID Discrepancies\n\n')
-	fpLogCur.write('Allele\tIMPC\tIMITs\n')
+        fpLogCur.write('\n***********\nIMPC/IMITS Colony ID Discrepancies\n\n')
+        fpLogCur.write('Allele\tIMPC\tIMITs\n')
     except:
         print 'Cannot open file: ' + logCurFile
         return 1
@@ -154,41 +153,41 @@ def closeFiles():
 def createColonyIdReport():
     imitsDict = {}
     results = db.sql('''select distinct nc1.note as imitsCID, a._Allele_key
-	from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a
-	where n1._NoteType_key = 1041
-	and n1._MGIType_key = 11
-	and n1._Note_key = nc1._Note_key
-	and n1._Object_key = a._Allele_key''', 'auto')
+        from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a
+        where n1._NoteType_key = 1041
+        and n1._MGIType_key = 11
+        and n1._Note_key = nc1._Note_key
+        and n1._Object_key = a._Allele_key''', 'auto')
 
     for r in results:
-	imitsDict[r['_Allele_key']] = string.strip(r['imitsCID'])
+        imitsDict[r['_Allele_key']] = string.strip(r['imitsCID'])
 
     results = db.sql('''select distinct nc1.note as impcCID, aa.accID, a._Allele_key
-	from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
-	    GXD_Genotype g, ACC_Accession aa
-	where n1._NoteType_key = 1012
-	and n1._MGIType_key = 10
-	and n1._Note_key = nc1._Note_key
-	and n1._Object_key = g._Strain_key
-	and g._Genotype_key = ap._Genotype_key
-	and ap._Allele_key_1 = a._Allele_key
-	and a._Allele_key = aa._Object_key
-	and aa._MGIType_key = 11
-	and aa._LogicalDB_key = 1
-	and aa.preferred = 1
-	and aa.prefixPart = 'MGI:'
-	order by aa.accID ''', 'auto')
+        from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
+            GXD_Genotype g, ACC_Accession aa
+        where n1._NoteType_key = 1012
+        and n1._MGIType_key = 10
+        and n1._Note_key = nc1._Note_key
+        and n1._Object_key = g._Strain_key
+        and g._Genotype_key = ap._Genotype_key
+        and ap._Allele_key_1 = a._Allele_key
+        and a._Allele_key = aa._Object_key
+        and aa._MGIType_key = 11
+        and aa._LogicalDB_key = 1
+        and aa.preferred = 1
+        and aa.prefixPart = 'MGI:'
+        order by aa.accID ''', 'auto')
 
     for r in results:
-	alleleKey = r['_Allele_key']
-	accID = r['accID']
-	id = string.strip(r['impcCID'])
-	if imitsDict.has_key(alleleKey):
-	    if id not in imitsDict[alleleKey]:
-		fpLogCur.write('%s\t%s\t%s\n' % (accID, id, imitsDict[alleleKey]))
+        alleleKey = r['_Allele_key']
+        accID = r['accID']
+        id = string.strip(r['impcCID'])
+        if imitsDict.has_key(alleleKey):
+            if id not in imitsDict[alleleKey]:
+                fpLogCur.write('%s\t%s\t%s\n' % (accID, id, imitsDict[alleleKey]))
 
     return 0
-	
+        
 #
 #  MAIN
 #
@@ -208,4 +207,3 @@ if createColonyIdReport() != 0:
 print 'close files'
 closeFiles()
 sys.exit(0)
-

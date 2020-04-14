@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 # Program: makeStrains.py
 #
@@ -160,7 +159,7 @@ def exit(
         errorFile.write('\n\nEnd Date/Time: %s\n' % (mgi_utils.date()))
         diagFile.close()
         errorFile.close()
-	inputFile.close()
+        inputFile.close()
     except:
         pass
 
@@ -192,12 +191,12 @@ def init():
         diagFile = open(diagFileName, 'w')
     except:
         exit(1, 'Could not open file %s\n' % diagFileName)
-		
+                
     try:
         errorFile = open(errorFileName, 'w')
     except:
         exit(1, 'Could not open file %s\n' % errorFileName)
-		
+                
     try:
         inputFile = open(inputFileName, 'r')
     except:
@@ -278,7 +277,7 @@ def verifySpecies(
         results = db.sql('select _Term_key, term from VOC_Term where _Vocab_key = 26', 'auto')
 
         for r in results:
-	    speciesDict[r['term']] = r['_Term_key']
+            speciesDict[r['term']] = r['_Term_key']
 
     if speciesDict.has_key(species):
             speciesKey = speciesDict[species]
@@ -307,7 +306,7 @@ def verifyStrainType(
         results = db.sql('select _Term_key, term from VOC_Term where _Vocab_key = 55', 'auto')
 
         for r in results:
-	    strainTypesDict[r['term']] = r['_Term_key']
+            strainTypesDict[r['term']] = r['_Term_key']
 
     if strainTypesDict.has_key(strainType):
             strainTypeKey = strainTypesDict[strainType]
@@ -328,22 +327,22 @@ def checkColonyNote(strainKey):
     print 'checking colony note for strain key: %s' % strainKey
 
     if len(colonyIdDict)== 0:
-	#print 'loading colonyIdDict'
+        #print 'loading colonyIdDict'
         results = db.sql('''
-	        select _Note_key, _Object_key as strainKey
-		from MGI_Note 
-		where _MGIType_key = %s
-		and _NoteType_key = %s
-		''' % (mgiTypeKey, mgiColonyNoteTypeKey), 'auto')
+                select _Note_key, _Object_key as strainKey
+                from MGI_Note 
+                where _MGIType_key = %s
+                and _NoteType_key = %s
+                ''' % (mgiTypeKey, mgiColonyNoteTypeKey), 'auto')
         for r in results:
             colonyIdDict[r['strainKey']] = r['_Note_key']
 
     if colonyIdDict.has_key(strainKey):
-	#print 'strain key %s has colony id: %s' % (strainKey, colonyIdDict[strainKey])
-	return 1
+        #print 'strain key %s has colony id: %s' % (strainKey, colonyIdDict[strainKey])
+        return 1
 
     return 0
-	
+        
 # Purpose:  verify Strain
 # Returns:  Strain Key if Strain is valid, else 0
 # Assumes:  nothing
@@ -360,8 +359,8 @@ def verifyStrain(
     global strainDict
 
     results = db.sql('''
-    	select _Strain_key, strain from PRB_Strain where strain = '%s'
-	''' % (strain), 'auto')
+        select _Strain_key, strain from PRB_Strain where strain = '%s'
+        ''' % (strain), 'auto')
 
     for r in results:
         strainDict[r['strain']] = r['_Strain_key']
@@ -440,8 +439,8 @@ def bcpFiles():
         (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), noteChunkTable, outputDir, noteChunkTableBCP)
 
     for bcpCmd in [bcp1, bcp2, bcp3, bcp4, bcp5, bcp6]:
-	diagFile.write('%s\n' % bcpCmd)
-	os.system(bcpCmd)
+        diagFile.write('%s\n' % bcpCmd)
+        os.system(bcpCmd)
 
     # update prb_strain_marker_seq auto-sequence
     db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) from PRB_Strain_Marker)) ''', None)
@@ -462,11 +461,11 @@ def createNote(strainKey, note, noteTypeKey, createdByKey):
     global noteKey
 
     noteFile.write('%s|%s|%s|%s|%s|%s|%s|%s\n' \
-	% (noteKey, strainKey, mgiNoteObjectKey, noteTypeKey, \
-	   createdByKey, createdByKey, cdate, cdate))
+        % (noteKey, strainKey, mgiNoteObjectKey, noteTypeKey, \
+           createdByKey, createdByKey, cdate, cdate))
 
     noteChunkFile.write('%s|1|%s|%s|%s|%s|%s\n' \
-	% (noteKey, note, createdByKey, createdByKey, cdate, cdate))
+        % (noteKey, note, createdByKey, createdByKey, cdate, cdate))
 
     noteKey = noteKey + 1
 
@@ -486,103 +485,103 @@ def processFile():
     for line in inputFile.readlines():
 
         lineNum = lineNum + 1
-	#print line
+        #print line
         # Split the line into tokens
         tokens = line[:-1].split('\t')
 
         try:
-	    name = tokens[0]
-	    alleleIDs = tokens[1]
-	    strainType = tokens[2]
-	    species = tokens[3]
-	    isStandard = tokens[4]
-	    createdBy = tokens[5]
-	    mutantNote = tokens[6]
-	    colonyNote = tokens[7]
-	    annotations = tokens[8].split('|')
+            name = tokens[0]
+            alleleIDs = tokens[1]
+            strainType = tokens[2]
+            species = tokens[3]
+            isStandard = tokens[4]
+            createdBy = tokens[5]
+            mutantNote = tokens[6]
+            colonyNote = tokens[7]
+            annotations = tokens[8].split('|')
         except:
             exit(1, 'Invalid Line (%d): %s\n' % (lineNum, line))
 
-	strainExistKey = verifyStrain(name, lineNum)
-	strainTypeKey = verifyStrainType(strainType, lineNum)
-	speciesKey = verifySpecies(species, lineNum)
-	createdByKey = loadlib.verifyUser(createdBy, 0, errorFile)
+        strainExistKey = verifyStrain(name, lineNum)
+        strainTypeKey = verifyStrainType(strainType, lineNum)
+        speciesKey = verifySpecies(species, lineNum)
+        createdByKey = loadlib.verifyUser(createdBy, 0, errorFile)
 
-	# if the strain exist, but with no colony id note, create one
-	if strainExistKey > 0:
-	    print 'strain in database checking colony note : %s' % line
-	    if (not checkColonyNote(strainExistKey) ):
-		#print 'colony note not in the database: %s' % colonyNote
-		createNote(strainExistKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
-	    else:
-		print 'colony note in database: %s'  % colonyNote
-	    continue
-	else: 
-	    print 'strain not in database : %s' % line
+        # if the strain exist, but with no colony id note, create one
+        if strainExistKey > 0:
+            print 'strain in database checking colony note : %s' % line
+            if (not checkColonyNote(strainExistKey) ):
+                #print 'colony note not in the database: %s' % colonyNote
+                createNote(strainExistKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
+            else:
+                print 'colony note in database: %s'  % colonyNote
+            continue
+        else: 
+            print 'strain not in database : %s' % line
 
-	# if strain does not exist and  verification failed on strain type, 
-	# species or createdBy, skip the record
+        # if strain does not exist and  verification failed on strain type, 
+        # species or createdBy, skip the record
         if strainTypeKey == 0 or speciesKey == 0 \
-		or createdByKey == 0:
-	    #print 'verification failed on strain type, species or createdBy: %s %s %s ' % (strainTypeKey, speciesKey, createdByKey)
+                or createdByKey == 0:
+            #print 'verification failed on strain type, species or createdBy: %s %s %s ' % (strainTypeKey, speciesKey, createdByKey)
             continue
 
         # if no errors, process
         strainFile.write('%d|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n' \
             % (strainKey, speciesKey, strainTypeKey, name, isStandard, 
-		isPrivate, isGeneticBackground, createdByKey, createdByKey, 
-		    cdate, cdate))
+                isPrivate, isGeneticBackground, createdByKey, createdByKey, 
+                    cdate, cdate))
 
-	# if Allele found, resolve to Marker
-	allAlleles = alleleIDs.split('|')
+        # if Allele found, resolve to Marker
+        allAlleles = alleleIDs.split('|')
 
-	for a in allAlleles:
-		alleleKey = loadlib.verifyObject(a, alleleTypeKey, None, lineNum, errorFile)
-		#print 'makeStrains.py allele: %s marker key: %s' % (a, alleleKey)
-	    	results = db.sql('select _Marker_key from ALL_Allele where _Allele_key = %s' % (alleleKey),  'auto')
-		markerKey = results[0]['_Marker_key']
+        for a in allAlleles:
+                alleleKey = loadlib.verifyObject(a, alleleTypeKey, None, lineNum, errorFile)
+                #print 'makeStrains.py allele: %s marker key: %s' % (a, alleleKey)
+                results = db.sql('select _Marker_key from ALL_Allele where _Allele_key = %s' % (alleleKey),  'auto')
+                markerKey = results[0]['_Marker_key']
 
-		markerFile.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\n' \
-		    % (strainmarkerKey, strainKey, markerKey, alleleKey, 
-			qualifierKey, createdByKey, createdByKey, cdate, cdate))
-		strainmarkerKey = strainmarkerKey + 1
+                markerFile.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\n' \
+                    % (strainmarkerKey, strainKey, markerKey, alleleKey, 
+                        qualifierKey, createdByKey, createdByKey, cdate, cdate))
+                strainmarkerKey = strainmarkerKey + 1
 
         # MGI Accession ID for the strain
-	if isStandard == '1':
-	    accFile.write('%d|%s%d|%s|%s|1|%d|%d|0|1|%s|%s|%s|%s\n' \
-	    % (accKey, mgiPrefix, mgiKey, mgiPrefix, mgiKey, strainKey, mgiTypeKey, 
-	       createdByKey, createdByKey, cdate, cdate))
-	    accKey = accKey + 1
+        if isStandard == '1':
+            accFile.write('%d|%s%d|%s|%s|1|%d|%d|0|1|%s|%s|%s|%s\n' \
+            % (accKey, mgiPrefix, mgiKey, mgiPrefix, mgiKey, strainKey, mgiTypeKey, 
+               createdByKey, createdByKey, cdate, cdate))
+            accKey = accKey + 1
 
         # storing data in MGI_Note/MGI_NoteChunk
         # Colony ID Note
 
         if len(colonyNote) > 0:
-	    createNote(strainKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
+            createNote(strainKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
 
         # storing data in MGI_Note/MGI_NoteChunk
         # Mutant Cell Line of Origin Note
         if len(mutantNote) > 0:
-	    createNote(strainKey, mutantNote, mgiMutOrigNoteTypeKey, createdByKey)
+            createNote(strainKey, mutantNote, mgiMutOrigNoteTypeKey, createdByKey)
 
-	#
+        #
         # Annotations
         #
-	# _AnnotType_key = 1009 =  "Strain/Attributes"
-	# _Qualifier_key = 1614158 =  null
-	#
+        # _AnnotType_key = 1009 =  "Strain/Attributes"
+        # _Qualifier_key = 1614158 =  null
+        #
 
-	for a in annotations:
+        for a in annotations:
 
-	    # strain annotation type
-	    annotTypeKey = 1009
+            # strain annotation type
+            annotTypeKey = 1009
 
-	    # this is a null qualifier key
-	    annotQualifierKey = 1614158
+            # this is a null qualifier key
+            annotQualifierKey = 1614158
 
-	    annotTermKey = loadlib.verifyTerm('', 27, a, lineNum, errorFile)
-	    if annotTermKey == 0:
-		continue
+            annotTermKey = loadlib.verifyTerm('', 27, a, lineNum, errorFile)
+            if annotTermKey == 0:
+                continue
 
             annotFile.write('%s|%s|%s|%s|%s|%s|%s\n' \
               % (annotKey, annotTypeKey, strainKey, annotTermKey, annotQualifierKey, cdate, cdate))
@@ -621,4 +620,3 @@ print 'bcp files : %s' % (mgi_utils.date())
 bcpFiles()
 
 exit(0)
-

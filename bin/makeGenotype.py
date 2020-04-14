@@ -1,4 +1,3 @@
-#!/usr/local/bin/python
 #
 #  makeGenotype.py
 ###########################################################################
@@ -346,7 +345,7 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-	fpLogCur.write('\n\n######################################\n')
+        fpLogCur.write('\n\n######################################\n')
         fpLogCur.write('########## makeGenotype Log ##########\n')
         fpLogCur.write('######################################\n\n')
 
@@ -459,11 +458,11 @@ def getGenotypes():
 
     for line in fpHTMPInput.readlines():
 
-	if DEBUG:
-	    print '\nNEW LINE: ', line
+        if DEBUG:
+            print '\nNEW LINE: ', line
 
-	error = 0
-	lineNum = lineNum + 1
+        error = 0
+        lineNum = lineNum + 1
 
         tokens = line[:-1].split('\t')
 
@@ -471,32 +470,32 @@ def getGenotypes():
         # if genotypeID  remains '', the genotype is not in the database
         # if it is assigned an ID from the database, it is still written to
         # the genotypeload input file because this file is used as input to the
-	# annotation load.  The genotypeload will only create
+        # annotation load.  The genotypeload will only create
         # a genotype if the genotypeID field is ''
 
-	genotypeID = ''
+        genotypeID = ''
 
-	phenotypingCenter = tokens[0]
-	annotationCenter = tokens[1]
+        phenotypingCenter = tokens[0]
+        annotationCenter = tokens[1]
 
-	mutantID = tokens[2]
-	mutantID2 = mutantID
-	mpID = tokens[3]
+        mutantID = tokens[2]
+        mutantID2 = mutantID
+        mpID = tokens[3]
         alleleID = tokens[4]
-	alleleID2 = alleleID
+        alleleID2 = alleleID
         alleleState = tokens[5]
         alleleSymbol = tokens[6]
         markerID = tokens[7]
-	strainName = tokens[9]
+        strainName = tokens[9]
         gender = tokens[10]
         colonyID = tokens[11]
 
-	# marker
+        # marker
 
-	if len(markerID) > 0:
+        if len(markerID) > 0:
             markerKey = loadlib.verifyMarker(markerID, lineNum, fpLogDiag)
         else:
-	    markerKey = 0
+            markerKey = 0
 
         if markerKey == 0:
             logit = errorDisplay % (markerID, lineNum, '8', line)
@@ -504,15 +503,15 @@ def getGenotypes():
             fpLogCur.write(logit)
             error = 1
 
-	if DEBUG:
-	    print '    markerID: %s markerKey: %s' % (markerID, markerKey)
+        if DEBUG:
+            print '    markerID: %s markerKey: %s' % (markerID, markerKey)
 
-	# allele
+        # allele
 
-	if len(alleleID) > 0:
+        if len(alleleID) > 0:
             alleleKey = loadlib.verifyObject(alleleID, 11, None, lineNum, fpLogDiag)
         else:
-	    alleleKey = 0
+            alleleKey = 0
 
         if alleleKey == 0:
             logit = errorDisplay % (alleleID, lineNum, '5', line)
@@ -520,356 +519,356 @@ def getGenotypes():
             fpLogCur.write(logit)
             error = 1
 
-	if DEBUG:
-	    print '    alleleID: %s alleleKey: %s' % (alleleID, alleleKey)
+        if DEBUG:
+            print '    alleleID: %s alleleKey: %s' % (alleleID, alleleKey)
 
-	# mutant
+        # mutant
 
-	if len(mutantID) > 0:
+        if len(mutantID) > 0:
            mutantKey = alleleloadlib.verifyMutnatCellLine(mutantID, lineNum, fpLogDiag)
            mutantKey2 = mutantKey
            mutantSQL = mutantSQL2 = '='
 
         else:
-	    mutantSQL = 'is'
-	    mutantKey = 'null'
+            mutantSQL = 'is'
+            mutantKey = 'null'
 
-	#
-	# if the MCL in the input file does not match the Allele/MCL association in MGD,
-	# (i.e. the mutantKey returned from the alleleloadlib lookup is null),
-	# then add the Genotype with null MCLs (see TR12508).
-	#
+        #
+        # if the MCL in the input file does not match the Allele/MCL association in MGD,
+        # (i.e. the mutantKey returned from the alleleloadlib lookup is null),
+        # then add the Genotype with null MCLs (see TR12508).
+        #
         if mutantKey == 0:
-	    mutantID = ''
-	    mutantID2 = ''
+            mutantID = ''
+            mutantID2 = ''
             #logit = errorDisplay % (mutantID, lineNum, '3', line)
             #fpLogDiag.write(logit)
             #fpLogCur.write(logit)
             #error = 1
 
-	if DEBUG:
-	    print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
+        if DEBUG:
+            print '    mutantID: %s mutantKey: %s' % (mutantID, mutantKey)
 
-	# strain should have been added by the previous makeStrains.sh 
-	# wrapper but in case it was not...
+        # strain should have been added by the previous makeStrains.sh 
+        # wrapper but in case it was not...
  
         strainID = ''
         strainKey = 0
 
-	# NS strain does not have colony ID, so don't check
-	if strainName == 'Not Specified':
-	    results = db.sql(''' select * from strains where strain = '%s' ''' % strainName, 'auto')
-	else:
-	    results = db.sql(''' select * from strains where strain = '%s' and colonyID like'%%%s%%' ''' % (strainName, colonyID), 'auto')
+        # NS strain does not have colony ID, so don't check
+        if strainName == 'Not Specified':
+            results = db.sql(''' select * from strains where strain = '%s' ''' % strainName, 'auto')
+        else:
+            results = db.sql(''' select * from strains where strain = '%s' and colonyID like'%%%s%%' ''' % (strainName, colonyID), 'auto')
 
-	for r in results:
-	   strainID = r['strainID']
-	   strainKey = r['_Strain_key']
+        for r in results:
+           strainID = r['strainID']
+           strainKey = r['_Strain_key']
 
-	if strainKey == 0:
-	    logit = errorDisplay % (strainName + '|' + colonyID, lineNum, '10', line)
-	    fpLogDiag.write(logit)
-	    fpLogCur.write(logit)
-	if DEBUG:
-	    print '    strainName: %s strainID %s strainKey: %s\n' % (strainName, strainID, strainKey)
+        if strainKey == 0:
+            logit = errorDisplay % (strainName + '|' + colonyID, lineNum, '10', line)
+            fpLogDiag.write(logit)
+            fpLogCur.write(logit)
+        if DEBUG:
+            print '    strainName: %s strainID %s strainKey: %s\n' % (strainName, strainID, strainKey)
 
-	# if allele is Heterzygous, then marker must have a wild-type allele
+        # if allele is Heterzygous, then marker must have a wild-type allele
         if alleleState == 'Heterozygous':
 
-	    if DEBUG:
-		print '    if allele is Heterzygous, then marker must have a wild-type allele, get it'
-	    #
-	    # for heterzygous, allele 2 = the wild type allele 
-	    #    (marker symbol + '<+>')
-	    # find the wild type allele accession id
-	    #
+            if DEBUG:
+                print '    if allele is Heterzygous, then marker must have a wild-type allele, get it'
+            #
+            # for heterzygous, allele 2 = the wild type allele 
+            #    (marker symbol + '<+>')
+            # find the wild type allele accession id
+            #
 
-	    querySQL = '''
-		select awt.accID
-			from ALL_Allele wt, ACC_Accession awt
-			where wt._Marker_key = %s
-			and wt.name = 'wild type'
-			and wt._Allele_key = awt._Object_key
-		        and awt._MGIType_key = 11
-		        and awt._LogicalDB_key = 1
-		        and awt.preferred = 1
-		''' % (markerKey)
+            querySQL = '''
+                select awt.accID
+                        from ALL_Allele wt, ACC_Accession awt
+                        where wt._Marker_key = %s
+                        and wt.name = 'wild type'
+                        and wt._Allele_key = awt._Object_key
+                        and awt._MGIType_key = 11
+                        and awt._LogicalDB_key = 1
+                        and awt.preferred = 1
+                ''' % (markerKey)
 
-	    if DEBUG:
-		print querySQL
+            if DEBUG:
+                print querySQL
 
-	    results = db.sql(querySQL, 'auto')
-	    for r in results:
-		# found the wild type, so set it
-		alleleID2 = r['accID']
-		mutantID2 = ''
+            results = db.sql(querySQL, 'auto')
+            for r in results:
+                # found the wild type, so set it
+                alleleID2 = r['accID']
+                mutantID2 = ''
 
-	    if DEBUG:
-		print '    found wild type and alleleID2: %s mutantID2: %s' % (alleleID2, mutantID2)
+            if DEBUG:
+                print '    found wild type and alleleID2: %s mutantID2: %s' % (alleleID2, mutantID2)
 
-	    if alleleID == alleleID2:
+            if alleleID == alleleID2:
                 logit = errorDisplay % (markerID, lineNum, '8', line)
-	        logit = logit + 'no wild type allele exists for this marker'
+                logit = logit + 'no wild type allele exists for this marker'
                 fpLogDiag.write(logit)
                 fpLogCur.write(logit)
                 error = 1
 
         # if error, continue to next line
         if error:
-	    fpHTMPError.write(line)
+            fpHTMPError.write(line)
             continue
 
-	#
-	# check alleleState
-	#
+        #
+        # check alleleState
+        #
 
-	if DEBUG:
-	    print '\n    Check AlleleState:'
+        if DEBUG:
+            print '\n    Check AlleleState:'
 
         if alleleState == 'Homozygous':
 
-	    if DEBUG:
-		print '    Homozygous : querying to find genotype'
+            if DEBUG:
+                print '    Homozygous : querying to find genotype'
 
-	    querySQL = '''
-		select g.accID
-			from genotypes g
-			where g._Marker_key = %s
-			and g._Allele_key_1 = %s
-			and g._Allele_key_2 = %s
-			and g._MutantCellLine_key_1 %s %s
-			and g._MutantCellLine_key_2 %s %s
-			and g.term = '%s'
-			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL, mutantKey, alleleState, strainKey)
+            querySQL = '''
+                select g.accID
+                        from genotypes g
+                        where g._Marker_key = %s
+                        and g._Allele_key_1 = %s
+                        and g._Allele_key_2 = %s
+                        and g._MutantCellLine_key_1 %s %s
+                        and g._MutantCellLine_key_2 %s %s
+                        and g.term = '%s'
+                        and g._Strain_key = %s
+                ''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, mutantSQL, mutantKey, alleleState, strainKey)
 
-	    if DEBUG:
-		print querySQL
+            if DEBUG:
+                print querySQL
 
-	    results = db.sql(querySQL, 'auto')
+            results = db.sql(querySQL, 'auto')
 
-	    if len(results) > 1:
-		if DEBUG:
-		    print '    More than one genotype - last one wins'
-		    print '    %s' % results
+            if len(results) > 1:
+                if DEBUG:
+                    print '    More than one genotype - last one wins'
+                    print '    %s' % results
 
-	    for r in results:
-		genotypeID = r['accID']
+            for r in results:
+                genotypeID = r['accID']
 
-	    if DEBUG:
-		print '    genotypeID: %s' % genotypeID
+            if DEBUG:
+                print '    genotypeID: %s' % genotypeID
 
         elif alleleState == 'Heterozygous':
 
-	    #
-	    # for heterzygous, allele 2 = the wild type allele 
-	    #   (marker symbol + '<+>')
-	    # find the wild type allele accession id
-	    #
+            #
+            # for heterzygous, allele 2 = the wild type allele 
+            #   (marker symbol + '<+>')
+            # find the wild type allele accession id
+            #
 
-	    if DEBUG:
-		print '    Heterozygous : querying to find genotype'
+            if DEBUG:
+                print '    Heterozygous : querying to find genotype'
 
-	    querySQL = '''
-		select g.accID
-			from genotypes g
-			where g._Marker_key = %s
-			and g._Allele_key_1 = %s
-			and g._Allele_key_2 != %s
-			and g._MutantCellLine_key_1 %s %s
-			and g._MutantCellLine_key_2 is null
-			and g.term = '%s'
-			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
+            querySQL = '''
+                select g.accID
+                        from genotypes g
+                        where g._Marker_key = %s
+                        and g._Allele_key_1 = %s
+                        and g._Allele_key_2 != %s
+                        and g._MutantCellLine_key_1 %s %s
+                        and g._MutantCellLine_key_2 is null
+                        and g.term = '%s'
+                        and g._Strain_key = %s
+                ''' % (markerKey, alleleKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
 
-	    if DEBUG:
-		print querySQL
+            if DEBUG:
+                print querySQL
 
-	    results = db.sql(querySQL, 'auto')
+            results = db.sql(querySQL, 'auto')
 
-	    if len(results) > 1:
-		if DEBUG:
-		    print '    More than one genotype - last one wins'
-		    print '    %s' % results
+            if len(results) > 1:
+                if DEBUG:
+                    print '    More than one genotype - last one wins'
+                    print '    %s' % results
 
-	    for r in results:
-		genotypeID = r['accID']
+            for r in results:
+                genotypeID = r['accID']
 
-	    if DEBUG:
-		print '    genotypeID: %s' % genotypeID
+            if DEBUG:
+                print '    genotypeID: %s' % genotypeID
 
-	elif alleleState in ('Hemizygous', 'Indeterminate'):
+        elif alleleState in ('Hemizygous', 'Indeterminate'):
 
-	    if DEBUG:
-		print '    querying to find genotype : ', alleleState
+            if DEBUG:
+                print '    querying to find genotype : ', alleleState
 
-	    alleleID2 = ''
-	    mutantID2 = ''
+            alleleID2 = ''
+            mutantID2 = ''
 
-	    if alleleState == 'Hemizygous':
+            if alleleState == 'Hemizygous':
 
-	        querySQL = '''
-		    select chromosome 
-			from MRK_Marker 
-			where _Marker_key = %s''' % markerKey
+                querySQL = '''
+                    select chromosome 
+                        from MRK_Marker 
+                        where _Marker_key = %s''' % markerKey
 
-	        results = db.sql(querySQL, 'auto')
+                results = db.sql(querySQL, 'auto')
 
-	        for r in results:
+                for r in results:
 
-		    if r['chromosome'] == 'X':
-		        alleleState = 'Hemizygous X-linked'
-		        if DEBUG:
-		            print '    ', alleleState
+                    if r['chromosome'] == 'X':
+                        alleleState = 'Hemizygous X-linked'
+                        if DEBUG:
+                            print '    ', alleleState
 
-		    elif r['chromosome'] == 'Y':
-		        alleleState = 'Hemizygous Y-linked'
-		        if DEBUG:
-		            print '    ', alleleState
+                    elif r['chromosome'] == 'Y':
+                        alleleState = 'Hemizygous Y-linked'
+                        if DEBUG:
+                            print '    ', alleleState
 
-		    else:
-            		logit = errorDisplay % (alleleState, lineNum, '6', line)
-			logit = logit + 'pair state %s does not match chromosome %s' % (alleleState, r['chromosome'])
-			if DEBUG:
-			    print '    ', logit
+                    else:
+                        logit = errorDisplay % (alleleState, lineNum, '6', line)
+                        logit = logit + 'pair state %s does not match chromosome %s' % (alleleState, r['chromosome'])
+                        if DEBUG:
+                            print '    ', logit
 
-            		fpLogDiag.write(logit)
-            		fpLogCur.write(logit)
-	    		error = 1
-			break
+                        fpLogDiag.write(logit)
+                        fpLogCur.write(logit)
+                        error = 1
+                        break
 
-	    querySQL = '''
-		select g.accID
-			from genotypes g
-			where g._Marker_key = %s
-			and g._Allele_key_1 = %s
-			and g._Allele_key_2 is null
-			and g._MutantCellLine_key_1 %s %s
-			and g._MutantCellLine_key_2 is null
-			and g.term = '%s'
-			and g._Strain_key = %s
-		''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
-	    
-	    if DEBUG:
-		print querySQL
+            querySQL = '''
+                select g.accID
+                        from genotypes g
+                        where g._Marker_key = %s
+                        and g._Allele_key_1 = %s
+                        and g._Allele_key_2 is null
+                        and g._MutantCellLine_key_1 %s %s
+                        and g._MutantCellLine_key_2 is null
+                        and g.term = '%s'
+                        and g._Strain_key = %s
+                ''' % (markerKey, alleleKey, mutantSQL, mutantKey, alleleState, strainKey)
+            
+            if DEBUG:
+                print querySQL
 
-	    results = db.sql(querySQL, 'auto')
+            results = db.sql(querySQL, 'auto')
 
-	    if len(results) > 1:
-		if DEBUG:
-		    print '    More than one genotype - last one wins'
-		    print '    %s' % results
+            if len(results) > 1:
+                if DEBUG:
+                    print '    More than one genotype - last one wins'
+                    print '    %s' % results
 
-	    for r in results:
-		genotypeID = r['accID']
+            for r in results:
+                genotypeID = r['accID']
 
-	    if DEBUG:
-		print '    genotypeID: %s' % genotypeID
+            if DEBUG:
+                print '    genotypeID: %s' % genotypeID
 
-	else:
+        else:
             logit = errorDisplay % (alleleState, lineNum, '6', line)
 
-	    if DEBUG:
-		print '    logging error:'
-		print '    ' + errorDisplay % (alleleState, lineNum, '6', line)
+            if DEBUG:
+                print '    logging error:'
+                print '    ' + errorDisplay % (alleleState, lineNum, '6', line)
 
             fpLogDiag.write(logit)
             fpLogCur.write(logit)
-	    error = 1
+            error = 1
 
         # if error, continue to next line
         if error:
-	    fpHTMPError.write(line)
+            fpHTMPError.write(line)
             continue
 
-	#
-	# check genotype unique-ness
-	#
-	# duplicate genotypes WITHIN the input file, doesn't mean the genotype
+        #
+        # check genotype unique-ness
+        #
+        # duplicate genotypes WITHIN the input file, doesn't mean the genotype
         # isn't in the database
 
-	dupGeno = 0
-	useOrder = str(genotypeOrder)
+        dupGeno = 0
+        useOrder = str(genotypeOrder)
 
-	if DEBUG:
-	    print '    check genotype uniqueness'
+        if DEBUG:
+            print '    check genotype uniqueness'
 
-	#
-	# set uniqueness
-	# isConditional is always 0, so we do not need to specify this value
-	#
-	key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey) + str(mutantKey)
+        #
+        # set uniqueness
+        # isConditional is always 0, so we do not need to specify this value
+        #
+        key = str(markerKey) + str(alleleKey) + str(alleleState) + str(strainKey) + str(mutantKey)
 
-	if DEBUG:
-	    print '    unique key is: %s' % key
+        if DEBUG:
+            print '    unique key is: %s' % key
 
-	if genotypeOrderDict.has_key(key):
-	    dupGeno = 1
-	    useOrder = str(genotypeOrderDict[key])
-	    if DEBUG:
-		print '    duplicate genotype and order is: %s' % useOrder
+        if genotypeOrderDict.has_key(key):
+            dupGeno = 1
+            useOrder = str(genotypeOrderDict[key])
+            if DEBUG:
+                print '    duplicate genotype and order is: %s' % useOrder
 
-	# uniq genotype/mpID key
-	currentMP = useOrder + '|' + mpID
+        # uniq genotype/mpID key
+        currentMP = useOrder + '|' + mpID
 
-	#### new code HDP-2 US161 support TR11792 ####
-	# add line to dictionary by currentMP key for later processing
-	if not annotDict.has_key(currentMP):
-	    annotDict[currentMP] = []
-	annotDict[currentMP].append(line)
+        #### new code HDP-2 US161 support TR11792 ####
+        # add line to dictionary by currentMP key for later processing
+        if not annotDict.has_key(currentMP):
+            annotDict[currentMP] = []
+        annotDict[currentMP].append(line)
 
-	if dupGeno:
-	    fpHTMPDup.write(line)
-	    continue
+        if dupGeno:
+            fpHTMPDup.write(line)
+            continue
 
-	#
-	# save genotype order
-	#
-	if DEBUG:
-	    print '    saving genotype order genotypeOrderDict[%s] = %s' % (key, genotypeOrder)
+        #
+        # save genotype order
+        #
+        if DEBUG:
+            print '    saving genotype order genotypeOrderDict[%s] = %s' % (key, genotypeOrder)
         genotypeOrderDict[key] = genotypeOrder
 
-	#
-	# add to genotype mgi-format file
-	#
+        #
+        # add to genotype mgi-format file
+        #
 
-	if DEBUG:
-	    print '    writing genotype to  genotype file'
+        if DEBUG:
+            print '    writing genotype to  genotype file'
 
-	fpGenotype.write(genotypeLine % (\
-		genotypeOrder, genotypeID, strainID, strainName, \
-		markerID, alleleID, mutantID, alleleID2, mutantID2, \
-		conditional, existsAs, generalNote, privateNote, alleleState, \
-		compound, createdBy))
+        fpGenotype.write(genotypeLine % (\
+                genotypeOrder, genotypeID, strainID, strainName, \
+                markerID, alleleID, mutantID, alleleID2, mutantID2, \
+                conditional, existsAs, generalNote, privateNote, alleleState, \
+                compound, createdBy))
 
-	genotypeOrder = genotypeOrder + 1
+        genotypeOrder = genotypeOrder + 1
 
     #### new code HDP-2 US161 support TR11792 ####
     # iterate through annotDict
 
     for key in annotDict.keys():
-	order, mpID = key.split('|')
-	lineList = annotDict[key]
-	genderSet = set([])
+        order, mpID = key.split('|')
+        lineList = annotDict[key]
+        genderSet = set([])
 
-	# get the gender for each line and add to the set
-	for line in lineList:
-	    tokens = line.split('\t')
-	    genderSet.add(tokens[10])
+        # get the gender for each line and add to the set
+        for line in lineList:
+            tokens = line.split('\t')
+            genderSet.add(tokens[10])
 
-	# if multi lines, the only difference is gender
-	# just get the last (or only) line in the list; prepend the order number
-	line = order + '\t' + line
+        # if multi lines, the only difference is gender
+        # just get the last (or only) line in the list; prepend the order number
+        line = order + '\t' + line
 
-	# if there are multi gender values in the set, update line to 'Both'
-	if len(genderSet) > 1:
-	    # Don't bother to look at values. If already 'Both', we're golden
-	    # otherwise just update the line to 'Both'
-	    line = line.replace('Male', 'Both')
-	    line = line.replace('Female', 'Both')
+        # if there are multi gender values in the set, update line to 'Both'
+        if len(genderSet) > 1:
+            # Don't bother to look at values. If already 'Both', we're golden
+            # otherwise just update the line to 'Both'
+            line = line.replace('Male', 'Both')
+            line = line.replace('Female', 'Both')
 
-	# now write out the line
-	fpHTMP.write(line)
+        # now write out the line
+        fpHTMP.write(line)
 
     return 0
 
@@ -901,4 +900,3 @@ if DEBUG:
 
 closeFiles()
 sys.exit(0)
-
