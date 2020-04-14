@@ -72,7 +72,7 @@ LOG=${LOG_DIAG}
 #
 echo "" >> ${LOG}
 date >> ${LOG}
-./makeAnnotation.py 2>&1 >> ${LOG}
+${PYTHON} ./makeAnnotation.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

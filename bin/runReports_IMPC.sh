@@ -70,7 +70,7 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create IMITS/IMPC Colony ID Discrepancy Report (runReports_IMPC.py)" | tee -a ${LOG}
-./runReports_IMPC.py 2>&1 >> ${LOG}
+${PYTHON} ./runReports_IMPC.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

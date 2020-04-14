@@ -83,11 +83,11 @@ touch ${LOG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create strains (makeStrain.py)" | tee -a ${LOG}
-./makeStrains.py 2>&1 >> ${LOG}
+${PYTHON} ./makeStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then
-    echo "Error: Create HTMP strain (makeStrain.py)" | tee -a ${LOG}
+    echo "Error: Create HTMP strain (makeStrains.py)" | tee -a ${LOG}
     exit 1
 fi
 echo "" >> ${LOG}

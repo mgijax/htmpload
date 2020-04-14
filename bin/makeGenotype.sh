@@ -67,7 +67,7 @@ LOG=${LOG_DIAG}
 echo "" >> ${LOG}
 date >> ${LOG}
 echo "Create the Genotype file (makeGenotype.sh)" | tee -a ${LOG}
-./makeGenotype.py 2>&1 >> ${LOG}
+${PYTHON} ./makeGenotype.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -ne 0 ]
 then

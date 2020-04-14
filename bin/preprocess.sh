@@ -113,7 +113,7 @@ fi
 echo "" >> ${LOG}
 date >> ${LOG}
 echo 'calling preprocess.py'
-./preprocess.py 2>&1 >> ${LOG}
+${PYTHON} ./preprocess.py 2>&1 >> ${LOG}
 PREPROCESS_STAT=$?
 if [ ${PREPROCESS_STAT} -eq 1 ]
 then
@@ -127,11 +127,11 @@ fi
 echo "" >> ${LOG}
 date >> ${LOG}
 echo 'calling makeStrains.py'
-./makeStrains.py 2>&1 >> ${LOG}
+${PYTHON} ./makeStrains.py 2>&1 >> ${LOG}
 STAT=$?
 if [ ${STAT} -eq 1 ]
 then
-    echo "Error: Creating the HTMP strains (preprocess.py)" | tee -a ${LOG}
+    echo "Error: Creating the HTMP strains (makeStrains.py)" | tee -a ${LOG}
     exit 1
 fi
 

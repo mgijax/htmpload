@@ -64,7 +64,7 @@ ${HTMPLOAD}/bin/htmpload.sh ${IMPCCONFIG} ${ANNOTCONFIG}
 
 date | tee -a ${LOG}
 echo 'Run Post MP Process' | tee -a ${LOG}
-${HTMPLOAD}/bin/postMP.py  2>&1 >> ${LOG}
+${PYTHON} ${HTMPLOAD}/bin/postMP.py  2>&1 >> ${LOG}
 
 date >> ${LOG}
 
