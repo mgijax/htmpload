@@ -49,12 +49,9 @@
 #   3. Colony Name
 #   4. ES Cell Name 
 #   5. Colony Background Strain
-#   6. Production Centre
-#   7. Production Consortium
-#   8. Phenotyping Centre
-#   9. Phenotyping Consortium Centre
-#   10. Production Centre
-#   11. Allele Symbol
+#   6. MGI Strain ID
+#   7. Production Centre
+#   etc   
 #
 #  Outputs:
 #
@@ -706,7 +703,7 @@ def parseIMITSFile():
 	colonyID = tokens[2]
 	mutantID = tokens[3]
 	colonyBackgroun = tokens[4] # not used
-	productionCtr = tokens[5]
+	productionCtr = tokens[6]
 
         # map the colony id to productionCtr, mutantID and markerID
         value = '%s|%s|%s' % (productionCtr, mutantID, markerID)
