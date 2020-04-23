@@ -1,4 +1,4 @@
-#
+#!/opt/python3.7/bin/python3
 #  preprocess.py
 ###########################################################################
 #
@@ -122,7 +122,7 @@
 
 import sys 
 import os
-import simplejson as json
+import json
 import string
 import Set
 import db
@@ -420,7 +420,9 @@ def initialize():
 
     # load production center/labcode mapping 
     results = db.sql('select term, abbreviation from VOC_Term where _Vocab_key = 98', 'auto')
+    print('loading procCtrToLabCodeDict')
     for r in results:
+        print('term: %s abbrev: %s' % (r['term'], r['abbreviation']))
         procCtrToLabCodeDict[r['term']] = r['abbreviation']
 
     # load list of phenotyping centers in the database
@@ -429,9 +431,23 @@ def initialize():
         phenoCtrList.append(r['term'])
 
     # load strain mappings from config
-    tokens = list(map(str.strip, str.split(strainInfoMapping, ',')))
+    # original:
+    # tokens = map(string.strip, string.split(strainInfoMapping, ','))
+
+    # after 2to3, does not work in script, works in inter interp
+    # tokens = list(map(str.strip, str.split(strainInfoMapping, ',')))
+
+    # this does not work in the script, but works in the inter interp
+    #tokens = list(map(str.strip, strainInfoMapping.split(',')))
+    # for the hell of it:
+    #tokens = list(map(str.strip(), strainInfoMapping.split(',')))
+
+    # this works too with list comprehension
+    #tokens = [x.strip() for x in strainInfoMapping.split(',')]
+    tokens = list(map(lambda str : str.strip(), strainInfoMapping.split(',')))
     for t in tokens:
-        iStrain, rID, rStrain, rTemplate, rType, rAttr = str.split(t, '|')
+        #iStrain, rID, rStrain, rTemplate, rType, rAttr = str.split(t, '|')
+        iStrain, rID, rStrain, rTemplate, rType, rAttr = t.split('|')
         inputStrainList.append(iStrain)
         referenceStrainDict[iStrain] = rStrain
         strainTemplateDict[iStrain] = rTemplate
@@ -457,15 +473,14 @@ def initialize():
     for r in results:
         # HIPPO US146
         # colony ids can be a pipe delimited str.e.g. 'BL3751|BL3751_TCP'
-        cIDs =  str.strip(r['colonyID'])
+        cIDs =  r['colonyID'].strip()
         str = r['strain']
-        #print 'cIDs: %s' % cIDs
-        #print 'str: %s' % str
+        #print('cIDs: %s' % cIDs)
+        #print('str: %s' % str)
         cIDList = []
         if cIDs != None:
-            #cIDList = str.split(cIDs, '|')
-            cIDList = list(map(str.strip, str.split(cIDs, '|')))
-            #print 'cIDList:%s' % cIDList
+            cIDList = list(map(str.strip, cIDs.split('|')))
+            #print('cIDList:%s' % cIDList)
         # HIPPO 6/2016 handle multi strains/colony ID
         for cID in cIDList:
             if not cID in colonyToStrainNameDict:
@@ -567,7 +582,6 @@ def openFiles():
     # Open the htmp output file 
     #
     try:
-        #print 'htmpfile: %s' % htmpFile
         fpHTMP = open(htmpFile, 'w')
     except:
         print('Cannot open file: ' + htmpFile)
@@ -577,7 +591,6 @@ def openFiles():
     # Open the strain output file
     #
     try:
-        #print 'strainfile: %s' % strainFile
         fpStrain = open(strainFile, 'w')
     except:
         print('Cannot open file: ' + strainFile)
@@ -704,15 +717,15 @@ def parseIMITSFile():
         markerID = tokens[1]
         colonyID = tokens[2]
         mutantID = tokens[3]
-        colonyBackgroun = tokens[4] # not used
-        productionCtr = tokens[5]
+        productionCtr = tokens[6] # moved from col 6 to 7 in Jan 2020
+                                  # found while testing py 2to3
 
         # map the colony id to productionCtr, mutantID and markerID
         value = '%s|%s|%s' % (productionCtr, mutantID, markerID)
 
         # if we find a dup, just print for now to see what we get 
         if colonyID in colonyToMCLDict and colonyToMCLDict[colonyID] == value:
-            #print 'Dup colony ID record: %s|%s' (colonyID, value)
+            #print('Dup colony ID record: %s|%s' (colonyID, value))
             continue
 
         colonyToMCLDict[colonyID] = value
@@ -731,9 +744,7 @@ def parseIMITSFile():
 def parseIMPCFile():
     global fpInputintWrite, fpInputdup
     
-    #print 'creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
     jFile = json.load(fpInput)
-    #print 'done creating json object: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time()))
 
     # the data interpretation center property value for IMPC
     interpretationCenter = 'IMPC'
@@ -977,9 +988,9 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
     # unpack the key into attributes
     inputAlleleID, alleleSymbol, inputStrain, markerID, colonyID, inputMutantID, prodCtr = \
         str.split(uniqStrainProcessingKey, '|') 
-    
     # Production Center Lab Code Check US5 doc 4c2
-    if not prodCtr in procCtrToLabCodeDict:
+    print('doUniqStrainChecks prodCtr: %s' % prodCtr)
+    if not prodCtr in list(procCtrToLabCodeDict.keys()):
         if dupStrainKey == 0:
             msg = 'Production Center not in MGI (voc_term table): %s' % prodCtr
             logIt(msg, line, 1, 'prodCtrNotInDb')
@@ -1008,11 +1019,10 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
         # if referenceStrainDict has key inputStrain so does strainTemplateDict
         strainTemplate = strainTemplateDict[inputStrain]
         strainName = strainTemplate % (strainRoot, alleleSymbol, labCode)
-        #print 'calculated strain name: %s' % strainName
+        
     else:  # otherwise use 'Not Specified'
-        #strainName = 'Not Specified'
-        #print 'cannot calc strain name returning "Not Specified"'
         return 'Not Specified'
+
     # 4c1b2 Strain name match to multiple strains
     if strainName in multiStrainNameList:
         msg = 'Multiple strain objects in MGI for strain %s' % strainName
@@ -1030,7 +1040,7 @@ def doUniqStrainChecks(uniqStrainProcessingKey, line):
 
         dbColonyIdList =  strainNameToColonyIdDict[strainName]
         msg = 'MGI/database colony ID(s) %s for strain %s does not match colony id %s' % \
-                (str.join(dbColonyIdList), strainName, colonyID)
+                (''.join(dbColonyIdList), strainName, colonyID)
         
         uniqStrainProcessingDict[uniqStrainProcessingKey] = [msg, line]
         
@@ -1192,14 +1202,14 @@ def writeCuratorLog():
     # HIPPO - US146 write fatal errors first
     if 'newStrainMultiColId' in errorDict:
         fatal = errorDict['newStrainMultiColId']
-        fpLogCur.write(str.join(fatal))
+        fpLogCur.write(''.join(fatal))
 
         # remove the fatal error from the dict so not repeated
         del errorDict['newStrainMultiColId']
 
     # report remaining error types to curator log
     for type in list(errorDict.keys()):
-        fpLogCur.write(str.join(errorDict[type]))
+        fpLogCur.write(''.join(errorDict[type]))
 
 #
 # Purpose: Read the intermediate file and re-format it to create a 
@@ -1236,7 +1246,6 @@ def createHTMPFile():
     #
     
     for line in fpInputintRead.readlines():
-        #print line
         error = 0
 
         # IMPC - mutantID and productionCtr blank
@@ -1273,6 +1282,7 @@ def createHTMPFile():
             # verify the IMPC/markerID with the IMITS/marker ID
             # note that the IMITS file also provides the 'mutantID' (es cell line)
             productionCtr, mutantID, imitsMrkID = str.split(colonyToMCLDict[colonyID], '|')
+            print('productionCtr: %s from colonyToMCLDict[colonyID]' % (productionCtr))
 
             if compareMarkers(markerID, imitsMrkID, line):
                 continue
@@ -1328,7 +1338,7 @@ def createHTMPFile():
         uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
             (alleleID, alleleSymbol, inputStrain, markerID, \
                 colonyID, mutantID, productionCtr)
-
+        print('uniqStrainPrcessingKey: %s' % uniqStrainProcessingKey)
         # resolve the colonyID to a strain in the database
         if colonyID in colonyToStrainNameDict:
             # HIPPO US146 case #4
@@ -1408,7 +1418,6 @@ def createHTMPFile():
 
             # get input lines for this new strain
             multiSet = newStrainDict[s]
-            #print multiSet
 
             # Add strain/cID(s) to the list whose genotypes/annotations we 
             # will not load
@@ -1416,7 +1425,6 @@ def createHTMPFile():
                 cID = str.split(line, '\t')[7]
                 # this corresponds to the key in htmpLineDict
                 key = '%s|%s' % (s, cID)
-                #print 'adding %s to noLoadAnnotList\n' % key
                 noLoadAnnotList.append(key)
 
             # get a arbitrary line from the list, the strain will be loaded with
