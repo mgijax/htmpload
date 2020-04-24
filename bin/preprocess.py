@@ -130,6 +130,9 @@ import time
 
 #db.setTrace(True)
 
+CRT = '\n'
+TAB = '\t'
+
 # load type
 isIMPC = 0
 isLacZ = 0
@@ -474,24 +477,21 @@ def initialize():
         # HIPPO US146
         # colony ids can be a pipe delimited str.e.g. 'BL3751|BL3751_TCP'
         cIDs =  r['colonyID'].strip()
-        str = r['strain']
-        #print('cIDs: %s' % cIDs)
-        #print('str: %s' % str)
+        strain = r['strain']
         cIDList = []
         if cIDs != None:
             cIDList = list(map(str.strip, cIDs.split('|')))
-            #print('cIDList:%s' % cIDList)
         # HIPPO 6/2016 handle multi strains/colony ID
         for cID in cIDList:
             if not cID in colonyToStrainNameDict:
                  colonyToStrainNameDict[cID] = [] 
-            colonyToStrainNameDict[cID].append(str)
+            colonyToStrainNameDict[cID].append(strain)
         # 5/2017 multi strain check addition: 4c1b2
-        if str in strainNameToColonyIdDict:
-            multiStrainNameList.append(str)
+        if strain in strainNameToColonyIdDict:
+            multiStrainNameList.append(strain)
         else:
             # HIPPO 6/2016 - handle multi colonyIDs/strain
-            strainNameToColonyIdDict[str] = cIDList
+            strainNameToColonyIdDict[strain] = cIDList
 
     # load strain name to genotype mappings
     # remove private strain constraint
@@ -1338,11 +1338,12 @@ def createHTMPFile():
         uniqStrainProcessingKey = '%s|%s|%s|%s|%s|%s|%s' % \
             (alleleID, alleleSymbol, inputStrain, markerID, \
                 colonyID, mutantID, productionCtr)
-        print('uniqStrainPrcessingKey: %s' % uniqStrainProcessingKey)
+        #print('uniqStrainPrcessingKey: %s' % uniqStrainProcessingKey)
         # resolve the colonyID to a strain in the database
         if colonyID in colonyToStrainNameDict:
             # HIPPO US146 case #4
             # multiple strains for a colony ID
+            #print('colonyID: %s strains: %s' % (colonyID, colonyToStrainNameDict[colonyID]))
             if len(colonyToStrainNameDict[colonyID]) > 1:
                 msg =  'Colony ID: %s associated with multiple strains in the database: %s' % (colonyID, ', '.join(colonyToStrainNameDict[colonyID]) )
                 logIt(msg, line, 1, 'colIdMultiStrains')
@@ -1374,20 +1375,20 @@ def createHTMPFile():
         if strainName == 'error':
             continue
 
-        htmpLine = phenotypingCenter + '\t' + \
-             interpretationCenter + '\t' + \
-             mutantID + '\t' + \
-             mpID + '\t' + \
-             alleleID + '\t' + \
-             alleleState + '\t' + \
-             alleleSymbol + '\t' + \
-             markerID + '\t' + \
-             evidenceCode + '\t' + \
-             strainName + '\t' + \
-             gender + '\t' + \
-             colonyID + '\t' + \
-             resourceName + '\n'
-
+        #htmpLine = phenotypingCenter + '\t' + \
+        #     interpretationCenter + '\t' + \
+        #     mutantID + '\t' + \
+        #     mpID + '\t' + \
+        #     alleleID + '\t' + \
+        #     alleleState + '\t' + \
+        #     alleleSymbol + '\t' + \
+        #     markerID + '\t' + \
+        #     evidenceCode + '\t' + \
+        #     strainName + '\t' + \
+        #     gender + '\t' + \
+        #     colonyID + '\t' + \
+        #     resourceName + '\n'
+        htmpLine = '%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s' % (phenotypingCenter, TAB, interpretationCenter, TAB, mutantID, TAB, mpID, TAB, alleleID, TAB, alleleState, TAB, alleleSymbol, TAB, markerID, TAB, evidenceCode, TAB, strainName, TAB, gender, TAB, colonyID, TAB, resourceName, CRT)
         #fpHTMP.write(htmpLine)
 
         # save the lines to a data structure with 'strain|colonyID' key
