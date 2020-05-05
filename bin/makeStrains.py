@@ -384,10 +384,9 @@ def setPrimaryKeys():
 
     global strainKey, strainmarkerKey, accKey, mgiKey, annotKey, noteKey
 
-    results = db.sql('select max(_Strain_key) + 1 as maxKey from PRB_Strain', 'auto')
+    results = db.sql(''' select nextval('prb_strain_seq') as maxKey ''', 'auto')
     strainKey = results[0]['maxKey']
 
-    #results = db.sql('select max(_StrainMarker_key) + 1 as maxKey from PRB_Strain_Marker', 'auto')
     results = db.sql(''' select nextval('prb_strain_marker_seq') as maxKey ''', 'auto')
     strainmarkerKey = results[0]['maxKey']
 
@@ -442,6 +441,9 @@ def bcpFiles():
         diagFile.write('%s\n' % bcpCmd)
         os.system(bcpCmd)
 
+    # update prb_strain auto-sequence
+    db.sql(''' select setval('prb_strain_seq', (select max(_Strain_key) from PRB_Strain)) ''', None)
+    db.commit()
     # update prb_strain_marker_seq auto-sequence
     db.sql(''' select setval('prb_strain_marker_seq', (select max(_StrainMarker_key) from PRB_Strain_Marker)) ''', None)
     db.commit()
