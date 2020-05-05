@@ -48,12 +48,9 @@
 #   3. Colony Name
 #   4. ES Cell Name 
 #   5. Colony Background Strain
-#   6. Production Centre
-#   7. Production Consortium
-#   8. Phenotyping Centre
-#   9. Phenotyping Consortium Centre
-#   10. Production Centre
-#   11. Allele Symbol
+#   6. MGI Strain ID
+#   7. Production Centre
+#   etc   
 #
 #  Outputs:
 #
