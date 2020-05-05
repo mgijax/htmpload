@@ -1,3 +1,10 @@
+TAG: htmpload-6-0-15-3
+DATE: 05/05/2020
+STAFF: lec
+CHANGES: tr13007-genotye merge
+merge for makeStrain.py was not pushed
+re-added this auto-sequence change
+
 TAG: htmpload-6-0-15-2
 DATE: 04/22/2020
 STAFF: sc
