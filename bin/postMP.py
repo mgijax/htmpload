@@ -114,8 +114,8 @@ for jNumKey in str.split(jNums, ','):
                 _ModifiedBy_key = %s
                 modification_date = now()
             WHERE _Allele_key = %s''' % (modifiedByKey, alleleKey), None)
-        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Transmission')''' % (alleleKey, jNumKey))
-        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Transmission')''' % (alleleKey, jNumKey), None)
+        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, '1023')''' % (alleleKey, jNumKey))
+        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, '1023')''' % (alleleKey, jNumKey), None)
         db.commit()
 
     db.sql('''select distinct _Object_key as alleleKey
