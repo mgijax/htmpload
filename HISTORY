@@ -1,7 +1,9 @@
+TAG: htmpload-6-0-16-2
 TAG: htmpload-6-0-16-1
-DATE: 08/21/2020
-STAFF: sc
+DATE: 08/21/2020, 08/26/2020
+STAFF: sc, lec
 CHANGES: TR13204/I20 project/python 3.7 upgrade
+htmpload fix for MGI_insertReferenceAssoc stored procedure
 
 TAG: htmpload-6-0-15-3
 DATE: 05/05/2020
