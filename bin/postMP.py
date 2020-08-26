@@ -114,8 +114,8 @@ for jNumKey in str.split(jNums, ','):
                 _ModifiedBy_key = %s
                 modification_date = now()
             WHERE _Allele_key = %s''' % (modifiedByKey, alleleKey), None)
-        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, '1023')''' % (alleleKey, jNumKey))
-        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, '1023')''' % (alleleKey, jNumKey), None)
+        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 1023)''' % (alleleKey, jNumKey))
+        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 1023)''' % (alleleKey, jNumKey), None)
         db.commit()
 
     db.sql('''select distinct _Object_key as alleleKey
@@ -139,8 +139,8 @@ for jNumKey in str.split(jNums, ','):
     print('Calling MGI_insertReferenceAssoc for Used-FC reference associations for %s alleles for refsKey %s' % (len(results), jNumKey))
     for r in results:
         alleleKey = r['_Allele_key']
-        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Used-FC')''' % (alleleKey, jNumKey))
-        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 'Used-FC')''' % (alleleKey, jNumKey), None)
+        print('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 1017)''' % (alleleKey, jNumKey))
+        db.sql('''select * from MGI_insertReferenceAssoc (1001, 11, %s, %s, 1017)''' % (alleleKey, jNumKey), None)
         db.commit()
     ct += 1 # increment for temp table/index name
 #
