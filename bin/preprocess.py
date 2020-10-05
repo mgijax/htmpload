@@ -750,9 +750,15 @@ def parseIMPCFile():
     for f in jFile['response']['docs']:
 
         try:
+                alleleID = alleleID2 = f['allele_accession_id']
+        except:
+                continue
+
+        try:
                 mpID = f['mp_term_id']
         except:
                 mpID = ''
+
         resourceName = f['resource_name']
         phenotypingCenter = f['phenotyping_center']
         alleleID = alleleID2 = f['allele_accession_id']
