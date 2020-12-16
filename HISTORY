@@ -1,9 +1,11 @@
+TAG: htmpload-6-0-16-6
 TAG: htmpload-6-0-16-5
 DATE: 13/16/2020
 STAFF: sc
 CHANGES: TR13449
 update load so that unknown incoming genders
 are loaded as 'NA' rather than skipped/reported
+but still reported to the curator log
 
 TAG: htmpload-6-0-16-4
 DATE: 10/05/2020

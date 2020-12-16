@@ -1152,6 +1152,8 @@ def checkGender(gender, line):
         gender = 'Both'
 
     else:
+        msg = 'Unrecognized gender %s, loaded as NA' % gender
+        logIt(msg, line, 1, 'gender')
         gender = 'NA'
 
     return gender 
