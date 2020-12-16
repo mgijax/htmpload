@@ -1144,18 +1144,15 @@ def checkGender(gender, line):
         gender = 'Female'
 
     elif gender.lower() == 'no_data':
-        # will be converted to NA laster in makeAnnotation.py
+        # will be converted to NA later in makeAnnotation.py
         gender = ''
 
     elif gender.lower() == 'both':
         # will be converted to NA later in makeAnnotation.py
         gender = 'Both'
-    elif gender.lower() == 'na':
-        gender = gender # no change
+
     else:
-        msg = 'Unrecognized gender %s' % gender
-        logIt(msg, line, 1, 'gender')
-        return 'error'
+        gender = 'NA'
 
     return gender 
 
@@ -1262,16 +1259,13 @@ def createHTMPFile():
             error = 1
         else: alleleState = returnVal
 
-        returnVal= checkGender(gender, line)
-        if returnVal == 'error':
-            error = 1
-        else: gender = returnVal
+        gender= checkGender(gender, line)
         
         returnVal= checkPhenoCtr(phenotypingCenter, line)
         if returnVal == 'error':
             error = 1
 
-        # if alleleState, gender or phenotyping error, continue to next line
+        # if alleleState or phenotyping error, continue to next line
         if error:
             continue
         #
