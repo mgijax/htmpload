@@ -1,6 +1,16 @@
+TAG: htmpload-6-0-16-7
+DATE: 1/11/2021
+STAFF: sc
+CHANGES: TR13457
+failed due to resource_name and strain_name missing
+from some json records. Update to put ALL json
+attributes in try/except blocks and report/skip
+when missing. Exception, alleleID, just continue
+if no allele.
+
 TAG: htmpload-6-0-16-6
 TAG: htmpload-6-0-16-5
-DATE: 13/16/2020
+DATE: 12/16/2020
 STAFF: sc
 CHANGES: TR13449
 update load so that unknown incoming genders

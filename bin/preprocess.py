@@ -96,6 +96,10 @@
 #
 #  Notes: 
 #
+# sc    01/11/21
+#       - TR13457 htmpload load failure - due to resource_name and strain_name not in some json records
+#       put all json attributes in try catch block and report/skip if missing
+#
 #  US5 refers to
 #	http://mgiwiki/mediawiki/index.php/sw:IMPC_htmpload#Strains
 #	http://prodwww.informatics.jax.org/all/wts_projects/11600/11674/Strains_Info/StrainProcessing_IMPC_v4.docx
@@ -750,24 +754,53 @@ def parseIMPCFile():
     for f in jFile['response']['docs']:
 
         try:
-                alleleID = alleleID2 = f['allele_accession_id']
+            resourceName = f['resource_name']
         except:
-                continue
+            resourceName = ''
 
         try:
-                mpID = f['mp_term_id']
+            phenotypingCenter = f['phenotyping_center']
         except:
-                mpID = ''
+            phenotypingCenter = ''
 
-        resourceName = f['resource_name']
-        phenotypingCenter = f['phenotyping_center']
-        alleleID = alleleID2 = f['allele_accession_id']
-        alleleState = f['zygosity']
-        alleleSymbol = f['allele_symbol']
-        inputStrain = f['strain_name']
-        markerID = f['marker_accession_id']
-        gender = f['sex']
-        colonyID = f['colony_id']
+        try:
+            mpID = f['mp_term_id']
+        except:
+            mpID = ''
+
+        try:
+            alleleID = alleleID2 = f['allele_accession_id']
+        except:
+            continue  # this was original to load, I did not change to report and skip
+        try:
+            alleleState = f['zygosity']
+        except:
+            alleleState = ''
+
+        try:
+            alleleSymbol = f['allele_symbol']
+        except:
+            alleleSymbol = ''
+
+        try:
+            inputStrain = f['strain_name']
+        except:
+            inputStrain = ''
+
+        try:
+            markerID = f['marker_accession_id']
+        except:
+            markerID = ''
+
+        try:
+            gender = f['sex']
+        except:
+            gender = ''
+
+        try:
+            colonyID = f['colony_id']
+        except:
+            colonyID = ''
 
         # line representing data from the IMPC input file 
         # no productionCenter
