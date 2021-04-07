@@ -1,3 +1,10 @@
+TAG: htmpload-6-0-16-8
+DATE: 04/07/2021
+STAFF: lec
+CHANGES: 
+TR13240/update IMPC lacZ data in GXD/J:228563
+comment out:  preprocess.py/#full_resolution_file_path = f['full_resolution_file_path']
+
 TAG: htmpload-6-0-16-7
 DATE: 1/11/2021
 STAFF: sc

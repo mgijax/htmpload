@@ -890,7 +890,7 @@ def parseIMPCLacZFile():
 
         download_url = f['download_url'] 
         jpeg_url = f['jpeg_url']  
-        full_resolution_file_path = f['full_resolution_file_path']  
+        #full_resolution_file_path = f['full_resolution_file_path']  
         parameter_name  = f['parameter_name']  
         parameter_stable_id  = f['parameter_stable_id']  
 
