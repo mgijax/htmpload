@@ -11,7 +11,7 @@
 #	PRB_Strain_Marker
 #	ACC_Accession
 #	VOC_Annot
-#	MGI_Note/MGI_NoteChunk
+#	MGI_Note
 #
 # Usage:
 #	makeStrains.py
@@ -39,7 +39,7 @@
 #       PRB_Strain_Marker.bcp           
 #       VOC_Annot.bcp			strain attributes
 #	ACC_Accession.bcp		strain MGI ID
-#       MGI_Note/MGI_NoteChunk          MCL of origin & colony ID  notes
+#       MGI_Note                        MCL of origin & colony ID  notes
 #
 #       Diagnostics file of all input parameters and SQL commands
 #       Error file
@@ -87,28 +87,24 @@ markerFile = ''         # file descriptor
 accFile = ''            # file descriptor
 annotFile = ''          # file descriptor
 noteFile = ''           # file descriptor
-noteChunkFile = ''      # file descriptor
 
 strainTable = 'PRB_Strain'
 markerTable = 'PRB_Strain_Marker'
 accTable = 'ACC_Accession'
 annotTable = 'VOC_Annot'
 noteTable = 'MGI_Note'
-noteChunkTable = 'MGI_NoteChunk'
 
 strainTableBCP = strainTable + '.bcp'
 markerTableBCP = markerTable + '.bcp'
 accTableBCP = accTable + '.bcp'
 annotTableBCP = annotTable + '.bcp'
 noteTableBCP = noteTable + '.bcp'
-noteChunkTableBCP = noteChunkTable + '.bcp'
 
 strainFileName = outputDir + '/' + strainTableBCP
 markerFileName = outputDir + '/' + markerTableBCP
 accFileName = outputDir + '/' + accTableBCP
 annotFileName = outputDir + '/' + annotTableBCP
 noteFileName = outputDir + '/' + noteTableBCP
-noteChunkFileName = outputDir + '/' + noteChunkTableBCP
 
 diagFileName = ''	# diagnostic file name
 errorFileName = ''	# error file name
@@ -177,7 +173,7 @@ def exit(
 def init():
     global diagFile, errorFile, inputFile, errorFileName, diagFileName
     global strainFile, markerFile, accFile, annotFile
-    global noteFile, noteChunkFile
+    global noteFile
  
     db.useOneConnection(1)
     db.set_sqlUser(user)
@@ -221,11 +217,6 @@ def init():
         noteFile = open(noteFileName, 'w')
     except:
         exit(1, 'Could not open file %s\n' % noteFileName)
-
-    try:
-        noteChunkFile = open(noteChunkFileName, 'w')
-    except:
-        exit(1, 'Could not open file %s\n' % noteChunkFileName)
 
     try:
         annotFile = open(annotFileName, 'w')
@@ -316,7 +307,7 @@ def verifyStrainType(
 
     return strainTypeKey
 
-# Purpose:  check for  Colony ID note for a strain
+# Purpose:  check for Colony ID note for a strain
 # Returns:  1 if strain has a colony ID in the database, else 0
 # Assumes:  nothing
 # Effects:  determines if a colony ID note exists for a Strain Type either the 
@@ -399,7 +390,7 @@ def setPrimaryKeys():
     results = db.sql(''' select nextval('voc_annot_seq') as maxKey ''', 'auto')
     annotKey = results[0]['maxKey']
 
-    results = db.sql('select max(_Note_key) + 1 as maxKey from MGI_Note', 'auto')
+    results = db.sql(''' select nextval('mgi_note_seq') as maxKey ''', 'auto')
     noteKey = results[0]['maxKey']
 
 # Purpose:  BCPs the data into the database
@@ -415,7 +406,6 @@ def bcpFiles():
     accFile.close()
     annotFile.close()
     noteFile.close()
-    noteChunkFile.close()
 
     if DEBUG or not bcpon:
         return
@@ -434,10 +424,8 @@ def bcpFiles():
         (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), annotTable, outputDir, annotTableBCP)
     bcp5 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
         (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), noteTable, outputDir, noteTableBCP)
-    bcp6 = '%s %s %s %s %s %s "\|" "\\n" mgd' % \
-        (bcpCommand, db.get_sqlServer(), db.get_sqlDatabase(), noteChunkTable, outputDir, noteChunkTableBCP)
 
-    for bcpCmd in [bcp1, bcp2, bcp3, bcp4, bcp5, bcp6]:
+    for bcpCmd in [bcp1, bcp2, bcp3, bcp4, bcp5]:
         diagFile.write('%s\n' % bcpCmd)
         os.system(bcpCmd)
 
@@ -450,24 +438,24 @@ def bcpFiles():
     # update voc_annot_seq auto-sequence
     db.sql(''' select setval('voc_annot_seq', (select max(_Annot_key) from VOC_Annot)) ''', None)
     db.commit()
+    # update mgi_note_seq auto-sequence
+    db.sql(''' select setval('mgi_note_seq', (select max(_Note_key) from MGI_Note)) ''', None)
+    db.commit()
 
     return
 
 # Purpose:  create note
 # Returns:  nothing
 # Assumes:  nothing
-# Effects:  write noteFile, noteChunkFile row
+# Effects:  write noteFile row
 # Throws:   nothing
 
 def createNote(strainKey, note, noteTypeKey, createdByKey):
     global noteKey
 
-    noteFile.write('%s|%s|%s|%s|%s|%s|%s|%s\n' \
-        % (noteKey, strainKey, mgiNoteObjectKey, noteTypeKey, \
+    noteFile.write('%s|%s|%s|%s|%s|%s|%s|%s|%s\n' \
+        % (noteKey, strainKey, mgiNoteObjectKey, noteTypeKey, note, \
            createdByKey, createdByKey, cdate, cdate))
-
-    noteChunkFile.write('%s|1|%s|%s|%s|%s|%s\n' \
-        % (noteKey, note, createdByKey, createdByKey, cdate, cdate))
 
     noteKey = noteKey + 1
 
@@ -555,13 +543,13 @@ def processFile():
                createdByKey, createdByKey, cdate, cdate))
             accKey = accKey + 1
 
-        # storing data in MGI_Note/MGI_NoteChunk
+        # storing data in MGI_Note
         # Colony ID Note
 
         if len(colonyNote) > 0:
             createNote(strainKey, colonyNote, mgiColonyNoteTypeKey, createdByKey)
 
-        # storing data in MGI_Note/MGI_NoteChunk
+        # storing data in MGI_Note
         # Mutant Cell Line of Origin Note
         if len(mutantNote) > 0:
             createNote(strainKey, mutantNote, mgiMutOrigNoteTypeKey, createdByKey)

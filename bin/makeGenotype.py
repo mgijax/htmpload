@@ -261,16 +261,15 @@ def initialize():
     #
 
     db.sql('''
-        select s._Strain_key, s.strain, a.accID as strainID, regexp_replace(regexp_replace(nc.note, '^\s+', ''), '\s+$', '') as colonyID
+        select s._Strain_key, s.strain, a.accID as strainID, regexp_replace(regexp_replace(n.note, '^\s+', ''), '\s+$', '') as colonyID
         into temporary table strains
-        from PRB_Strain s, ACC_Accession a, MGI_Note n, MGI_NoteChunk nc
+        from PRB_Strain s, ACC_Accession a, MGI_Note n
         where s._Strain_key = a._Object_key
         and a._MGIType_key = 10
         and a._LogicalDB_key = 1
         and a.preferred = 1
         and s._Strain_key = n._Object_key
         and n._NoteType_key = 1012
-        and n._Note_key = nc._Note_key
         union
         select s._Strain_key, s.strain, a.accID as strainID, null
         from PRB_Strain s, ACC_Accession a

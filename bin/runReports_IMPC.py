@@ -152,22 +152,20 @@ def closeFiles():
 #
 def createColonyIdReport():
     imitsDict = {}
-    results = db.sql('''select distinct nc1.note as imitsCID, a._Allele_key
-        from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a
+    results = db.sql('''select distinct n1.note as imitsCID, a._Allele_key
+        from MGI_Note n1, ALL_Allele a
         where n1._NoteType_key = 1041
         and n1._MGIType_key = 11
-        and n1._Note_key = nc1._Note_key
         and n1._Object_key = a._Allele_key''', 'auto')
 
     for r in results:
         imitsDict[r['_Allele_key']] = str.strip(r['imitsCID'])
 
-    results = db.sql('''select distinct nc1.note as impcCID, aa.accID, a._Allele_key
-        from MGI_Note n1, MGI_NoteChunk nc1, ALL_Allele a, GXD_AllelePair ap, 
+    results = db.sql('''select distinct n1.note as impcCID, aa.accID, a._Allele_key
+        from MGI_Note n1, ALL_Allele a, GXD_AllelePair ap, 
             GXD_Genotype g, ACC_Accession aa
         where n1._NoteType_key = 1012
         and n1._MGIType_key = 10
-        and n1._Note_key = nc1._Note_key
         and n1._Object_key = g._Strain_key
         and g._Genotype_key = ap._Genotype_key
         and ap._Allele_key_1 = a._Allele_key

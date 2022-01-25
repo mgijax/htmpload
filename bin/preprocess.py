@@ -465,13 +465,12 @@ def initialize():
     #
     # remove private strain constraint
     results = db.sql('''
-        select s.strain, trim(nc.note) as colonyID
-        from PRB_Strain s, MGI_Note n, MGI_NoteChunk nc
+        select s.strain, trim(n.note) as colonyID
+        from PRB_Strain s, MGI_Note n
         where s._StrainType_key in (3410530, 3410535, 6508969) 
         and s._Strain_key = n._Object_key
         and n._NoteType_key = 1012
         and n._MGIType_key = 10
-        and n._Note_key = nc._Note_key 
         ''', 'auto')
 
     for r in results:
