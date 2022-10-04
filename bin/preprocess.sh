@@ -90,19 +90,19 @@ fi
 LOG=${LOG_DIAG}
 echo "LOG: ${LOG}"
 touch ${LOG}
-if [ "${IMITS_INPUT_FILE}" != "" ]
+if [ "${GENTAR_INPUT_FILE}" != "" ]
 then
     #
-    # copy imits2 input file into working directory
+    # copy gentar input file into working directory
     #
-    echo "copying iMits input file..." >> ${LOG}
+    echo "copying GenTar input file..." >> ${LOG}
     date >> ${LOG}
-    rm -rf ${IMITS_COPY_INPUT_FILE}
-    cp ${IMITS_INPUT_FILE} ${IMITS_COPY_INPUT_FILE}
+    rm -rf ${GENTAR_COPY_INPUT_FILE}
+    cp ${GENTAR_INPUT_FILE} ${GENTAR_COPY_INPUT_FILE}
     STAT=$?
     if [ ${STAT} -ne 0 ]
     then
-	echo "Error: copying ${IMITS_INPUT_FILE} to ${IMITS_COPY_INPUT_FILE}" | tee -a ${LOG}
+	echo "Error: copying ${GENTAR_INPUT_FILE} to ${GENTAR_COPY_INPUT_FILE}" | tee -a ${LOG}
 	exit 1
     fi
 fi

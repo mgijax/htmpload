@@ -4,7 +4,7 @@
 #
 #  Purpose:
 #
-#      This script will query the database comparing IMPC and IMITS colony IDs
+#      This script will query the database comparing IMPC and GENTAR colony IDs
 #
 #  Usage:
 #
@@ -114,8 +114,8 @@ def openFiles():
     #
     try:
         fpLogCur = open(logCurFile, 'a+')
-        fpLogCur.write('\n***********\nIMPC/IMITS Colony ID Discrepancies\n\n')
-        fpLogCur.write('Allele\tIMPC\tIMITs\n')
+        fpLogCur.write('\n***********\nIMPC/GENTAR Colony ID Discrepancies\n\n')
+        fpLogCur.write('Allele\tIMPC\tGenTar\n')
     except:
         print('Cannot open file: ' + logCurFile)
         return 1
@@ -143,7 +143,7 @@ def closeFiles():
     return 0
 
 #
-# Purpose: report discrepancies between IMITS allele colony ID and IMPC strain
+# Purpose: report discrepancies between GENTAR allele colony ID and IMPC strain
 #	colony ID
 # Returns: 0
 # Assumes: Nothing
@@ -151,15 +151,15 @@ def closeFiles():
 # Throws: Nothing
 #
 def createColonyIdReport():
-    imitsDict = {}
-    results = db.sql('''select distinct n1.note as imitsCID, a._Allele_key
+    gentarDict = {}
+    results = db.sql('''select distinct n1.note as gentarCID, a._Allele_key
         from MGI_Note n1, ALL_Allele a
         where n1._NoteType_key = 1041
         and n1._MGIType_key = 11
         and n1._Object_key = a._Allele_key''', 'auto')
 
     for r in results:
-        imitsDict[r['_Allele_key']] = str.strip(r['imitsCID'])
+        gentarDict[r['_Allele_key']] = str.strip(r['gentarCID'])
 
     results = db.sql('''select distinct n1.note as impcCID, aa.accID, a._Allele_key
         from MGI_Note n1, ALL_Allele a, GXD_AllelePair ap, 
@@ -180,9 +180,9 @@ def createColonyIdReport():
         alleleKey = r['_Allele_key']
         accID = r['accID']
         id = str.strip(r['impcCID'])
-        if alleleKey in imitsDict:
-            if id not in imitsDict[alleleKey]:
-                fpLogCur.write('%s\t%s\t%s\n' % (accID, id, imitsDict[alleleKey]))
+        if alleleKey in gentarDict:
+            if id not in gentarDict[alleleKey]:
+                fpLogCur.write('%s\t%s\t%s\n' % (accID, id, gentarDict[alleleKey]))
 
     return 0
         

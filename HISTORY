@@ -1,3 +1,10 @@
+TAG: htmpload-6-0-22-1
+DATE: 10/04/2022
+STAFF: sc
+CHANGES: https://mgi-jira.atlassian.net/browse/WTS2-558 / 
+    https://mgi-jira.atlassian.net/browse/CRM-447
+update load to use gentar file
+
 TAG: htmpload-6-0-18-1
 DATE: 01/25/2022
 STAFF: lec

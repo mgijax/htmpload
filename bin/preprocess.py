@@ -40,9 +40,9 @@
 #   9.  Gender
 #   10. Colony ID
 #
-#   IMITS input file - tab delimited
-#	 IMITS_COPY_INPUT_FILE from impcmpload.config and impclaczload.config
-#   This is a imits/tsv (tab-delimited) file
+#   GENTAR input file - tab delimited
+#	 GENTAR_COPY_INPUT_FILE from impcmpload.config and impclaczload.config
+#   This is a gentar/tsv (tab-delimited) file
 #   1. Marker Symbol
 #   2. MGI Marker ID
 #   3. Colony Name
@@ -108,8 +108,8 @@
 #       - TR12488 Mice Crispies project
 #
 #  03/30/2016
-#	- TR12273/use new IMITS report input file to verify IMPC colony/marker
-#	  and to find production_centre and es_cell_name. the json IMITS file
+#	- TR12273/use new GENTAR report input file to verify IMPC colony/marker
+#	  and to find production_centre and es_cell_name. the json GENTAR file
 #	  is incorrect. using mirror_wget/www.mousephenotype.org instead.
 #	- added 'parseIMPCLacZFile' for parsing IMPC/LacZ input file
 #
@@ -150,7 +150,7 @@ evidenceCode = 'EXP'
 inputFile = None
 inputFileInt = None
 inputFileDup = None
-imitsFile = None
+gentarFile = None
 
 # Outputs 
 
@@ -166,7 +166,7 @@ fpInput = None
 fpInputintWrite = None
 fpInputintRead = None
 fpInputdup = None
-fpIMITS = None
+fpGENTAR = None
 fpHTMP = None
 fpStrain = None
 fpLogDiag = None
@@ -186,7 +186,7 @@ errMsg: %s
 # {errorNum:[msg1, msg2, ...], ...}
 errorDict = {}
 
-# IMITS colony id mapped to IMITS attributes
+# GENTAR colony id mapped to GENTAR attributes
 # {colonyId:'productionCtr|mutantID|markerID', ...}
 colonyToMCLDict = {}
 
@@ -263,7 +263,7 @@ class Allele:
 # Throws: Nothing
 #
 def initialize():
-    global inputFile, inputFileInt, inputFileDup, imitsFile, htmpFile
+    global inputFile, inputFileInt, inputFileDup, gentarFile, htmpFile
     global strainFile, logDiagFile, logCurFile, htmpErrorFile, htmpSkipFile
     global allelesInDbDict, mclInDbDict, procCtrToLabCodeDict, phenoCtrList
     global strainInfoDict, referenceStrainDict, strainTemplateDict, strainTypeDict
@@ -294,7 +294,7 @@ def initialize():
         print('Environment variable not set: LOADTYPE')
         rc = 1
     if isIMPC or isLacZ:
-        imitsFile = os.getenv('IMITS_COPY_INPUT_FILE')
+        gentarFile = os.getenv('GENTAR_COPY_INPUT_FILE')
     #
     # Make sure the environment variables are set.
     #
@@ -302,8 +302,8 @@ def initialize():
         print('Environment variable not set: SOURCE_COPY_INPUT_FILE')
         rc = 1
 
-    if (loadType == 'impc' or loadType == 'lacz') and not imitsFile:
-        print('Environment variable not set: IMITS_COPY_INPUT_FILE')
+    if (loadType == 'impc' or loadType == 'lacz') and not gentarFile:
+        print('Environment variable not set: GENTAR_COPY_INPUT_FILE')
         rc = 1
 
     if not htmpFile:
@@ -537,7 +537,7 @@ def initialize():
 #
 
 def openFiles():
-    global fpInput, fpIMITS, fpHTMP, fpStrain
+    global fpInput, fpGENTAR, fpHTMP, fpStrain
     global fpInputintWrite, fpInputdup
     global fpLogDiag, fpLogCur, fpHTMPError, fpHTMPSkip
 
@@ -569,13 +569,13 @@ def openFiles():
         return 1
 
     #
-    # Open the IMITS file
+    # Open the GENTAR file
     #
     if loadType == 'impc' or loadType == 'lacz':
         try:
-            fpIMITS = open(imitsFile, 'r')
+            fpGENTAR = open(gentarFile, 'r')
         except:
-            print('Cannot open file: ' + imitsFile)
+            print('Cannot open file: ' + gentarFile)
             return 1
 
     #
@@ -650,8 +650,8 @@ def closeFiles():
     if fpInput:
         fpInput.close()
 
-    if fpIMITS:
-        fpIMITS.close()
+    if fpGENTAR:
+        fpGENTAR.close()
 
     if fpHTMP:
         fpHTMP.close()
@@ -696,18 +696,18 @@ def logIt(msg, line, isError, typeError):
     return 0
 
 #
-# Purpose: parse IMITS report (tab-delimited) file into a data structure
+# Purpose: parse GENTAR report (tab-delimited) file into a data structure
 # Returns: 0
-# Assumes: fpIMITS exists 
+# Assumes: fpGENTAR exists 
 # Effects: Nothing
 # Throws: Nothing
 #
-def parseIMITSFile():
+def parseGENTARFile():
     global colonyToMCLDict
 
-    print('Parsing IMITS, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
+    print('Parsing GENTAR, creating lookup: %s'  % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
 
-    for line in fpIMITS.readlines():
+    for line in fpGENTAR.readlines():
 
         tokens = line[:-1].split('\t')
 
@@ -1145,8 +1145,8 @@ def checkAlleleState(alleleState, line):
     return alleleState
 
 #
-# Purpose: checks if IMPC colony ID maps to IMITS colony ID
-# Returns: 1 if not IMITS colony ID for IMPC colony ID
+# Purpose: checks if IMPC colony ID maps to GENTAR colony ID
+# Returns: 1 if not GENTAR colony ID for IMPC colony ID
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
@@ -1154,7 +1154,7 @@ def checkAlleleState(alleleState, line):
 def checkColonyID(colonyID, line):
 
     if not colonyID in colonyToMCLDict:
-        msg='No IMITS colony id for %s' % colonyID
+        msg='No GENTAR colony id for %s' % colonyID
         logIt(msg, line, 1, 'colonyID')
         return 1
 
@@ -1207,20 +1207,20 @@ def checkPhenoCtr(phenoCtr, line):
     return phenoCtr
 
 #
-# Purpose: compares IMPC marker ID to IMITS marker ID
-# Returns: 1 if IMITS marker ID not the same as IMITS marker ID
+# Purpose: compares IMPC marker ID to GENTAR marker ID
+# Returns: 1 if GENTAR marker ID not the same as GENTAR marker ID
 # Assumes: Nothing
 # Effects: writes to error file and curation/diagnostic logs
 # Throws: Nothing
 #
-def compareMarkers(markerID, imitsMrkID, line):
+def compareMarkers(markerID, gentarMrkID, line):
 
-    if markerID != imitsMrkID:
+    if markerID != gentarMrkID:
         # US5 doc 4a2
         # 8/22 all match
         # test file:
-        #  imits.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
-        msg='No Marker ID match. IMPC: %s IMITS: %s' % (markerID, imitsMrkID)
+        #  gentar.mp.tsv.no_marker_id_match_mgi104848_to_mgi2442056_line_1982
+        msg='No Marker ID match. IMPC: %s GENTAR: %s' % (markerID, gentarMrkID)
         logIt(msg, line, 1, 'noMrkIdMatch')
         return 1
 
@@ -1306,16 +1306,16 @@ def createHTMPFile():
         # IMPC/LacZ only 
         #
         if isIMPC or isLacZ:
-            # verify the IMPC/colony_id with the IMITS/colonyName
+            # verify the IMPC/colony_id with the GENTAR/colonyName
             if checkColonyID(colonyID, line):
                 continue
 
-            # verify the IMPC/markerID with the IMITS/marker ID
-            # note that the IMITS file also provides the 'mutantID' (es cell line)
-            productionCtr, mutantID, imitsMrkID = str.split(colonyToMCLDict[colonyID], '|')
+            # verify the IMPC/markerID with the GENTAR/marker ID
+            # note that the GENTAR file also provides the 'mutantID' (es cell line)
+            productionCtr, mutantID, gentarMrkID = str.split(colonyToMCLDict[colonyID], '|')
             print('productionCtr: %s from colonyToMCLDict[colonyID]' % (productionCtr))
 
-            if compareMarkers(markerID, imitsMrkID, line):
+            if compareMarkers(markerID, gentarMrkID, line):
                 continue
 
         # Allele/MCL Object Identity/Consistency Check US5 doc 4b
@@ -1509,8 +1509,8 @@ if openFiles() != 0:
     sys.exit(1)
 
 if isIMPC or isLacZ:
-    print('parseIMITSFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
-    if parseIMITSFile() != 0:
+    print('parseGENTARFile: %s' % time.strftime("%H.%M.%S.%m.%d.%y", time.localtime(time.time())))
+    if parseGENTARFile() != 0:
         sys.exit(1)
 
 #
