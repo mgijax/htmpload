@@ -1183,6 +1183,9 @@ def checkGender(gender, line):
         # will be converted to NA later in makeAnnotation.py
         gender = 'Both'
 
+    elif gender.lower() == 'not_considered':
+        gender = 'NA'
+
     else:
         msg = 'Unrecognized gender %s, loaded as NA' % gender
         logIt(msg, line, 1, 'gender')

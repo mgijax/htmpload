@@ -29,7 +29,8 @@ fi
 #inputStrain|referenceStrainID|referenceStrain|template|referenceStrainType|referenceStrainAttributes
 #  note: referenceStrainAttributes are ':' delimited
 #
-STRAIN_INFO="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NCrl|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NJ|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6NTac|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6Brd-Tyr<c-Brd>;C57BL/6N|MGI:5446360|B6Brd;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6N;C57BL/6NTac|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6Brd-Tyr<c-Brd>;C57BL/6Dnk;C57BL/6N;C57BL/6NTac|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation"
+# 10/17 updated by Cindy:
+STRAIN_INFO="B6Brd;B6Dnk;B6N-Tyr<c-Brd>|MGI:5446362|B6Brd;B6Dnk;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6Brd-Tyr<c-Brd>|MGI:5446360|B6Brd;B6N-Tyr<c-Brd>|%s %s/%s|Not Specified|mutant stock:targeted mutation,C57BL/6JTyr;C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic:targeted mutation,C57BL/6N|MGI:2159965|C57BL/6N|%s-%s/%s|coisogenic|coisogenic,C57BL/6NCrl|MGI:2683688|C57BL/6NCrl|%s-%s/%s|coisogenic|coisogenic,C57BL/6NJ|MGI:3056279|C57BL/6NJ|%s-%s/%s|coisogenic|coisogenic,C57BL/6NJcl|MGI:2160139|C57BL/6NJcl|%s-%s/%s|coisogenic|coisogenic,C57BL/6NTac|MGI:2164831|C57BL/6NTac|%s-%s/%s|coisogenic|coisogenic"
 
 export STRAIN_INFO
 

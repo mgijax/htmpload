@@ -151,7 +151,8 @@ def closeFiles():
 # Throws: Nothing
 #
 def createColonyIdReport():
-    gentarDict = {}
+    gentarDict = {}      # for reporting
+    gentarDictLower = {} # for comparing
     results = db.sql('''select distinct n1.note as gentarCID, a._Allele_key
         from MGI_Note n1, ALL_Allele a
         where n1._NoteType_key = 1041
@@ -160,6 +161,7 @@ def createColonyIdReport():
 
     for r in results:
         gentarDict[r['_Allele_key']] = str.strip(r['gentarCID'])
+        gentarDictLower[r['_Allele_key']] = str.strip(r['gentarCID']).lower()
 
     results = db.sql('''select distinct n1.note as impcCID, aa.accID, a._Allele_key
         from MGI_Note n1, ALL_Allele a, GXD_AllelePair ap, 
@@ -176,13 +178,16 @@ def createColonyIdReport():
         and aa.prefixPart = 'MGI:'
         order by aa.accID ''', 'auto')
 
+    mismatchCt = 0
     for r in results:
         alleleKey = r['_Allele_key']
         accID = r['accID']
         id = str.strip(r['impcCID'])
         if alleleKey in gentarDict:
-            if id not in gentarDict[alleleKey]:
+            if id.lower() not in gentarDictLower[alleleKey]:
+                mismatchCt += 1
                 fpLogCur.write('%s\t%s\t%s\n' % (accID, id, gentarDict[alleleKey]))
+    fpLogCur.write('%sTotal: %s' % (CRT, mismatchCt))
 
     return 0
         

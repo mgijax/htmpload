@@ -1,3 +1,13 @@
+TAG: htmpload-6-0-22-3
+DATE: 11/28/2022
+STAFF: sc
+CHANGES: https://mgi-jira.atlassian.net/browse/FL2-4
+switching to the GenTar input file
+1) common.config.default = updated STRAIN_INFO
+2) bin/preprocess.py - load gender when not_considered or blank as NA
+3) bin/runReports_IMPC.py - case insensitive colony id checking
+4) bin/runReports_IMPC.sh update to config checking/sourcing
+
 TAG: htmpload-6-0-22-2
 TAG: htmpload-6-0-22-1
 DATE: 10/04/2022
